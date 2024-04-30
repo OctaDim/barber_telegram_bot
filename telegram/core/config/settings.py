@@ -3,8 +3,6 @@ from pathlib import Path
 from dotenv import dotenv_values
 from dataclasses import dataclass
 
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 FULL_ENV_FILENAME = os.path.join(BASE_DIR, ".env")
 
@@ -13,6 +11,7 @@ print(environment_vars_dict)
 
 for key, value in environment_vars_dict.items():
     print(type(key), type(value))
+
 
 @dataclass
 class BOT_CREDENTIALS:

@@ -1,16 +1,21 @@
-# This is a sample Python script.
+import asyncio
+from aiogram import (
+    Bot,
+    Dispatcher,
+)
+from telegram.core.config.settings import BOT_CREDENTIALS
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+ALLOWED_UPDATES = ['message, edited_message']
+
+bot = Bot(token=BOT_CREDENTIALS.TG_BOT_TOKEN)
+
+dp = Dispatcher()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot, allowed_updates=ALLOWED_UPDATES)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    asyncio.run(main())
