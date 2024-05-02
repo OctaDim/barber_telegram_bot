@@ -7,10 +7,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 FULL_ENV_FILENAME = os.path.join(BASE_DIR, ".env")
 
 environment_vars_dict = dotenv_values(FULL_ENV_FILENAME)
-print(environment_vars_dict)
-
-for key, value in environment_vars_dict.items():
-    print(type(key), type(value))
 
 
 @dataclass
