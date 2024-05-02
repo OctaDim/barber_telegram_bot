@@ -1,4 +1,4 @@
-class COMMANDS_PARAMETERS:
+class COMMANDS_PARAMS:
     class START_CMD:
         TEXT = "start"
         DESCRIPTION = "🚀 Start"
