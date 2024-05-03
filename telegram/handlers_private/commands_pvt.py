@@ -8,7 +8,7 @@ from telegram.params.commands import COMMANDS_PARAMS
 from telegram.params.messages import MAIN_GREETING
 
 
-on_start_router = Router()
+on_start_router = Router(name=__name__)
 on_start_router.message.filter(ChatTypesFilter(["private"]))
 
 
