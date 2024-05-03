@@ -8,3 +8,4 @@ class COMMON_BUTTONS_PARAMS:
     MENU = "📃 Main Menu"
     MINIMIZE_MENU = "📕 Minimize Menu"
     SAY_BYE = "🚪 Say 'Bye-Bye'"
+    RETURN = "⬅️ Previous Menu"
