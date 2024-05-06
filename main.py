@@ -7,8 +7,9 @@ from aiogram.types import BotCommand
 
 from telegram.config.settings import BOT_CREDENTIALS
 from telegram.params.commands import COMMANDS_PARAMS
-from telegram.handlers_private.commands_pvt import on_start_router
 
+from telegram.handlers_private.commands_pvt import on_start_router
+from telegram.handlers_private.services_btn_pvt import services_btn_router
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(name)s - "
@@ -22,6 +23,8 @@ dp = Dispatcher()
 dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 dp.include_router(on_start_router)
+dp.include_router(services_btn_router)
+
 
 private_chat_commands = [
     BotCommand(command=COMMANDS_PARAMS.START_CMD.TEXT,
