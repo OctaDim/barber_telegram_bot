@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from telegram.params.buttons_main_menu import MAIN_MENU_BUTTONS_PARAMS
-from telegram.params.messages import  SELECT_ACTION
+from telegram.params.messages import SELECT_ACTION
 
 
 def get_pvt_main_menu_kbd():

@@ -11,6 +11,8 @@ from telegram.params.commands import COMMANDS_PARAMS
 from telegram.handlers_private.commands_pvt import on_start_router
 from telegram.handlers_private.services_btn_pvt import services_btn_router
 from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
+from telegram.handlers_admin.commands_admin import admin_panel
+
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(name)s - "
@@ -23,7 +25,8 @@ bot = Bot(token=BOT_CREDENTIALS.TG_BOT_TOKEN)
 dp = Dispatcher()
 dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-dp.include_router(on_start_router)
+dp.include_router(admin_panel)
+# dp.include_router(on_start_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
 
