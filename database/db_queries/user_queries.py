@@ -1,5 +1,3 @@
-
-
 from database.db_engine import url_engine
 from database.db_connection import DBConnection
 
