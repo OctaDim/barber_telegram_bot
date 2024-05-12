@@ -26,14 +26,14 @@ dp = Dispatcher()
 dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 dp.include_router(admin_panel)
-# dp.include_router(on_start_router)
+dp.include_router(on_start_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
 
 
 private_chat_commands = [
-    BotCommand(command=COMMANDS_PARAMS.START_CMD.TEXT,
-               description=COMMANDS_PARAMS.START_CMD.DESCRIPTION),
+    BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
+               description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
     # BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
     #            description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
 ]
