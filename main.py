@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
 from telegram.params.commands import COMMANDS_PARAMS
@@ -38,11 +38,21 @@ private_chat_commands = [
     #            description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
 ]
 
+admin_chat_commands = [
+    BotCommand(command=COMMANDS_PARAMS.ADMIN_PANEL.TEXT,
+               description=COMMANDS_PARAMS.ADMIN_PANEL.DESCRIPTION),
+    BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
+               description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
+]
+
+scope = BotCommandScopeChat(chat_id=int(BOT_CREDENTIALS.TG_BOT_ADMIN_ID))
+
 
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
 
     await bot.set_my_commands(commands=private_chat_commands)
+    await bot.set_my_commands(commands=admin_chat_commands, scope=scope)
 
     try:
         await dp.start_polling(
