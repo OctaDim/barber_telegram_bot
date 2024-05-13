@@ -12,6 +12,7 @@ from telegram.handlers_private.commands_pvt import on_start_router
 from telegram.handlers_private.services_btn_pvt import services_btn_router
 from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
 from telegram.handlers_admin.commands_admin import admin_panel
+from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -29,6 +30,7 @@ dp.include_router(admin_panel)
 dp.include_router(on_start_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
+dp.include_router(services_admin_btn_router)
 
 
 private_chat_commands = [

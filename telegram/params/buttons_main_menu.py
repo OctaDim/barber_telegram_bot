@@ -18,7 +18,7 @@ class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
 
 @dataclass()
 class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
-    ADD_SERVICES = "Add Services"
-    CHANGE_SERVICES = "Change Services"
-    ADD_CONTACTS = "Add Contacts"
-    CHANGE_CONTACTS = "Change Contacts"
+    ADD_SERVICES = "Add services"
+    CHANGE_SERVICES = "Change services"
+    ADD_CONTACTS = "Add contacts"
+    CHANGE_CONTACTS = "Change contacts"
