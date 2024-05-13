@@ -33,5 +33,11 @@ def get_btn_admin_panel():
 
 def add_services(data: dict):
     with manager as session:
-        session.add(Services(**data))
+        validate_data = {
+            'name': data['name'],
+            'description': data['description'],
+            'price': data['price'],
+        }
+
+        session.add(Services(**validate_data))
         session.commit()
