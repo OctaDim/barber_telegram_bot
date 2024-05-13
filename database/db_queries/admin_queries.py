@@ -29,3 +29,9 @@ def get_btn_admin_panel():
             data['contacts'] = MAIN_MANU_ADMIN_PARAMS.CHANGE_CONTACTS
 
         return data
+
+
+def add_services(data: dict):
+    with manager as session:
+        session.add(Services(**data))
+        session.commit()
