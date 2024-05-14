@@ -134,6 +134,5 @@ async def change_service(message: Message, state: FSMContext):
                     return await preview_service(message=message, state=state)
 
                 case BUTTONS_CHANGE_SERVICES.PRICE:
-                    await state.update_data(price=message.text)
-                    return await preview_service(message=message, state=state)
+                    return await add_price(message=message, state=state)
 
