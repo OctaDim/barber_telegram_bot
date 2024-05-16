@@ -3,6 +3,8 @@ import logging
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
@@ -13,6 +15,9 @@ from telegram.handlers_private.services_btn_pvt import services_btn_router
 from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
 from telegram.handlers_admin.commands_admin import admin_panel
 from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
+from telegram.handlers_private.enroll_services_pvt_hdr import enroll_services_pvt_router
+from telegram.handlers_callback_pvt.select_services_inl_kbd_hdr import select_services_callback_router
+
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -20,14 +25,17 @@ logging.basicConfig(level=logging.DEBUG,
                            "(%(filename)s).%(funcName)s(%(lineno)d) - "
                            "%(message)s")
 
-ALLOWED_UPDATES = ['message, edited_message']
+# ALLOWED_UPDATES = ['message, edited_message']
 
-bot = Bot(token=BOT_CREDENTIALS.TG_BOT_TOKEN)
+bot = Bot(token=BOT_CREDENTIALS.TG_BOT_TOKEN,
+          default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+dp.include_router(select_services_callback_router)
 dp.include_router(admin_panel)
 dp.include_router(on_start_router)
+dp.include_router(enroll_services_pvt_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
 dp.include_router(services_admin_btn_router)
@@ -36,8 +44,8 @@ dp.include_router(services_admin_btn_router)
 private_chat_commands = [
     BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
                description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
-    # BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
-    #            description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
+    # BotCommand(command=COMMANDS_PARAMS.START_CMD.TEXT,
+    #            description=COMMANDS_PARAMS.START_CMD.DESCRIPTION),
 ]
 
 admin_chat_commands = [
