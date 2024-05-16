@@ -5,7 +5,7 @@ from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 @dataclass
 class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
-    FREE_TIME = "Free Time"
+    ENROLL_SERVICES = "Enroll Services"
     RESERVATIONS = "My Reservations"
     SERVICES = "Services"
     PRICES = "Prices"
