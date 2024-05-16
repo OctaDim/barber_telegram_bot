@@ -13,10 +13,9 @@ from database.db_models.company import (
 manager = DBConnection(db_url=url_engine)
 
 
-def get_service():
+def get_services_list():
     with manager as session:
         data = session.query(Services).all()
-
         return data
 
 
