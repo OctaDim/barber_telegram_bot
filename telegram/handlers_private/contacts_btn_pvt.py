@@ -21,11 +21,11 @@ async def get_contacts(message: Message):
 
     if data:
         await message.answer(text='📱 Socials:\n'
-                                  f'{", ".join(data.get("socials"))}\n'
+                                  f'{''.join(data.get('socials'))}\n'
                                   '📞 Telephone:\n'
-                                  f'{", ".join(data.get("phone"))}\n\n'
+                                  f'{' , '.join(data.get('phone'))}\n\n'
                                   f'📍 Address: \n'
-                                  f'{", ".join(data.get("address"))}',
+                                  f'{' , '.join(data.get('address'))}',
                              parse_mode=ParseMode.HTML,
                              disable_web_page_preview=True,
                              reply_markup=get_pvt_main_menu_kbd()
