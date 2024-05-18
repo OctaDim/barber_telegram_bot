@@ -1,5 +1,10 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm.decl_api import DeclarativeMeta
+
+
+# The common Base metamodel used to create models in a separate modules packages
+Base = declarative_base()
 
 
 class DBConnection:
@@ -15,5 +20,5 @@ class DBConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         return self.session.close()
 
-    def create_tables(self, base):
-        base.metadata.create_all(self.engine)
+    def create_tables(self, base: DeclarativeMeta):
+        base.metadata.create_all(self.engine, checkfirst=True)

@@ -13,4 +13,4 @@ DB_HOST = os.getenv('POSTGRES_DB_HOST')
 DB_PORT = os.getenv('POSTGRES_DB_PORT')
 DB_NAME = os.getenv('POSTGRES_DB_NAME')
 
-url_engine = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+db_engine_url = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
