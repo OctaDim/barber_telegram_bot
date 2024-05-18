@@ -6,16 +6,20 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
 from telegram.filters.chat_types_filter import IsAdmin
+from telegram.keyboard_inline.services_change_select_inl_kbd import services_select_inl_kbd
+from telegram.keyboard_reply.admin_services_action_kbd import get_services_action_kbd
 from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS as MAIN_PARAMS
 from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.keyboard_reply.admin_add_services_kbd import get_keyboard, get_change_service_keyboard
 from telegram.params.buttons_add_services import BUTTONS_ADD_SERVICES
 from telegram.params.buttons_change_services import BUTTONS_CHANGE_SERVICES
+from telegram.params.button_services_action import BUTTON_SERVICES_ACTION
 
 from telegram.params.messages import (
     ADD_DESCRIPTION_SERVICE,
     ADD_NAME_SERVICE,
-    ADD_PRICE_SERVICE
+    ADD_PRICE_SERVICE,
+    CHOOSE_AN_ACTION
 )
 
 from database.db_queries.admin_queries import add_services
@@ -32,9 +36,15 @@ class Services(StatesGroup):
     price = State()
     decision = State()
     change = State()
+    id_service = State()
 
 
-@services_admin_btn_router.message(F.text == MAIN_PARAMS.ADD_SERVICES)
+@services_admin_btn_router.message(F.text == MAIN_PARAMS.SERVICES)
+async def get_services_action(message: Message):
+    await message.answer(text=CHOOSE_AN_ACTION, reply_markup=get_services_action_kbd())
+
+
+@services_admin_btn_router.message(F.text == BUTTON_SERVICES_ACTION.ADD)
 async def add_name_service(message: Message, state: FSMContext):
     await message.answer(text=ADD_NAME_SERVICE)
     await state.set_state(Services.name)
@@ -68,7 +78,15 @@ async def add_price(message: Message, state: FSMContext):
         await state.set_state(Services.price)
 
 
-async def preview_service(message: Message, state: FSMContext):
+async def preview_service(message: Message, state: FSMContext, cb_data=None):
+    if cb_data:
+        await state.update_data(
+            name=cb_data.get('name'),
+            description=cb_data.get('description'),
+            price=cb_data.get('price'),
+            id_service=cb_data.get('id')
+        )
+
     data = await state.get_data()
 
     await message.answer(text=f'Name: {data["name"]}\n'
@@ -135,4 +153,16 @@ async def change_service(message: Message, state: FSMContext):
 
                 case BUTTONS_CHANGE_SERVICES.PRICE:
                     return await add_price(message=message, state=state)
+
+
+@services_admin_btn_router.message(F.text == BUTTON_SERVICES_ACTION.CHANGE)
+@services_admin_btn_router.message(F.text == BUTTON_SERVICES_ACTION.Remove)
+async def services_change_or_remove(message: Message):
+    if message.text == BUTTON_SERVICES_ACTION.Remove:
+        await message.answer(text='Services:', reply_markup=services_select_inl_kbd(action=True))
+
+        return
+
+    await message.answer(text='Services:', reply_markup=services_select_inl_kbd())
+
 
