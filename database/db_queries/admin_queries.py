@@ -1,32 +1,11 @@
 from database.db_engine_url import db_engine_url
 from database.db_connection import DBConnection
+from database.db_utilities.model_object_update import update_object
 
-from database.db_models.phones_model import Phone
 from database.db_models.services_model import Services
-
-from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS
 
 
 manager = DBConnection(db_url=db_engine_url)
-
-
-def get_admin_panel_btn_text():
-    with manager as session:
-        services = session.query(Services).all()
-        phone = session.query(Phone).all()
-
-        data = {
-            'services': MAIN_MANU_ADMIN_PARAMS.ADD_SERVICES,
-            'contacts': MAIN_MANU_ADMIN_PARAMS.ADD_CONTACTS,
-        }
-
-        if services:
-            data['services'] = MAIN_MANU_ADMIN_PARAMS.CHANGE_SERVICES
-
-        if phone:
-            data['contacts'] = MAIN_MANU_ADMIN_PARAMS.CHANGE_CONTACTS
-
-        return data
 
 
 def add_services(data: dict):
@@ -37,5 +16,35 @@ def add_services(data: dict):
             'price': data['price'],
         }
 
+        service = session.query(Services).filter(Services.id == data.get('id_service')).first()
+
+        if service:
+            update_object(
+                data=validate_data,
+                obj=service,
+                session=session
+            )
+
+            return
+
         session.add(Services(**validate_data))
         session.commit()
+
+        return
+
+
+def get_one_service(id_service: int):
+    with manager as session:
+        data = session.query(Services).filter(Services.id == id_service).first()
+
+        return data
+
+
+def services_remove(id_service: int):
+    with manager as session:
+        service = session.query(Services).filter(Services.id == id_service).first()
+
+        session.delete(service)
+        session.commit()
+
+
