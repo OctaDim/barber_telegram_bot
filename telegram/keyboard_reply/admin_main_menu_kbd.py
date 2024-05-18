@@ -2,11 +2,11 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from telegram.params.messages import SELECT_ACTION
 
-from database.db_queries.admin_queries import get_btn_admin_panel
+from database.db_queries.admin_queries import get_admin_panel_btn_text
 
 
 def get_admin_main_menu_kbd():
-    btn_text = get_btn_admin_panel()
+    btn_text = get_admin_panel_btn_text()
 
     builder = ReplyKeyboardBuilder()
 
