@@ -7,3 +7,5 @@ ADD_DESCRIPTION_SERVICE = "Send the description of the new service:"
 ADD_PRICE_SERVICE = "Send the price of the new service:"
 SELECT_SERVICES = "Select necessary services:"
 SERVICE_SELECTED = "You have been selected our service:"
+CHOOSE_AN_ACTION = 'Choose an action'
+SUCCESSFULLY = 'Successfully'
