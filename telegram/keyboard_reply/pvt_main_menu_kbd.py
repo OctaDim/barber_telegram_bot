@@ -7,7 +7,7 @@ from telegram.params.messages import SELECT_ACTION
 def get_pvt_main_menu_kbd():
     builder = ReplyKeyboardBuilder()
 
-    builder.button(text=MAIN_MENU_BUTTONS_PARAMS.FREE_TIME)
+    builder.button(text=MAIN_MENU_BUTTONS_PARAMS.ENROLL_SERVICES)
     builder.button(text=MAIN_MENU_BUTTONS_PARAMS.RESERVATIONS)
     builder.button(text=MAIN_MENU_BUTTONS_PARAMS.SERVICES)
     builder.button(text=MAIN_MENU_BUTTONS_PARAMS.FAQ)

@@ -7,7 +7,7 @@ from telegram.params.buttons_main_menu import MAIN_MENU_BUTTONS_PARAMS
 from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.params.messages import NO_SERVICES
 
-from database.db_queries.user_queries import get_service
+from database.db_queries.user_queries import get_services_list
 
 services_btn_router = Router(name=__name__)
 services_btn_router.message.filter(ChatTypesFilter(["private"]))
@@ -15,7 +15,7 @@ services_btn_router.message.filter(ChatTypesFilter(["private"]))
 
 @services_btn_router.message(F.text == MAIN_MENU_BUTTONS_PARAMS.SERVICES)
 async def get_services(message: Message):
-    data = get_service()
+    data = get_services_list()
 
     if data:
         for service in data:
