@@ -1,18 +1,14 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from telegram.params.messages import SELECT_ACTION
-
-from database.db_queries.admin_queries import get_admin_panel_btn_text
+from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS
 
 
 def get_admin_main_menu_kbd():
-    btn_text = get_admin_panel_btn_text()
-
     builder = ReplyKeyboardBuilder()
 
-    builder.button(text=btn_text.get('services'))
-    builder.button(text=btn_text.get('contacts'))
-
+    builder.button(text=MAIN_MANU_ADMIN_PARAMS.SERVICES)
+    builder.button(text=MAIN_MANU_ADMIN_PARAMS.CONTACTS)
 
     builder.adjust(1, 1)
 
