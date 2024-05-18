@@ -1,18 +1,16 @@
-from database.db_engine import url_engine
+from database.db_engine_url import db_engine_url
 from database.db_connection import DBConnection
 
-from database.db_models.company import (
-    Services,
-    Phone
-)
+from database.db_models.phones_model import Phone
+from database.db_models.services_model import Services
 
 from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS
 
 
-manager = DBConnection(db_url=url_engine)
+manager = DBConnection(db_url=db_engine_url)
 
 
-def get_btn_admin_panel():
+def get_admin_panel_btn_text():
     with manager as session:
         services = session.query(Services).all()
         phone = session.query(Phone).all()
