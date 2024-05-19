@@ -3,6 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class BUTTONS_ADD_SERVICES:
-    ADD = 'Add'
-    CHANGE_SERVICE = 'Change'
-    REMOVE_SERVICE = 'Remove'
+    ADD: str = 'Add'
+    CHANGE_SERVICE: str = 'Change'
+    REMOVE_SERVICE: str = 'Remove'
