@@ -164,5 +164,3 @@ async def services_change_or_remove(message: Message):
         return
 
     await message.answer(text='Services:', reply_markup=services_select_inl_kbd())
-
-
