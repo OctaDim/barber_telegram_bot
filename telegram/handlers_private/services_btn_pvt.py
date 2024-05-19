@@ -13,7 +13,7 @@ services_btn_router = Router(name=__name__)
 services_btn_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@services_btn_router.message(F.text == MAIN_MENU_BUTTONS_PARAMS.SERVICES)
+@services_btn_router.message(F.text == MAIN_MENU_BUTTONS_PARAMS.OUR_SERVICES)
 async def get_services(message: Message):
     data = get_services_list()
 
