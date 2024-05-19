@@ -6,7 +6,7 @@ from telegram.keyboard_inline.services_change_select_inl_kbd import ChangeServic
 from telegram.handlers_admin.services_btn_admin import preview_service
 
 from database.db_queries.admin_queries import get_one_service, services_remove
-from telegram.params.messages import SUCCESSSFULLY
+from telegram.params.messages import SUCCESSFULLY
 
 services_change_cb_query = Router(name=__name__)
 
