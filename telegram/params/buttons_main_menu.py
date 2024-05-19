@@ -7,7 +7,7 @@ from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
     ENROLL_SERVICES = "Enroll Services"
     RESERVATIONS = "My Reservations"
-    SERVICES = "Services"
+    OUR_SERVICES = "Our Services"
     PRICES = "Prices"
     PAYMENTS = "Payments"
     ASK_ADMINISTRATOR = "Ask Administrator"
