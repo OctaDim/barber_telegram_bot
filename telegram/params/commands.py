@@ -1,13 +1,13 @@
 class COMMANDS_PARAMS:
     class START_CMD:
-        TEXT = "start"
-        DESCRIPTION = "🚀 Start"
+        TEXT: str = "start"
+        DESCRIPTION: str = "🚀 Start"
 
     class MENU_CMD:
-        TEXT = "menu"
-        DESCRIPTION = "💈 Main Menu"
+        TEXT: str = "menu"
+        DESCRIPTION: str = "💈 Main Menu"
 
 
     class ADMIN_PANEL:
-        TEXT = "admin_panel"
-        DESCRIPTION = "⚙️ Admin Panel"
+        TEXT: str = "admin_panel"
+        DESCRIPTION: str = "⚙️ Admin Panel"

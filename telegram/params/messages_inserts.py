@@ -3,18 +3,18 @@ from dataclasses import dataclass
 
 @dataclass
 class MSG:
-    NAME = "Name"
-    DESCRIPTION = "Description"
-    PRICE = "Price"
-    DURATION = "Duration"
+    NAME: str = "Name"
+    DESCRIPTION: str = "Description"
+    PRICE: str = "Price"
+    DURATION: str = "Duration"
 
-    TOTAL_COST = "Total cost"
-    TOTAL_DURATION = "Total duration"
-    TOTAL_COUNT = "Total count"
+    TOTAL_COST: str = "Total cost"
+    TOTAL_DURATION: str = "Total duration"
+    TOTAL_COUNT: str = "Total count"
 
-    CURRENCY_BRIEF = "byn"
+    CURRENCY_BRIEF: str = "byn"
 
-    SERVICE_NAME = "Service name"
-    SERVICE_DESCRIPTION = "Description"
-    SERVICE_PRICE = "Service price"
-    SERVICE_DURATION = "Service duration"
+    SERVICE_NAME: str = "Service name"
+    SERVICE_DESCRIPTION: str = "Description"
+    SERVICE_PRICE: str = "Service price"
+    SERVICE_DURATION: str = "Service duration"
