@@ -1,4 +1,4 @@
-SERVICE_SELECTED_OPTIONS = [
+SERVICE_SELECTED_VARIANTS = [
     "Thank you! You have been selected our service",
     "Congratulations! You have been selected our service",
     "Super! You have been selected our service",
