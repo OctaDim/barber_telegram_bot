@@ -6,7 +6,7 @@ from aiogram.utils.keyboard import (InlineKeyboardBuilder,
                                     InlineKeyboardMarkup)
 
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
-from telegram.params.messages import CURRENCY_BRIEF, SERVICE_DURATION
+from telegram.params.messages_inserts import MSG_INSERTS
 
 
 class EnrollServicesCallbackData(CallbackData, prefix="enroll_services"):
@@ -23,8 +23,8 @@ def get_enroll_services_inl_kbd(all_services_records: list) \
         service_icon = SELECT_SERVICES_ICONS.UNSELECTED
 
         service_text = (f"{service.name} - "
-                        f"{service.price}{CURRENCY_BRIEF}  "
-                        f"({SERVICE_DURATION}: {service.time_duration})")
+                        f"{service.price}{MSG_INSERTS.CURRENCY_BRIEF}  "
+                        f"({MSG_INSERTS.SERVICE_DURATION}: {service.time_duration})")
 
         callback_data = EnrollServicesCallbackData(service_id=service.id,
                                                    service_icon=service_icon,

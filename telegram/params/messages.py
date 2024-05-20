@@ -1,14 +1,10 @@
-SELECT_ACTION = "Select action:"
+SELECT_SERVICES = "Select services:"
+SELECT_ACTION = "Select an action:"
 MAIN_GREETING = "Hallo!"
 NO_SERVICES = "Sorry, I don't have any services."
 NO_CONTACTS = "Sorry, I don't have any contacts."
 ADD_NAME_SERVICE = "Send the name of the new service:"
 ADD_DESCRIPTION_SERVICE = "Send the description of the new service:"
 ADD_PRICE_SERVICE = "Send the price of the new service:"
-SELECT_SERVICES = "Select necessary services to enroll:"
-CURRENCY_BRIEF = "byn"
-PRICE = "Price"
-TOTAL_COST = "Total cost"
-SERVICE_DURATION = "Service duration"
 CHOOSE_AN_ACTION = 'Choose an action'
 SUCCESSFULLY = 'Successfully'
