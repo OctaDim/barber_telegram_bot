@@ -5,9 +5,9 @@ class COMMANDS_PARAMS:
 
     class MENU_CMD:
         TEXT = "menu"
-        DESCRIPTION = "📃 Main Menu"
+        DESCRIPTION = "💈 Main Menu"
 
 
     class ADMIN_PANEL:
         TEXT = "admin_panel"
-        DESCRIPTION = "Admin Panel"
+        DESCRIPTION = "⚙️ Admin Panel"
