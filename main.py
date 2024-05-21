@@ -18,6 +18,8 @@ from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
 from telegram.handlers_private.enroll_services_pvt_hdr import enroll_services_pvt_router
 from telegram.handlers_callback_admin.services_change_cb_data import services_change_cb_query
 from telegram.handlers_callback_admin.services_remove_cb_data import services_remove_cb_query
+from telegram.handlers_callback_pvt.enroll_services_cb_hdr import enroll_services_cb_router
+
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -34,6 +36,7 @@ dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 dp.include_router(services_remove_cb_query)
 dp.include_router(services_change_cb_query)
+dp.include_router(enroll_services_cb_router)
 dp.include_router(services_admin_btn_router)
 dp.include_router(admin_panel)
 dp.include_router(on_start_router)
