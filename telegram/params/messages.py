@@ -1,4 +1,5 @@
-SELECT_SERVICES = "Select services:"
+SELECT_SERVICES = "Select service to enroll:"
+SELECT_OTHER_ACTIONS = "Or select other actions:"
 SELECT_ACTION = "Select an action:"
 MAIN_GREETING = "Hallo!"
 NO_SERVICES = "Sorry, I don't have any services."
