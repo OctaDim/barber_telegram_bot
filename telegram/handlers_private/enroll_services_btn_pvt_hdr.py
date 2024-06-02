@@ -9,7 +9,6 @@ from telegram.keyboard_reply.pvt_return_main_menu_kbd import get_pvt_return_main
 
 from telegram.params.buttons_main_menu import MAIN_MENU_BUTTONS_PARAMS
 from telegram.params.messages_multiline import SELECT_SERVICES_MULTI
-from telegram.params.prefixes import ENROLL_SERVICE_RETURN_PREFIX
 from telegram.params.messages import (NO_SERVICES,
                                       SELECT_OTHER_ACTIONS)
 
@@ -37,5 +36,4 @@ async def enroll_services_btn_handler(message: Message):
 
     await message.answer(
         text=SELECT_OTHER_ACTIONS,
-        reply_markup=get_pvt_return_main_menu_kbd(
-            return_btn_prefix=ENROLL_SERVICE_RETURN_PREFIX))
+        reply_markup=get_pvt_return_main_menu_kbd())

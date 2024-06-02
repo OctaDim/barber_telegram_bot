@@ -3,12 +3,11 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, ReplyKeyboardMarkup
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 
-def get_pvt_return_main_menu_kbd(return_btn_prefix: str) -> ReplyKeyboardMarkup:
+def get_pvt_return_main_menu_kbd() -> ReplyKeyboardMarkup:
     builder_reply_kbd = ReplyKeyboardBuilder()
 
     builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.MAIN_MENU)
-    builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.RETURN,
-                             return_prefix=return_btn_prefix)
+    builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.RETURN)
 
     builder_reply_kbd.adjust(1)
 
