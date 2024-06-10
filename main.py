@@ -8,6 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
+from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
 from telegram.params.commands import COMMANDS_PARAMS
 
 from telegram.handlers_private.commands_pvt import on_start_router
@@ -15,11 +16,13 @@ from telegram.handlers_private.services_btn_pvt import services_btn_router
 from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
 from telegram.handlers_admin.commands_admin import admin_panel
 from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
-from telegram.handlers_private.enroll_services_pvt_hdr import enroll_services_pvt_router
+from telegram.handlers_private.enroll_services_btn_pvt_hdr import enroll_services_pvt_router
 from telegram.handlers_callback_admin.services_change_cb_data import services_change_cb_query
 from telegram.handlers_callback_admin.services_remove_cb_data import services_remove_cb_query
 from telegram.handlers_callback_pvt.enroll_services_cb_hdr import enroll_services_cb_router
-
+from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt_router
+from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
+from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -34,15 +37,23 @@ bot = Bot(token=BOT_CREDENTIALS.TG_BOT_TOKEN,
 dp = Dispatcher()
 dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+# Outer Middlewares:
+dp.update.outer_middleware(AllUpdatesMiddleware())
+
+# Routers:
+dp.include_router(return_button_router)
 dp.include_router(services_remove_cb_query)
 dp.include_router(services_change_cb_query)
 dp.include_router(enroll_services_cb_router)
 dp.include_router(services_admin_btn_router)
 dp.include_router(admin_panel)
 dp.include_router(on_start_router)
+dp.include_router(return_main_menu_pvt_router)
 dp.include_router(enroll_services_pvt_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
+# All unhandled updates router:
+dp.include_router(unhandled_update_router)
 
 private_chat_commands = [
     BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,

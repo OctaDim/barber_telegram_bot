@@ -9,5 +9,5 @@ class COMMANDS_PARAMS:
 
 
     class ADMIN_PANEL:
-        TEXT: str = "admin_panel"
+        TEXT: str = "admin"
         DESCRIPTION: str = "⚙️ Admin Panel"

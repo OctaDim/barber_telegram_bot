@@ -4,9 +4,9 @@ from dataclasses import dataclass
 @dataclass
 class MSG:
     NAME: str = "Name"
-    DESCRIPTION: str = "Description"
     PRICE: str = "Price"
     DURATION: str = "Duration"
+    DESCRIPTION: str = "Description"
 
     TOTAL_COST: str = "Total cost"
     TOTAL_DURATION: str = "Total duration"
@@ -14,7 +14,7 @@ class MSG:
 
     CURRENCY_BRIEF: str = "byn"
 
-    SERVICE_NAME: str = "Service name"
+    SERVICE_NAME: str = "Name"
+    SERVICE_PRICE: str = "Price"
+    SERVICE_DURATION: str = "Duration"
     SERVICE_DESCRIPTION: str = "Description"
-    SERVICE_PRICE: str = "Service price"
-    SERVICE_DURATION: str = "Service duration"

@@ -202,6 +202,6 @@ Media/
 .BackUp
 .ToDo
 .Test
-.Test.py
+Test.py
 .Examples.py
 test.py
