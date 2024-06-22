@@ -1,4 +1,5 @@
 from aiogram import Router
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram.filters.command import CommandStart, Command
 
@@ -12,6 +13,8 @@ admin_panel.message.filter(IsAdmin())
 
 @admin_panel.message(CommandStart())
 @admin_panel.message(Command(COMMANDS_PARAMS.ADMIN_PANEL.TEXT))
-async def start_command(message: Message):
+async def start_command(message: Message, state: FSMContext):
+    await state.clear()
+
     await message.answer(text=f'{message.chat.id}',
                          reply_markup=get_admin_main_menu_kbd())

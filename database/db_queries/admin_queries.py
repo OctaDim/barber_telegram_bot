@@ -1,3 +1,5 @@
+import datetime
+
 from database.db_engine_url import db_engine_url
 from database.db_connection import DBConnection
 from database.db_utilities.model_object_update import update_object
@@ -14,6 +16,7 @@ def add_services(data: dict):
             'name': data['name'],
             'description': data['description'],
             'price': data['price'],
+            'time_duration': datetime.time(hour=data['duration_hours'], minute=data['duration_minutes'])
         }
 
         service = session.query(Services).filter(Services.id == data.get('id_service')).first()
@@ -48,3 +51,4 @@ def services_remove(id_service: int):
         session.commit()
 
 
+get_one_service(17)

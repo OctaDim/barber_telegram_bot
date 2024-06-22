@@ -21,4 +21,6 @@ async def unhandled_update_handler(message: Message, state: FSMContext):
     print("\tTEST INFO: len(handlers_list): ", len(handlers_list))
     print()
 
+    await message.delete()
+    # await message.answer(text="НЕ СРАБОТАЛ НИ ОДИН ДРУГОЙ ХЭНДЛЕР")
     await state.update_data(handlers_stack=handlers_list)

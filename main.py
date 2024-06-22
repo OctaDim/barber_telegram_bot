@@ -17,6 +17,7 @@ from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
 from telegram.handlers_admin.commands_admin import admin_panel
 from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
 from telegram.handlers_private.enroll_services_btn_pvt_hdr import enroll_services_pvt_router
+from telegram.handlers_callback_admin.services_add_time_duration_cb_data import services_add_time_duration_cb_query
 from telegram.handlers_callback_admin.services_change_cb_data import services_change_cb_query
 from telegram.handlers_callback_admin.services_remove_cb_data import services_remove_cb_query
 from telegram.handlers_callback_pvt.enroll_services_cb_hdr import enroll_services_cb_router
@@ -42,11 +43,12 @@ dp.update.outer_middleware(AllUpdatesMiddleware())
 
 # Routers:
 dp.include_router(return_button_router)
+dp.include_router(services_add_time_duration_cb_query)
 dp.include_router(services_remove_cb_query)
 dp.include_router(services_change_cb_query)
 dp.include_router(enroll_services_cb_router)
-dp.include_router(services_admin_btn_router)
 dp.include_router(admin_panel)
+dp.include_router(services_admin_btn_router)
 dp.include_router(on_start_router)
 dp.include_router(return_main_menu_pvt_router)
 dp.include_router(enroll_services_pvt_router)

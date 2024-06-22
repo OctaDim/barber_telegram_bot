@@ -27,6 +27,7 @@ def get_change_service_keyboard():
     builder.button(text=BUTTONS_CHANGE_SERVICES.NAME)
     builder.button(text=BUTTONS_CHANGE_SERVICES.DESCRIPTION)
     builder.button(text=BUTTONS_CHANGE_SERVICES.PRICE)
+    builder.button(text=BUTTONS_CHANGE_SERVICES.DURATION)
 
     builder.adjust(3)
 
