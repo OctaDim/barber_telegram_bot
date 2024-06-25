@@ -13,7 +13,7 @@ class MinutesCallbackData(CallbackData, prefix='minutes-services'):
 def add_hours_time_duration_services_inl_kbd(selected_hours_value=None):
     builder = InlineKeyboardBuilder()
 
-    for hours_step in range(0, 10):
+    for hours_step in range(0, 12):
         callback_data = HoursCallbackData(hours=hours_step)
 
         if hours_step != selected_hours_value:
