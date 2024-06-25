@@ -13,7 +13,7 @@ from telegram.keyboard_inline.services_time_duration_add_inl_kbd import (
     add_minutes_time_duration_services_inl_kbd
 )
 from telegram.params.add_time_duration_cb_data_message import (
-    DURATION_CANNOT,
+    ZERO_DURATION_NOT_ALLOWED,
     HOURS,
     MINUTES_SIGN_UP,
     YOU_CHOSEN_HOURS,
@@ -38,7 +38,7 @@ async def add_hours_callback_query(callback_query: CallbackQuery,
     if data.get("duration_minutes") == 0 and callback_data.hours == 0:
         await bot.send_message(
             chat_id=chat_id,
-            text=DURATION_CANNOT)
+            text=ZERO_DURATION_NOT_ALLOWED)
         return
 
     await state.update_data(duration_hours=callback_data.hours)
@@ -77,7 +77,7 @@ async def add_minutes_callback_query(callback_query: CallbackQuery,
     if data.get("duration_hours") == 0 and callback_data.minutes == 0:
         await bot.send_message(
             chat_id=chat_id,
-            text=DURATION_CANNOT)
+            text=ZERO_DURATION_NOT_ALLOWED)
         return
 
     await state.update_data(duration_minutes=callback_data.minutes)
@@ -102,7 +102,3 @@ async def add_minutes_callback_query(callback_query: CallbackQuery,
 
     else:
         await add_price_service(message=callback_query.message, state=state)
-
-
-
-
