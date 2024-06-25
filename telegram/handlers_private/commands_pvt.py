@@ -8,7 +8,7 @@ from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
 from telegram.params.commands import COMMANDS_PARAMS
-from telegram.params.messages_multiline import MAIN_GREETING_MULTI
+from telegram.params.messages_multiline import MAIN_GREETING_TXT
 
 
 on_start_router = Router(name=__name__)
@@ -22,5 +22,5 @@ async def start_command(state: FSMContext):
 
 @on_start_router.message(Command(COMMANDS_PARAMS.MENU_CMD.TEXT))
 async def menu_command(message: Message):
-    await message.answer(text=MAIN_GREETING_MULTI,
+    await message.answer(text=MAIN_GREETING_TXT,
                          reply_markup=get_pvt_main_menu_kbd())
