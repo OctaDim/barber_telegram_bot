@@ -2,31 +2,37 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import (InlineKeyboardBuilder,
                                     InlineKeyboardMarkup)
 
-from telegram.params.messages_helpers import get_service_brief_info
+from database.db_models.services_model import Services
+from telegram.params.messages_helpers import get_service_brief_info_from_record
+from telegram.params.buttons_enroll_service import ENROLL_SERVICE_BUTTONS
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 
 
-class EnrollServicesCallbackData(CallbackData, prefix="enroll_services"):
+class EnrollServiceCallbackData(CallbackData, prefix="enroll_service"):
     service_id: int
-    service_icon: str
-    selected_state: bool
+    # service_text: str
+    inl_button_selected: bool
 
 
-def get_enroll_services_inl_kbd(all_services_records: list) -> InlineKeyboardMarkup:
+def get_enroll_service_inl_kbd(service_id: int, button_selected=False) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    for service_record in all_services_records:
-        service_icon = SELECT_SERVICES_ICONS.UNSELECTED
-        service_text = get_service_brief_info(service_record)
+    if not button_selected:
+        inl_button_text = ENROLL_SERVICE_BUTTONS.ENROLL_SERVICE
+        callback_data = EnrollServiceCallbackData(
+            service_id=service_id,
+            inl_button_selected=False)
 
-        callback_data = EnrollServicesCallbackData(service_id=service_record.id,
-                                                   service_icon=service_icon,
-                                                   selected_state=False)
+    else:
+        inl_button_text = ENROLL_SERVICE_BUTTONS.CANCEL_SERVICE
+        callback_data = EnrollServiceCallbackData(
+            service_id=service_id,
+            inl_button_selected=True)
 
-        service_btn_text = f"{service_icon}  {service_text}"
-        builder_inl_kbd.button(text=service_btn_text,
-                               callback_data=callback_data)
+    builder_inl_kbd.button(text=inl_button_text,
+                           callback_data=callback_data.pack())
 
     builder_inl_kbd.adjust(1)
-    inline_keyboard_markup = builder_inl_kbd.as_markup()
-    return inline_keyboard_markup
+
+    inline_kbd_markup = builder_inl_kbd.as_markup()
+    return inline_kbd_markup
