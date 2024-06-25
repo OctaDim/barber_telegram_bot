@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class AddTimeDurationServiceMessage:
-    SELECT_DURATION = '<b>Select the duration of the service in HOURS and MINUTES:</b>'
+    SELECT_DURATION = 'Select the duration of the service in <b>HOURS</b> and <b>MINUTES:</b>'
     HOURS = 'Hours:'
     MINUTES = 'Minutes:'
 
