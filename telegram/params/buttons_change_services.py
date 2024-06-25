@@ -7,4 +7,4 @@ class BUTTONS_CHANGE_SERVICES:
     NAME: str = "Name"
     DESCRIPTION: str = "Description"
     PRICE: str = "Price"
-    DURATION: str = "Time duration"
+    DURATION: str = "Time time_duration"

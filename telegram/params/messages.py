@@ -11,3 +11,4 @@ CHOOSE_AN_ACTION = 'Choose an action'
 SUCCESSFULLY = 'Successfully'
 MAIN_MENU = "Main menu:"
 CAN_USE_LEFT_MENU = "You can select a command from the left menu:"
+NONE_SERVICES_SELECTED = "ℹ️ None of the services have been selected"

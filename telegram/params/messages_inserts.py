@@ -5,16 +5,16 @@ from dataclasses import dataclass
 class MSG:
     NAME: str = "Name"
     PRICE: str = "Price"
-    DURATION: str = "Duration"
+    DURATION: str = "Time duration"
     DESCRIPTION: str = "Description"
 
-    TOTAL_COST: str = "Total cost"
-    TOTAL_DURATION: str = "Total duration"
-    TOTAL_COUNT: str = "Total count"
+    SERVICES_TOTAL_COST: str = "Total cost💰:"
+    SERVICES_TOTAL_DURATION: str = "Total time duration⌚️:"
+    SERVICES_TOTAL_COUNT: str = "Selected service(s)✂️ (count):"
 
     CURRENCY_BRIEF: str = "byn"
 
-    SERVICE_NAME: str = "Name"
+    SERVICE_NAME: str = "Service name"
     SERVICE_PRICE: str = "Price"
     SERVICE_DURATION: str = "Duration"
     SERVICE_DESCRIPTION: str = "Description"
