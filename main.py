@@ -11,6 +11,7 @@ from telegram.config.settings import BOT_CREDENTIALS
 from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
 from telegram.params.commands import COMMANDS_PARAMS
 
+from telegram.handlers_private.start_stop_bot_pvt_hds import on_start_stop_router
 from telegram.handlers_private.commands_pvt import on_start_router
 from telegram.handlers_private.services_btn_pvt import services_btn_router
 from telegram.handlers_private.contacts_btn_pvt import contacts_btn_router
@@ -49,6 +50,7 @@ dp.include_router(services_change_cb_query)
 dp.include_router(enroll_services_cb_router)
 dp.include_router(admin_panel)
 dp.include_router(services_admin_btn_router)
+dp.include_router(on_start_stop_router)
 dp.include_router(on_start_router)
 dp.include_router(return_main_menu_pvt_router)
 dp.include_router(enroll_services_pvt_router)
