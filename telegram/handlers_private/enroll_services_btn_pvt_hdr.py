@@ -47,14 +47,18 @@ async def enroll_services_btn_handler(message: Message, state: FSMContext):
             same_id_count = selected_services_ids_state.count(service.id)
             inline_button_icon = f"{SELECT_SERVICES_ICONS.SELECTED} " *  same_id_count
             button_selected = True
+            one_more_service_btn = True
+
         else:
             inline_button_icon = SELECT_SERVICES_ICONS.NO_ICON
             button_selected = False
+            one_more_service_btn = False
 
         await message.answer(
             text=f"{inline_button_icon} {service_brief_text}",
             reply_markup=get_enroll_service_inl_kbd(service.id,
-                                                    button_selected))
+                                                    button_selected,
+                                                    one_more_service_btn))
 
         all_services_info_dict[service.id] = {
             "text": service_brief_text,
