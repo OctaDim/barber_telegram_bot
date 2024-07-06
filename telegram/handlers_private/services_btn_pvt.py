@@ -8,6 +8,7 @@ from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.params.messages import NO_SERVICES
 
 from database.db_queries.user_queries import get_services_list
+from telegram.params.messages_helpers import get_service_detailed_info
 
 services_btn_router = Router(name=__name__)
 services_btn_router.message.filter(ChatTypesFilter(["private"]))
@@ -19,11 +20,9 @@ async def get_services(message: Message):
 
     if data:
         for service in data:
-            await message.answer(text=f'{service.name} - {service.price} byn \n\n'
-                                      f'{service.description}',
-                                 reply_markup=get_pvt_main_menu_kbd()
-                                 )
-
+            await message.answer(
+                text=f"{get_service_detailed_info(service)}",
+                reply_markup=get_pvt_main_menu_kbd())
         return
 
     await message.answer(text=NO_SERVICES, reply_markup=get_pvt_main_menu_kbd())
