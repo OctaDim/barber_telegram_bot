@@ -12,3 +12,4 @@ SUCCESSFULLY = 'Successfully'
 MAIN_MENU = "Main menu:"
 CAN_USE_LEFT_MENU = "You can select a command from the left menu:"
 NONE_SERVICES_SELECTED = "ℹ️ None of the services have been selected"
+CANNOT_CHANGE_PREVIOUS_LIST = "⚠️ You cannot change the previous services list"
