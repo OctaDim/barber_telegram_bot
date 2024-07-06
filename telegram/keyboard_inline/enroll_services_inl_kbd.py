@@ -2,37 +2,41 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import (InlineKeyboardBuilder,
                                     InlineKeyboardMarkup)
 
-from database.db_models.services_model import Services
-from telegram.params.messages_helpers import get_service_brief_info_from_record
 from telegram.params.buttons_enroll_service import ENROLL_SERVICE_BUTTONS
-from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 
 
-class EnrollServiceCallbackData(CallbackData, prefix="enroll_service"):
+class EnrollServiceCallbackData(CallbackData, prefix="enroll_cancel_services"):
     service_id: int
-    # service_text: str
-    inl_button_selected: bool
 
 
-def get_enroll_service_inl_kbd(service_id: int, button_selected=False) -> InlineKeyboardMarkup:
+class OneMoreServiceCallbackData(CallbackData, prefix="one_more_same_service"):
+    service_id: int
+
+
+def get_enroll_service_inl_kbd(service_id: int,
+                               button_selected: bool = False,
+                               one_more_service_btn: bool = False) -> InlineKeyboardMarkup:
+
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    if not button_selected:
-        inl_button_text = ENROLL_SERVICE_BUTTONS.ENROLL_SERVICE
-        callback_data = EnrollServiceCallbackData(
-            service_id=service_id,
-            inl_button_selected=False)
+    if button_selected:
+        inl_button_text = ENROLL_SERVICE_BUTTONS.CANCEL_SERVICE
+        callback_data = EnrollServiceCallbackData(service_id=service_id)
+        builder_inl_kbd.button(text=inl_button_text,
+                               callback_data=callback_data.pack())
+
+        if one_more_service_btn:
+            callback_data = OneMoreServiceCallbackData(service_id=service_id)
+            builder_inl_kbd.button(text=ENROLL_SERVICE_BUTTONS.ENROLL_ONE_MORE,
+                                   callback_data=callback_data.pack())
 
     else:
-        inl_button_text = ENROLL_SERVICE_BUTTONS.CANCEL_SERVICE
-        callback_data = EnrollServiceCallbackData(
-            service_id=service_id,
-            inl_button_selected=True)
+        inl_button_text = ENROLL_SERVICE_BUTTONS.ENROLL_SERVICE
+        callback_data = EnrollServiceCallbackData(service_id=service_id)
+        builder_inl_kbd.button(text=inl_button_text,
+                               callback_data=callback_data.pack())
 
-    builder_inl_kbd.button(text=inl_button_text,
-                           callback_data=callback_data.pack())
-
-    builder_inl_kbd.adjust(1)
+    builder_inl_kbd.adjust(3)
 
     inline_kbd_markup = builder_inl_kbd.as_markup()
     return inline_kbd_markup
