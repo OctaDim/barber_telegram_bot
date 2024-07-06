@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class COMMANDS_PARAMS:
     class START_CMD:
         TEXT: str = "start"
