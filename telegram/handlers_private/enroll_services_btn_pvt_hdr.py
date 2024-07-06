@@ -4,7 +4,6 @@ from aiogram.types import Message
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
 from aiogram.fsm.context import FSMContext
-from telegram.fsm_states.enroll_services_state import EnrolledServicesState
 
 from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.keyboard_inline.enroll_services_inl_kbd import get_enroll_service_inl_kbd
@@ -18,6 +17,7 @@ from telegram.params.messages import (NO_SERVICES,
                                       SELECT_OTHER_ACTIONS)
 
 from database.db_queries.user_queries import get_services_list
+
 
 enroll_services_pvt_router = Router(name=__name__)
 enroll_services_pvt_router.message.filter(ChatTypesFilter(["private"]))
@@ -35,20 +35,34 @@ async def enroll_services_btn_handler(message: Message, state: FSMContext):
 
     await message.answer(text=SELECT_SERVICES_TXT)
 
+    state_data = await state.get_data()
+    selected_services_ids_state = state_data.get("selected_services_ids_state", [])
+
     all_services_info_dict = {}
+
     for service in all_services_records:
         service_brief_text = get_service_brief_info_from_record(service)
 
+        if service.id in selected_services_ids_state:
+            same_id_count = selected_services_ids_state.count(service.id)
+            inline_button_icon = f"{SELECT_SERVICES_ICONS.SELECTED} " *  same_id_count
+            button_selected = True
+        else:
+            inline_button_icon = SELECT_SERVICES_ICONS.NO_ICON
+            button_selected = False
+
         await message.answer(
-            text=f"{SELECT_SERVICES_ICONS.NO_ICON} "
-                 f"{service_brief_text}",
-            reply_markup=get_enroll_service_inl_kbd(service.id))
+            text=f"{inline_button_icon} {service_brief_text}",
+            reply_markup=get_enroll_service_inl_kbd(service.id,
+                                                    button_selected))
 
-        all_services_info_dict[service.id] = {"text": service_brief_text,
-                                         "price": service.price,
-                                         "duration": service.time_duration}
+        all_services_info_dict[service.id] = {
+            "text": service_brief_text,
+            "price": service.price,
+            "duration": service.time_duration}
 
-    await state.update_data(all_services_info_state=all_services_info_dict)
+    await state.update_data(all_services_info_state=all_services_info_dict,
+                            last_enroll_services_msg_id = message.message_id)
 
     await message.answer(text=SELECT_OTHER_ACTIONS,
                          reply_markup=get_pvt_return_main_menu_kbd())
