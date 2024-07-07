@@ -10,6 +10,8 @@ ADD_PRICE_SERVICE = "Send the price of the new service:"
 CHOOSE_AN_ACTION = 'Choose an action'
 SUCCESSFULLY = 'Successfully'
 MAIN_MENU = "Main menu:"
-CAN_USE_LEFT_MENU = "You can select a command from the left menu:"
+CAN_USE_LEFT_MENU = "ℹ️ You can select a command from the left menu:"
 NONE_SERVICES_SELECTED = "ℹ️ None of the services have been selected"
-CANNOT_CHANGE_PREVIOUS_LIST = "⚠️ You cannot change the previous services list"
+CANNOT_CHANGE_PREVIOUS_LIST = ("⚠️ You cannot change the previous list of services. "
+                               "Change the last one or call up a new one ⬇️")
+UNKNOWN_COMMAND_ENTERED = "⚠️ Sorry. Unknown command. Try again!"
