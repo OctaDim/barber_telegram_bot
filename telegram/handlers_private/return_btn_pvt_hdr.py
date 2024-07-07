@@ -5,6 +5,8 @@ from aiogram.fsm.context import FSMContext
 
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
+from telegram.telegram_utils.execute_last_handler import execute_last_handler
+from telegram.telegram_utils.handler_answer_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.list_utils import empty_list_if_none
 
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
@@ -27,32 +29,22 @@ async def return_button_handler(message: Message,
 
     if len(handlers_list) <= 1:
         await message.answer(text=CAN_USE_LEFT_MENU)
-        handlers_list = []
+        handlers_list = None
 
         print("\tTEST INFO: Return handler. Handlers stack cleared")
+        handlers_list = empty_list_if_none(handlers_list)
         print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
 
     else:
         del handlers_list[-1]
-
-        return_hdr_function = handlers_list[-1].get("handler")
-        return_hdr_event = handlers_list[-1].get("event")
-        return_hdr_data = handlers_list[-1].get("data")
+        await execute_last_handler(handlers_list)
 
         # current_hdr_function = current_handler_data.get("handler")
         # current_hdr_event = current_handler_data.get("event")
         # current_hdr_data = current_handler_data.get("data")
-        #
-        # print(f"\t{return_hdr_function}")
         # print(f"\t{current_hdr_function}\n")
-        #
-        # print(f"\t{return_hdr_event}")
         # print(f"\t{current_hdr_event}\n")
-        #
-        # print(f"\t{return_hdr_data}")
         # print(f"\t{current_hdr_data}\n")
-
-        await return_hdr_function(return_hdr_event, return_hdr_data)
 
         print("\tTEST INFO: Return handler. Handlers stack reduced -1 and executed")
         print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
@@ -62,5 +54,4 @@ async def return_button_handler(message: Message,
     print("\tTEST INFO: Return handler. Handler answer = skip_handler_stack")
     print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
 
-    handler_answer = {"skip_handler_stack": True}
-    return handler_answer
+    return get_handler_answer_flag_dict(skip_handler_stack=True)
