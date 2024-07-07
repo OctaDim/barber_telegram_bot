@@ -1,8 +1,9 @@
-from aiogram import F, Router, Bot
+from aiogram import Router, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from telegram.handlers_admin.services_btn_admin import add_price_service, preview_service
+from telegram.handlers_admin.services_btn_admin import (add_price_service,
+                                                        preview_service)
 from telegram.keyboard_inline.services_time_duration_add_inl_kbd import (
     HoursCallbackData,
     MinutesCallbackData
@@ -36,9 +37,8 @@ async def add_hours_callback_query(callback_query: CallbackQuery,
 
     data = await state.get_data()
     if data.get("duration_minutes") == 0 and callback_data.hours == 0:
-        await bot.send_message(
-            chat_id=chat_id,
-            text=ZERO_DURATION_NOT_ALLOWED)
+        await callback_query.answer(text=ZERO_DURATION_NOT_ALLOWED,
+                                    show_alert=True)
         return
 
     await state.update_data(duration_hours=callback_data.hours)
@@ -62,6 +62,7 @@ async def add_hours_callback_query(callback_query: CallbackQuery,
         return await preview_service(message=callback_query.message, state=state)
 
     else:
+        await bot.delete_message(chat_id=chat_id, message_id=message_id+2)
         await add_price_service(message=callback_query.message, state=state)
 
 
@@ -75,9 +76,8 @@ async def add_minutes_callback_query(callback_query: CallbackQuery,
 
     data = await state.get_data()
     if data.get("duration_hours") == 0 and callback_data.minutes == 0:
-        await bot.send_message(
-            chat_id=chat_id,
-            text=ZERO_DURATION_NOT_ALLOWED)
+        await callback_query.answer(text=ZERO_DURATION_NOT_ALLOWED,
+                                    show_alert=True)
         return
 
     await state.update_data(duration_minutes=callback_data.minutes)
@@ -101,4 +101,5 @@ async def add_minutes_callback_query(callback_query: CallbackQuery,
         return await preview_service(message=callback_query.message, state=state)
 
     else:
+        await bot.delete_message(chat_id=chat_id, message_id=message_id+1)
         await add_price_service(message=callback_query.message, state=state)
