@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
+from telegram.telegram_utils.dict_utils import empty_dict_if_none
 from telegram.telegram_utils.list_utils import empty_list_if_none
 
 
@@ -23,17 +24,18 @@ class AllUpdatesMiddleware(BaseMiddleware):
         data["current_handler_data"] = current_handler_data
 
         handler_answer = await handler(event, data)
+        handler_answer = empty_dict_if_none(handler_answer)
 
         # Skip adding handler to stack if inline kbd callback query
-        if event.callback_query:
-            print("\tTEST INFO: All updates middleware. "
-                  "Handlers stack skipped because inline keyboard callback query answer\n")
+        if event.callback_query and not handler_answer.get("add_handler_stack"):
+            print("\tTEST INFO: All updates middleware. Handlers stack skipped "
+                  "because inline kbd cb query answer and add_handler_stack was not returned\n")
             return
 
         # Skip adding handler to stack if handler returns dict {"skip_handler_stack": True}
-        if handler_answer and handler_answer.get("skip_handler_stack"):
-            print("\tTEST INFO: All updates middleware. "
-                  "Handlers stack skipped because skip_handler_stack key was returned from handler\n")
+        if handler_answer.get("skip_handler_stack"):
+            print("\tTEST INFO: All updates middleware. Handlers stack skipped "
+                  "because skip_handler_stack key was returned from handler\n")
             return
 
         state = data.get("state")  # Getting fsm state from the data
