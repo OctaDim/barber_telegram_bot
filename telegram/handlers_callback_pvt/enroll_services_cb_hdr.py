@@ -15,10 +15,11 @@ from telegram.keyboard_inline.enroll_services_inl_kbd import (
     OneMoreServiceCallbackData,
     get_enroll_service_inl_kbd)
 
+from telegram.telegram_utils.messages_utils import cannot_modify_obsolete_list
+
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 from telegram.params.messages_helpers import get_selected_services_summary
-from telegram.params.messages import (NONE_SERVICES_SELECTED,
-                                      CANNOT_CHANGE_PREVIOUS_LIST)
+from telegram.params.messages import NONE_SERVICES_SELECTED
 
 
 enroll_services_cb_router = Router(name=__name__)
@@ -31,11 +32,13 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
                                       callback_data: CallbackData,
                                       state: FSMContext):
     data = await state.get_data()
+    if not data:
+        await cannot_modify_obsolete_list(callback_query)
+        return
 
     last_enroll_services_msg_id = data.get("last_enroll_services_msg_id")
     if callback_query.message.message_id < last_enroll_services_msg_id:
-        await callback_query.answer(text=CANNOT_CHANGE_PREVIOUS_LIST,
-                                    show_alert=True)
+        await cannot_modify_obsolete_list(callback_query)
         return
 
     all_services_info = data.get("all_services_info_state")
@@ -50,9 +53,6 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
     total_cost_selected = data.get("selected_services_cost_state", 0.0)
     total_duration_selected = data.get("selected_services_duration_state",
                                        timedelta(0))
-
-    new_service_text = None
-    inline_keyboard = None
 
     if not cur_service_id in selected_services_ids:  # If service is not selected entirely
         selected_services_ids.append(cur_service_id)
@@ -111,9 +111,9 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
     if len(selected_services_ids):
         await callback_query.answer(
             text=get_selected_services_summary(
-                len(selected_services_ids),
-                total_cost_selected,
-                total_duration_selected),
+                services_count=len(selected_services_ids),
+                total_cost=total_cost_selected,
+                total_duration=total_duration_selected),
             show_alert=True)
 
     else:
