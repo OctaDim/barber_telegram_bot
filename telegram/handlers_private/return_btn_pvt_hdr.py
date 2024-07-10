@@ -5,9 +5,11 @@ from aiogram.fsm.context import FSMContext
 
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
-from telegram.telegram_utils.execute_last_handler import execute_last_handler
-from telegram.telegram_utils.handler_answer_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.list_utils import empty_list_if_none
+from telegram.telegram_utils.handlers_stack_utils import (
+    execute_last_stack_handler,
+    get_handlers_stack_list,
+    get_handler_answer_flag_dict)
 
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 from telegram.params.messages import CAN_USE_LEFT_MENU
@@ -22,10 +24,7 @@ async def return_button_handler(message: Message,
                                 state: FSMContext,
                                 current_handler_data):
 
-    state_data = await state.get_data()
-
-    handlers_list = state_data.get("handlers_stack")
-    handlers_list = empty_list_if_none(original_list=handlers_list)
+    handlers_list = await get_handlers_stack_list(state=state)
 
     if len(handlers_list) <= 1:
         await message.answer(text=CAN_USE_LEFT_MENU)
@@ -37,7 +36,7 @@ async def return_button_handler(message: Message,
 
     else:
         del handlers_list[-1]
-        await execute_last_handler(handlers_list)
+        await execute_last_stack_handler(handlers_list)
 
         # current_hdr_function = current_handler_data.get("handler")
         # current_hdr_event = current_handler_data.get("event")
