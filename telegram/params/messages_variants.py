@@ -1,6 +1,6 @@
-SERVICE_SELECTED_VARIANTS = [
-    "Thank you! You have been selected our service",
-    "Congratulations! You have been selected our service",
-    "Super! You have been selected our service",
-    "You are cute! You have been selected our service",
+SERVICE_SALUTATIONS_VARIANTS = [
+    "Thank you! You have been selected our services",
+    "Congratulations! You have been selected our services",
+    "Super! You have been selected our services",
+    "You are cute! You have been selected our services",
 ]
