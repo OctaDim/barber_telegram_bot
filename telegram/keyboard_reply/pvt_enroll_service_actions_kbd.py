@@ -6,13 +6,13 @@ from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 
 
-def get_enroll_service_actions_reply_kbd() -> ReplyKeyboardMarkup:
+def get_pvt_enroll_services_actions_reply_kbd() -> ReplyKeyboardMarkup:
     builder_reply_kbd = ReplyKeyboardBuilder()
 
-    builder_reply_kbd.button(text=ENROLL_SERVICE_BUTTONS.KEEP_SERVICE)
-    builder_reply_kbd.button(text=ENROLL_SERVICE_BUTTONS.CANCEL_SERVICE)
+    builder_reply_kbd.button(text=ENROLL_SERVICE_BUTTONS.CONTINUE_ENROLL_SERVICES)
+    builder_reply_kbd.button(text=ENROLL_SERVICE_BUTTONS.CANCEL_ALL_CERVICES)
     builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.RETURN)
-
+    builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.MAIN_MENU)
 
     builder_reply_kbd.adjust(1)
     reply_keyboard_markup = builder_reply_kbd.as_markup(
