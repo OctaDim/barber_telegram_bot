@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
@@ -7,6 +5,8 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 from telegram.filters.chat_types_filter import ChatTypesFilter
+from telegram.telegram_utils.enroll_services_utils import get_selected_services_ids, get_selected_services_cost, \
+    get_selected_services_duration
 
 from telegram.telegram_utils.list_utils import remove_same_list_elms_by_value
 
@@ -36,8 +36,9 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
         await cannot_modify_obsolete_list(callback_query)
         return
 
-    last_enroll_services_msg_id = data.get("last_enroll_services_msg_id")
-    if callback_query.message.message_id < last_enroll_services_msg_id:
+    # Checking if inline keyboard is not obsolete (not older )
+    last_not_inline_msg_id = data.get("last_not_inline_msg_id_state")
+    if callback_query.message.message_id < last_not_inline_msg_id:
         await cannot_modify_obsolete_list(callback_query)
         return
 
@@ -49,10 +50,9 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
     cur_service_price = cur_service_info.get("price")
     cur_service_duration = cur_service_info.get("duration")
 
-    selected_services_ids = data.get("selected_services_ids_state", [])
-    total_cost_selected = data.get("selected_services_cost_state", 0.0)
-    total_duration_selected = data.get("selected_services_duration_state",
-                                       timedelta(0))
+    selected_services_ids = await get_selected_services_ids(state=data)
+    total_cost_selected = await get_selected_services_cost(state=data)
+    total_duration_selected = await get_selected_services_duration(state=data)
 
     if not cur_service_id in selected_services_ids:  # If service is not selected entirely
         selected_services_ids.append(cur_service_id)
@@ -108,7 +108,7 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
         selected_services_cost_state=total_cost_selected,
         selected_services_duration_state=total_duration_selected)
 
-    if len(selected_services_ids):
+    if selected_services_ids:
         await callback_query.answer(
             text=get_selected_services_summary(
                 services_count=len(selected_services_ids),
