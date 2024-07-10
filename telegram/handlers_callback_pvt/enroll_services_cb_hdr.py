@@ -49,10 +49,9 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
     cur_service_price = cur_service_info.get("price")
     cur_service_duration = cur_service_info.get("duration")
 
-    selected_services_ids = data.get("selected_services_ids_state", [])
-    total_cost_selected = data.get("selected_services_cost_state", 0.0)
-    total_duration_selected = data.get("selected_services_duration_state",
-                                       timedelta(0))
+    selected_services_ids = await get_selected_services_ids(state=data)
+    total_cost_selected = await get_selected_services_cost(state=data)
+    total_duration_selected = await get_selected_services_duration(state=data)
 
     if not cur_service_id in selected_services_ids:  # If service is not selected entirely
         selected_services_ids.append(cur_service_id)
