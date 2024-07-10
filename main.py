@@ -25,6 +25,8 @@ from telegram.handlers_callback_pvt.enroll_services_cb_hdr import enroll_service
 from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt_router
 from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
 from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
+from telegram.handlers_private.continue_enroll_services_btn_pvt import continue_enroll_srcs_pvt_router
+
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -54,6 +56,7 @@ dp.include_router(on_start_stop_router)
 dp.include_router(on_start_router)
 dp.include_router(return_main_menu_pvt_router)
 dp.include_router(enroll_services_pvt_router)
+dp.include_router(continue_enroll_srcs_pvt_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
 # All unhandled updates router:
