@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router
 from aiogram.types import Message
 
@@ -19,6 +21,7 @@ unhandled_update_router.message.filter(ChatTypesFilter(["private"]))
 @unhandled_update_router.message()
 async def unhandled_update_handler(message: Message, state: FSMContext):
     await message.reply(text=UNKNOWN_COMMAND_ENTERED)
+    await asyncio.sleep(2)
 
     handlers_list = await get_handlers_stack_list(state=state)
     await execute_last_stack_handler(handlers_list=handlers_list)
