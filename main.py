@@ -26,7 +26,11 @@ from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt
 from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
 from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
 from telegram.handlers_private.continue_enroll_services_btn_pvt import continue_enroll_srcs_pvt_router
-
+from telegram.handlers_callback_pvt.calendar_services_cb_hdrs import calendar_services_cb_router
+from telegram.handlers_callback_pvt.main_menu_common_cb_hdr import main_menu_common_cb_router
+from telegram.handlers_callback_pvt.no_action_common_cb_hdr import no_action_common_cb_router
+from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
+from telegram.handlers_private.cancel_all_services_btn_pvt import cancel_all_services_pvt_router
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -45,11 +49,15 @@ dp["bot_started"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 dp.update.outer_middleware(AllUpdatesMiddleware())
 
 # Routers:
+dp.include_router(no_action_common_cb_router)
 dp.include_router(return_button_router)
 dp.include_router(services_add_time_duration_cb_query)
 dp.include_router(services_remove_cb_query)
 dp.include_router(services_change_cb_query)
 dp.include_router(enroll_services_cb_router)
+dp.include_router(calendar_services_cb_router)
+dp.include_router(main_menu_common_cb_router)
+dp.include_router(return_common_cb_router)
 dp.include_router(admin_panel)
 dp.include_router(services_admin_btn_router)
 dp.include_router(on_start_stop_router)
@@ -57,9 +65,10 @@ dp.include_router(on_start_router)
 dp.include_router(return_main_menu_pvt_router)
 dp.include_router(enroll_services_pvt_router)
 dp.include_router(continue_enroll_srcs_pvt_router)
+dp.include_router(cancel_all_services_pvt_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
-# All unhandled updates router:
+# All unhandled update router:
 dp.include_router(unhandled_update_router)
 
 private_chat_commands = [
