@@ -9,11 +9,10 @@ ADD_DESCRIPTION_SERVICE = "Send the description of the new service:"
 ADD_PRICE_SERVICE = "Send the price of the new service:"
 CHOOSE_AN_ACTION = 'Choose an action'
 SUCCESSFULLY = 'Successfully'
-MAIN_MENU = "Main menu:"
 CAN_USE_LEFT_MENU = "ℹ️ You can select a command from the left menu:"
 NONE_SERVICES_SELECTED = "ℹ️ None of the services have been selected"
-CANNOT_MODIFY_OBSOLETE_LIST = ("⚠️ You cannot modify obsolete list. "
-                               "Change the last one or call up a new one  ⬇️⬇️⬇️")
-UNKNOWN_COMMAND_ENTERED = "⚠️ Sorry. Unknown command. Try again!"
-NO_SERVICE_SELECTED = "⚠️ No service selected. Select at least one service before"
+CANNOT_MODIFY_OBSOLETE_LIST = "⚠️ Update the last list or call up a new one  ⬇️⬇️⬇️"
+UNKNOWN_COMMAND_ENTERED = "⚠️ Unknown command. Try again!"
+SELECT_MIN_ONE_SERVICE = "⚠️ Select at least one service before"
 ALL_SERVICES_CANCELLED = "ℹ️ All services have been canceled"
+CHOOSE_SERVICE_DAY = "Choose a day to receive the service: ⤵️"

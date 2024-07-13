@@ -8,3 +8,4 @@ class ENROLL_SERVICE_BUTTONS:
     ENROLL_ONE_MORE: str = "✅+1"
     CONTINUE_ENROLL_SERVICES: str = "▶️ Continue Enroll Services"
     CANCEL_ALL_CERVICES: str = "✖️ Cancel All Services"
+    CONTINUE: str = "▶️ Continue"
