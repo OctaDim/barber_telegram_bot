@@ -22,7 +22,7 @@ return_button_router.message.filter(ChatTypesFilter(["private"]))
 @return_button_router.message(F.text == COMMON_BUTTONS_PARAMS.RETURN)
 async def return_button_handler(message: Message,
                                 state: FSMContext,
-                                current_handler_data):
+                                current_handler_data: dict):
 
     handlers_list = await get_handlers_stack_list(state=state)
 
