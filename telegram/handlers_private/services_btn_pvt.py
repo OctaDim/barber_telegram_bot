@@ -8,7 +8,7 @@ from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.params.messages import NO_SERVICES
 
 from database.db_queries.user_queries import get_services_list
-from telegram.params.messages_helpers import get_service_detailed_info
+from telegram.telegram_utils.messages_helpers import get_service_detailed_info
 
 services_btn_router = Router(name=__name__)
 services_btn_router.message.filter(ChatTypesFilter(["private"]))
