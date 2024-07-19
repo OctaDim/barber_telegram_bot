@@ -5,7 +5,6 @@ from telegram.params.messages import CHOOSE_AN_ACTION
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 
-
 def get_pvt_enroll_services_actions_reply_kbd() -> ReplyKeyboardMarkup:
     builder_reply_kbd = ReplyKeyboardBuilder()
 
@@ -14,7 +13,7 @@ def get_pvt_enroll_services_actions_reply_kbd() -> ReplyKeyboardMarkup:
     builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.RETURN)
     builder_reply_kbd.button(text=COMMON_BUTTONS_PARAMS.MAIN_MENU)
 
-    builder_reply_kbd.adjust(1)
+    builder_reply_kbd.adjust(1, 3)
     reply_keyboard_markup = builder_reply_kbd.as_markup(
         input_field_placeholder=CHOOSE_AN_ACTION,
         resize_keyboard=True,
