@@ -1,14 +1,17 @@
-import calendar
-import locale
-
 from typing import Literal
+
+import calendar
+
+import locale
 
 from datetime import datetime, date
 
 from dateutil.relativedelta import relativedelta
 
+from telegram.params.calendar_icons import CALENDAR_ICONS
 
-def get_next_months_numbers_from_now(required_months_number: int) -> list:
+
+def get_next_months_list_from_now(required_months_number: int) -> list:
     datetime_now = datetime.now()
     next_months_numbers = []
 
@@ -34,28 +37,57 @@ def get_weekday_index_by_year_month_day(year: int, month: int, day: int) -> int:
     return weekday_number
 
 
-def get_weekdays_eng_abbr_list() -> list:
-    weekdays_abbr_list = calendar.weekheader(3).split()
+def get_weekdays_flex_abbr_list(language: Literal["EN", "RU"] = "EN",
+                                symbols_max: Literal[1, 2, 3, 100] = 3) -> list:
+
+    origin_locale = locale.getlocale(locale.LC_TIME)
+    if language == "RU":
+        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    weekdays_abbr_list = calendar.weekheader(symbols_max).split()
+
+    locale.setlocale(locale.LC_TIME, locale=origin_locale)
     return weekdays_abbr_list
 
 
-def get_weekday_eng_abbr_by_index(weekday_index: int) -> str:
-    weekdays_abbr_list = get_weekdays_eng_abbr_list()
+def get_weekday_flex_abbr_by_index(
+        weekday_index: int,
+        language: Literal["EN", "RU"] = "EN",
+        symbols_max: Literal[1, 2, 3, 100] = 3) -> str:
+
+    origin_locale = locale.getlocale(locale.LC_TIME)
+    if language == "RU":
+        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    weekdays_abbr_list = calendar.weekheader(symbols_max).split()
     weekday_abbr = weekdays_abbr_list[weekday_index]
+
+    locale.setlocale(locale.LC_TIME, locale=origin_locale)
     return weekday_abbr
 
 
-def get_weekday_eng_abbr_by_date(date_value: date|datetime) -> str:
-    weekdays_abbr_list = get_weekdays_eng_abbr_list()
-    weekday_number = get_weekday_index_by_date(date_value)
+def get_weekday_flex_abbr_by_date(
+        date_value: date|datetime,
+        language: Literal["EN", "RU"] = "EN",
+        symbols_max: Literal[1, 2, 3, 100] = 3) -> str:
+
+    origin_locale = locale.getlocale(locale.LC_TIME)
+    if language == "RU":
+        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    weekdays_abbr_list = calendar.weekheader(symbols_max).split()
+    weekday_number = date_value.weekday()
     weekday_abbr = weekdays_abbr_list[weekday_number]
+
+    locale.setlocale(locale.LC_TIME, locale=origin_locale)
     return weekday_abbr
 
 
-def get_month_days_quantity(year: int, month: int) -> int:
+def get_days_quantity_in_month(year: int, month: int) -> int:
     month_days_quantity = calendar.monthrange(year=year, month=month)[1]
     return month_days_quantity
 
+# print(get_days_quantity_in_month(2024, 7))
 
 def get_month_start_weekday_index(year: int, month: int) -> int:
     month_start_weekday = calendar.monthrange(year=year, month=month)[0]
@@ -66,7 +98,6 @@ def get_month_names_dict(abbreviation: bool = False,
                          language: Literal["EN","RU"] = "EN") -> dict:
 
     origin_locale = locale.getlocale(locale.LC_TIME)
-
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
 
@@ -76,7 +107,6 @@ def get_month_names_dict(abbreviation: bool = False,
         month_names_dict = dict(enumerate(calendar.month_name))
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
-
     return month_names_dict
 
 
@@ -85,7 +115,6 @@ def get_month_name_by_number(month_number: int,
                              language: Literal["EN","RU"] = "EN") -> str:
 
     origin_locale = locale.getlocale(locale.LC_TIME)
-
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
 
@@ -95,7 +124,6 @@ def get_month_name_by_number(month_number: int,
         month_name = calendar.month_name[month_number]
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
-
     return month_name
 
 
@@ -103,7 +131,6 @@ def get_weekdays_names_dict(abbreviation: bool = False,
                             language: Literal["EN","RU"] = "EN") -> dict:
 
     origin_locale = locale.getlocale(locale.LC_TIME)
-
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
 
@@ -113,16 +140,15 @@ def get_weekdays_names_dict(abbreviation: bool = False,
         weekdays_names = dict(enumerate(calendar.day_name))
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
-
     return weekdays_names
 
 
-def get_weekday_name_by_index(weekday_index: int,
-                              abbreviation: bool = False,
-                              language: Literal["EN","RU"] = "EN") -> str:
+def get_weekday_name_by_index(
+        weekday_index: int,
+        abbreviation: bool = False,
+        language: Literal["EN","RU"] = "EN") -> str:
 
     origin_locale = locale.getlocale(locale.LC_TIME)
-
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
 
@@ -132,11 +158,10 @@ def get_weekday_name_by_index(weekday_index: int,
         weekday_name = calendar.day_name[weekday_index]
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
-
     return weekday_name
 
 
-def get_month_calendar_list(year: int, month: int) -> list[list]:
+def get_numeric_month_calendar_list(year: int, month: int) -> list[list]:
     month_calendar_list = calendar.monthcalendar(year=year, month=month)
     return month_calendar_list
 
@@ -149,3 +174,25 @@ def check_day_is_weekend(year: int, month: int, day: int) -> bool:
     weekday_index = get_weekday_index_by_year_month_day(year, month, day)
     day_is_weekend: bool = weekday_index in [5, 6]
     return day_is_weekend
+
+
+def get_date_with_month_name(date_value: datetime | date,
+                             language: Literal["EN", "RU"] = "EN") -> str:
+    if language == "EN":
+        month_name = get_month_name_by_number(date_value.month, language="EN")
+        date_string = f"{month_name} {date_value.day}, {date_value.year}"
+
+    elif language == "RU":
+        month_name = get_month_name_by_number(date_value.month, language="RU")
+        if date_value.month in [1, 2, 4, 5, 6, 7, 9, 10, 11, 12]:
+            month_name = month_name[:-1]+"я"
+        else:
+            month_name += "а"
+
+        date_string = f"{date_value.day} {month_name} {date_value.year}"
+
+    else:
+        date_string = str(date_value.replace(
+            hour=0, minute=0, second=0, microsecond=0))
+
+    return date_string
