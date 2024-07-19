@@ -1,6 +1,6 @@
 from aiogram.fsm.context import FSMContext
 
-from telegram.telegram_utils.list_utils import empty_list_if_none
+from utilities.list_utils import empty_list_if_none
 
 
 async def get_handlers_stack_list(state: FSMContext | dict) -> list:
@@ -18,25 +18,31 @@ async def execute_last_stack_handler(handlers_list: list[dict]) -> None:
         return_hdr_function = handlers_list[-1].get("handler")
         return_hdr_event = handlers_list[-1].get("event")
         return_hdr_data = handlers_list[-1].get("data")
-
         await return_hdr_function(return_hdr_event, return_hdr_data)
 
 
-def get_handler_answer_flag_dict(skip_handler_stack: bool = False,
-                                 add_handler_stack: bool = False) -> dict:
+def get_handler_answer_flag_dict(skip_add_handler_stack: bool = False,
+                                 upd_actual_msg_min_id: bool = False) -> dict:
     """
-    Use this simple function to easily create dictionary with flag keys, which
-    will be returned to the all update middleware from the handler.
-    Result of this function may be returned from the handler optionally,
-    but not necessarily. In the future flag keys can be added.
+    Simple function to easily create dictionary with flag keys.
+    Result of this function may be returned from the handler
+    to the all update outer middleware optionally, but not necessarily.
+    In the future flag keys can be added, if needed.
 
-    :param skip_handler_stack: bool. Optional. True, if it is not necessary to
-    add handler to the return handler stack.
+    :param skip_add_handler_stack: bool. Optional.
+    Define True to skip adding handler to the handlers stack, otherwise
+    any handler will be added to the handler stack automatically
 
-    :param add_handler_stack: bool. Optional. True, if it is necessary to
-    add handler with callback query (inline keyboard) to the return handler stack.
-    Note: By default, all handlers from inline keyboards with callback will be skipped.
+    :param upd_actual_msg_min_id: bool. Optional.
+    By default, any message id except inline message will update actual
+    message minimum id. Define True to update actual message minimum id
+    for inline message too.
 
-    :return: dictionary with keys as flags for the all update middleware
+    :return: dictionary with flag keys and values, which can be read
+    in middleware
     """
     return locals()
+
+
+async def clear_handlers_return_stack_fsm_state(state: FSMContext):
+    await state.update_data(handlers_stack=None)

@@ -1,11 +1,12 @@
-import json
 from typing import Any, Callable, Dict
 
 from aiogram import BaseMiddleware
+from aiogram.fsm.context import FSMContext
 from aiogram.types import TelegramObject
 
-from telegram.telegram_utils.dict_utils import empty_dict_if_none
 from telegram.telegram_utils.handlers_stack_utils import get_handlers_stack_list
+from utilities.dict_utils import (
+    empty_dict_if_none)
 
 
 class AllUpdatesMiddleware(BaseMiddleware):
@@ -13,10 +14,8 @@ class AllUpdatesMiddleware(BaseMiddleware):
                        event: TelegramObject,
                        data: Dict) -> Any:
 
-        # Use to see event content in a convenient form in a file
-        # event_dict = event.model_dump(mode="json")
-        # with open("TestJSON.json", "w") as json_file:
-        #     json.dump(event_dict, json_file, indent=4, ensure_ascii=True)
+        # Getting FSM state from the data parameter
+        state_data: FSMContext = data.get("state")
 
         current_handler_data = {"handler": handler,
                                 "event": event,
@@ -25,34 +24,32 @@ class AllUpdatesMiddleware(BaseMiddleware):
         # Passing current_handler_data to the handler through data
         data["current_handler_data"] = current_handler_data
 
-        # Executing and getting answer from the handler, dict or none
+        # Executing and getting answer, dict or None, from the handler
         handler_answer = await handler(event, data)
         handler_answer = empty_dict_if_none(handler_answer)
 
-        # Getting fsm state from the data dictionary
-        state = data.get("state")
+        # Automatically adding handler to the handlers stack if not skip_add_handler_stack flag
+        if (handler_answer is not None
+                and not handler_answer.get("skip_add_handler_stack")):
+            handlers_list = await get_handlers_stack_list(state=state_data)
+            handlers_list.append(current_handler_data)
+            await state_data.update_data(handlers_stack=handlers_list)
 
-        # Saving last message id if not inline kbd, to check inline kbd is actual thereafter
-        if not event.callback_query :
-            await state.update_data(
-                last_not_inline_msg_id_state=event.message.message_id)
+            print("\tTEST INFO: All updates middleware. Handlers stack incremented +1")
+            print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
 
-        # Skip adding handler to stack if inline kbd callback query
-        if event.callback_query and not handler_answer.get("add_handler_stack"):
+        else:  # Skipping adding handler to the handlers stack if skip_add_handler_stack flag
+
             print("\tTEST INFO: All updates middleware. Handlers stack skipped "
-                  "because inline kbd cb query answer and add_handler_stack was not returned\n")
-            return
+                  "because skip_add_handler_stack flag was returned from handler\n")
 
-        # Skip adding handler to stack if handler returns dict {"skip_handler_stack": True}
-        if handler_answer.get("skip_handler_stack"):
-            print("\tTEST INFO: All updates middleware. Handlers stack skipped "
-                  "because skip_handler_stack key was returned from handler\n")
-            return
 
-        # Adding current executed handler data to the handler stack
-        handlers_list = await get_handlers_stack_list(state=state)
-        handlers_list.append(current_handler_data)
-        await state.update_data(handlers_stack=handlers_list)
+        # Updating message min id if any updates except inline kbd
+        if event.message:
+            actual_message_min_id = event.message.message_id
+            await state_data.update_data(actual_message_min_id=actual_message_min_id)
 
-        print("\tTEST INFO: All updates middleware. Handlers stack incremented +1")
-        print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
+        # Updating message min id if inline kbd and upd_actual_msg_min_id flag
+        elif event.callback_query and handler_answer.get("upd_actual_msg_min_id"):
+            actual_message_min_id = event.callback_query.message.message_id
+            await state_data.update_data(actual_message_min_id=actual_message_min_id)
