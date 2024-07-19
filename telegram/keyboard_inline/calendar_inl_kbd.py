@@ -5,39 +5,49 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import (InlineKeyboardBuilder,
                                     InlineKeyboardMarkup)
 
-from telegram.keyboard_inline.common_cb_data_all_inl_kbds import (
-    NoActionCommonCBData,
-    ReturnInlineBtnCBData,
-    MainMenuInlineBtnCBData)
+from telegram.config.configs import LANGUAGE_CONFIGS
+from telegram.keyboard_inline.common_buttons_inline import (
+    create_return_inline_button,
+    NoActionEmptyCBData,
+    create_main_menu_inline_button,
+    create_empty_no_action_inl_btn)
 
-from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 from telegram.params.buttons_enroll_service import ENROLL_SERVICE_BUTTONS
 from telegram.params.calendar_icons import CALENDAR_ICONS
 
-from telegram.telegram_utils.calendar_utilities import (
-    get_month_calendar_list,
-    get_month_name_by_number)
+from utilities.calendar_utils import (
+    get_numeric_month_calendar_list,
+    get_month_name_by_number,
+    get_weekday_flex_abbr_by_index)
 
 
-class MonthDayCallbackData(CallbackData, prefix="month_day"):
+class PreviousMonthCBData(CallbackData, prefix="prev_month_enroll_srcs"):
+    pass
+
+
+class MonthNameCBData(CallbackData, prefix="month_name_enroll_srcs"):
+    pass
+
+
+class YearNameCBData(CallbackData, prefix="year_name_enroll_srcs"):
+    pass
+
+
+class NextMonthCBData(CallbackData, prefix="next_month_enroll_srcs"):
+    pass
+
+
+class MonthDayCBData(CallbackData, prefix="month_day_enroll_srcs"):
     month_day: int
 
 
-class PreviousMonthCBData(CallbackData, prefix="previous_month"):
+class MonthContinueCBData(CallbackData, prefix="calendar_continue_enroll_srcs"):
     pass
 
 
-class NextMonthCBData(CallbackData, prefix="next_month"):
-    pass
-
-
-class MonthContinueCBData(CallbackData, prefix="month_continue"):
-    pass
-
-
-def get_enroll_srcs_calendar_inl_kbd(date_value: datetime | date) -> InlineKeyboardMarkup:
-    year = date_value.year
-    month = date_value.month
+def get_enroll_srcs_calendar_inl_kbd(calendar_year: int,
+                                     calendar_month: int,
+                                     selected_date: datetime = None) -> InlineKeyboardMarkup:
 
     builder_inl_kbd = InlineKeyboardBuilder()
 
@@ -45,70 +55,98 @@ def get_enroll_srcs_calendar_inl_kbd(date_value: datetime | date) -> InlineKeybo
         text=CALENDAR_ICONS.PREVIOUS_MONTH,
         callback_data=PreviousMonthCBData().pack())
 
-    month_name = get_month_name_by_number(month_number=month,
-                                          language="RU")
+    month_name = get_month_name_by_number(
+        month_number=calendar_month,
+        language=LANGUAGE_CONFIGS.LANGUAGE)
     month_name = month_name.upper()
 
     builder_inl_kbd.button(
         text=month_name,
-        callback_data=NoActionCommonCBData().pack())
+        callback_data=MonthNameCBData().pack())
 
     builder_inl_kbd.button(
-        text=str(year),
-        callback_data=NoActionCommonCBData().pack())
+        text=str(calendar_year),
+        callback_data=YearNameCBData().pack())
 
     builder_inl_kbd.button(
         text=CALENDAR_ICONS.NEXT_MONTH,
         callback_data=NextMonthCBData().pack())
 
-    for workday_header_index in range(5):
-        builder_inl_kbd.button(
-            text=CALENDAR_ICONS.WORKDAY,
-            callback_data=NoActionCommonCBData().pack())
+    for weekday_index in range(7):
+        weekday_abbreviation = get_weekday_flex_abbr_by_index(
+            weekday_index=weekday_index,
+            language=LANGUAGE_CONFIGS.LANGUAGE,
+            symbols_max=2)
 
-    for weekday_header_index in range(2):
-        builder_inl_kbd.button(
-            text=CALENDAR_ICONS.WEEKEND,
-            callback_data=NoActionCommonCBData().pack())
+        if weekday_index > 4:
+            text = f"{weekday_abbreviation}{CALENDAR_ICONS.WEEKEND}"
+        else:
+            text = f"{weekday_abbreviation}{CALENDAR_ICONS.WORKDAY}"
 
-    month_calendar_list = get_month_calendar_list(year, month)
+        builder_inl_kbd.button(
+            text=text,
+            callback_data=NoActionEmptyCBData().pack())
+
+    month_calendar_list = get_numeric_month_calendar_list(calendar_year,
+                                                          calendar_month)
+
+    # if (calendar_month == datetime.now().month
+    #         and calendar_year == datetime.now().year):
+    #     month_calendar_truncated = month_calendar_list.copy()
+    #     for week_index in range(len(month_calendar_list)):
+    #         if datetime.now().day not in month_calendar_list[week_index]:
+    #             month_calendar_truncated.pop(0)
+    #         else:
+    #             month_calendar_list = month_calendar_truncated
+    #             break
+
     month_calendar_flat_list = sum(month_calendar_list, [])
 
     for loop_day in month_calendar_flat_list:
 
         if loop_day:
-            loop_datetime = datetime(year, month, loop_day)
+            loop_datetime = datetime(calendar_year, calendar_month, loop_day)
             datetime_now = datetime.now().replace(hour=0, minute=0,
                                                   second=0, microsecond=0)
-            if loop_datetime > datetime_now:
-                button_text = str(loop_day)
-                callback_data = MonthDayCallbackData(month_day=loop_day)
+
+            if selected_date and loop_datetime == selected_date:
+                button_text = CALENDAR_ICONS.SELECTED + str(loop_day)
+                callback_data = MonthDayCBData(month_day=loop_day)
+                builder_inl_kbd.button(text=button_text,
+                                       callback_data=callback_data)
+
+            elif loop_datetime > datetime_now:
+                button_text = CALENDAR_ICONS.NO_ICON + str(loop_day)
+                callback_data = MonthDayCBData(month_day=loop_day)
+                builder_inl_kbd.button(text=button_text,
+                                       callback_data=callback_data)
+
             elif loop_datetime == datetime_now:
                 button_text = CALENDAR_ICONS.TODAY + str(loop_day)
-                callback_data = MonthDayCallbackData(month_day=loop_day)
-            else:
-                button_text = "\u200B"
-                callback_data = NoActionCommonCBData().pack()
+                callback_data = MonthDayCBData(month_day=loop_day)
+                builder_inl_kbd.button(text=button_text,
+                                       callback_data=callback_data)
+
+            else:  # if loop_datetime < datetime_now (empty days before today)
+                builder_inl_kbd.add(create_empty_no_action_inl_btn())
+
         else:
-            button_text = "\u200B"
-            callback_data = NoActionCommonCBData().pack()
+            builder_inl_kbd.add(create_empty_no_action_inl_btn())
 
-        builder_inl_kbd.button(text=button_text,
-                               callback_data=callback_data)
+    if selected_date:
+        continue_adjust = [1]
+        builder_inl_kbd.button(
+            text=ENROLL_SERVICE_BUTTONS.CONTINUE,
+            callback_data=MonthContinueCBData().pack())
+    else:
+        continue_adjust = []
 
-    builder_inl_kbd.button(
-        text=ENROLL_SERVICE_BUTTONS.CONTINUE,
-        callback_data=MonthContinueCBData().pack())
+    builder_inl_kbd.add(create_return_inline_button())
+    builder_inl_kbd.add(create_main_menu_inline_button())
 
-    builder_inl_kbd.button(
-        text=COMMON_BUTTONS_PARAMS.RETURN,
-        callback_data=ReturnInlineBtnCBData().pack())
-
-    builder_inl_kbd.button(
-        text=COMMON_BUTTONS_PARAMS.MAIN_MENU,
-        callback_data=MainMenuInlineBtnCBData().pack())
-
-    builder_inl_kbd.adjust(4, 7, 7, 7, 7, 7, 7, 1, 2)
+    work_weeks_number = len(month_calendar_flat_list) // 7
+    dynamic_adjust = [4, 7] + [7] * work_weeks_number + continue_adjust + [2]
+    builder_inl_kbd.adjust(*dynamic_adjust)
 
     inline_kbd_markup = builder_inl_kbd.as_markup()
     return inline_kbd_markup
