@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from aiogram.fsm.context import FSMContext
 
-from telegram.telegram_utils.list_utils import empty_list_if_none
+from utilities.list_utils import empty_list_if_none
 
 
 async def get_selected_services_ids(state: FSMContext|dict) -> list:
