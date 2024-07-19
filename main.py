@@ -8,6 +8,8 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
+from telegram.handlers_callback_pvt.continue_srcs_calendar_cb_hdr import continue_enroll_srcs_calendar_cb_router
+from telegram.handlers_callback_pvt.next_prev_month_calend_cb_hdr import next_prev_month_services_cb_router
 from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
 from telegram.params.commands import COMMANDS_PARAMS
 
@@ -26,7 +28,7 @@ from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt
 from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
 from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
 from telegram.handlers_private.continue_enroll_services_btn_pvt import continue_enroll_srcs_pvt_router
-from telegram.handlers_callback_pvt.calendar_services_cb_hdrs import calendar_services_cb_router
+from telegram.handlers_callback_pvt.month_day_enroll_srcs_calendar_cb_hdr import month_day_enroll_srcs_calendar_cb_router
 from telegram.handlers_callback_pvt.main_menu_common_cb_hdr import main_menu_common_cb_router
 from telegram.handlers_callback_pvt.no_action_common_cb_hdr import no_action_common_cb_router
 from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
@@ -55,7 +57,9 @@ dp.include_router(services_add_time_duration_cb_query)
 dp.include_router(services_remove_cb_query)
 dp.include_router(services_change_cb_query)
 dp.include_router(enroll_services_cb_router)
-dp.include_router(calendar_services_cb_router)
+dp.include_router(month_day_enroll_srcs_calendar_cb_router)
+dp.include_router(continue_enroll_srcs_calendar_cb_router)
+dp.include_router(next_prev_month_services_cb_router)
 dp.include_router(main_menu_common_cb_router)
 dp.include_router(return_common_cb_router)
 dp.include_router(admin_panel)
