@@ -1,4 +1,4 @@
-import asyncio
+from time import sleep
 
 from aiogram import Router, F
 from aiogram.types import Message
@@ -11,15 +11,20 @@ from telegram.keyboard_reply.pvt_enroll_service_actions_kbd import get_pvt_enrol
 from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.keyboard_inline.enroll_services_inl_kbd import get_enroll_service_inl_kbd
 
-from telegram.params.messages_helpers import get_service_brief_info_from_record
+from telegram.config.configs import PAUSE_CONFIGS
+
+from utilities.numeric_utils import number_or_str_to_float
+from telegram.telegram_utils.enroll_services_utils import get_selected_services_ids
+
+from database.db_queries.user_queries import get_services_list
+
+from telegram.telegram_utils.messages_helpers import get_service_brief_info_from_record
 from telegram.params.buttons_main_menu import MAIN_MENU_BUTTONS_PARAMS
 from telegram.params.messages_multiline import SELECT_SERVICES_TXT
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 from telegram.params.messages import (NO_SERVICES,
                                       SELECT_OTHER_ACTIONS)
 
-from database.db_queries.user_queries import get_services_list
-from telegram.telegram_utils.enroll_services_utils import get_selected_services_ids
 
 enroll_services_pvt_router = Router(name=__name__)
 enroll_services_pvt_router.message.filter(ChatTypesFilter(["private"]))
@@ -36,10 +41,8 @@ async def enroll_services_btn_handler(message: Message, state: FSMContext):
         return
 
     await message.answer(text=SELECT_SERVICES_TXT)
-    # await asyncio.sleep(0.2)
 
     selected_services_ids = await get_selected_services_ids(state=state)
-
     all_services_info_dict = {}
 
     for service in all_services_records:
@@ -61,7 +64,9 @@ async def enroll_services_btn_handler(message: Message, state: FSMContext):
             reply_markup=get_enroll_service_inl_kbd(service.id,
                                                     button_selected,
                                                     one_more_service_btn))
-        # await asyncio.sleep(0.2)
+
+        delay_seconds = number_or_str_to_float(PAUSE_CONFIGS. LIST_DELAY)
+        sleep(delay_seconds)
 
         all_services_info_dict[service.id] = {
             "text": service_brief_text,
