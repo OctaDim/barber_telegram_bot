@@ -8,9 +8,9 @@ class MSG:
     DURATION: str = "Time duration"
     DESCRIPTION: str = "Description"
 
-    SERVICES_TOTAL_COST: str = "💰 Total cost:"
-    SERVICES_TOTAL_DURATION: str = "🕑 Total time duration:"
-    SERVICES_TOTAL_COUNT: str = "✂️ Selected services count:"
+    SERVICES_TOTAL_COST: str = "💰 Total cost"
+    SERVICES_TOTAL_DURATION: str = "🕑 Total time duration"
+    SERVICES_TOTAL_COUNT: str = "✂️ Selected services count"
 
     CURRENCY_BRIEF: str = "byn"
 
