@@ -195,14 +195,12 @@ Media/
 
 .dump*
 
-#.local_endpoints
-
-.notes
-
-.BackUp
-.ToDo
-.Test
+.LocalEndpoint*
+.Notes*
+.BackUp*
+.Back*
+.ToDo*
+.Test*
+.Examples*
 TestJSON*
-Test.py
-.Examples.py
-test.py
+Test*.py
