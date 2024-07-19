@@ -1,18 +1,20 @@
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 
 from aiogram.fsm.context import FSMContext
 
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
-from telegram.telegram_utils.list_utils import empty_list_if_none
+from utilities.list_utils import empty_list_if_none
+
+from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
+from telegram.params.messages import CAN_USE_LEFT_MENU
+
+from telegram.telegram_utils.fsm_states_utils import clear_all_enroll_services_fsm_states
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
     get_handlers_stack_list,
     get_handler_answer_flag_dict)
-
-from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
-from telegram.params.messages import CAN_USE_LEFT_MENU
 
 
 return_button_router = Router(name=__name__)
@@ -25,6 +27,9 @@ async def return_button_handler(message: Message,
                                 current_handler_data: dict):
 
     handlers_list = await get_handlers_stack_list(state=state)
+
+    if len(handlers_list) <= 2:
+        await clear_all_enroll_services_fsm_states(state)
 
     if len(handlers_list) <= 1:
         await message.answer(text=CAN_USE_LEFT_MENU)
@@ -50,7 +55,7 @@ async def return_button_handler(message: Message,
 
     await state.update_data(handlers_stack=handlers_list)
 
-    print("\tTEST INFO: Return handler. Handler answer = skip_handler_stack")
+    print("\tTEST INFO: Return handler. Handler answer = skip_add_handler_stack")
     print(f"\tTEST INFO: len(handlers_list): {len(handlers_list)}\n")
 
-    return get_handler_answer_flag_dict(skip_handler_stack=True)
+    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
