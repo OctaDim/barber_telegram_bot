@@ -1,9 +1,9 @@
 from aiogram import Router
-from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
 from aiogram.fsm.context import FSMContext
 
+from aiogram.filters.callback_data import CallbackData
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
 from telegram.keyboard_inline.enroll_services_inl_kbd import (
@@ -11,16 +11,14 @@ from telegram.keyboard_inline.enroll_services_inl_kbd import (
     OneMoreServiceCallbackData,
     get_enroll_service_inl_kbd)
 
+from utilities.list_utils import remove_same_list_elms_by_value
+
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 from telegram.params.messages import NONE_SERVICES_SELECTED
+
 from telegram.telegram_utils.messages_helpers import get_selected_services_summary
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
-
-from telegram.telegram_utils.messages_utils import (
-    cannot_modify_obsolete_inl_kbd,
-    inline_keyboard_is_actual)
-
-from utilities.list_utils import remove_same_list_elms_by_value
+from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
 from telegram.telegram_utils.enroll_services_utils import (
     get_selected_services_ids,
     get_selected_services_cost,
@@ -41,7 +39,6 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
     data = await state.get_data()
 
     if not await inline_keyboard_is_actual(data, callback_query):
-        await cannot_modify_obsolete_inl_kbd(callback_query)
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
     all_services_info = data.get("all_services_info_state")

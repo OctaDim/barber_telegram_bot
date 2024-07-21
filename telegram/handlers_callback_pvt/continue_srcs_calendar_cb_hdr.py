@@ -4,27 +4,23 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 from aiogram.filters.callback_data import CallbackData
-
-from telegram.config.configs import LANGUAGE_CONFIGS
 from telegram.filters.chat_types_filter import ChatTypesFilter
 
+from telegram.config.configs import LANGUAGE_CONFIGS
+
 from telegram.keyboard_inline.calendar_inl_kbd import MonthContinueCBData
+
 from telegram.params.calendar_icons import CALENDAR_ICONS
 
-from telegram.telegram_utils.messages_helpers import get_selected_services_summary
 from utilities.calendar_utils import get_date_with_month_name
 
-from telegram.telegram_utils.handlers_stack_utils import (
-    get_handler_answer_flag_dict)
-
+from telegram.telegram_utils.messages_helpers import get_selected_services_summary
+from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
+from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
 from telegram.telegram_utils.enroll_services_utils import (
     get_selected_services_ids,
     get_selected_services_cost,
     get_selected_services_duration)
-
-from telegram.telegram_utils.messages_utils import (
-    inline_keyboard_is_actual,
-    cannot_modify_obsolete_inl_kbd)
 
 
 continue_enroll_srcs_calendar_cb_router = Router(name=__name__)
@@ -38,8 +34,9 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        await cannot_modify_obsolete_inl_kbd(callback_query)
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+
+    await callback_query.answer()
 
     message = callback_query.message
 
