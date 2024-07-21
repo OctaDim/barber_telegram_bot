@@ -15,4 +15,4 @@ CANNOT_USE_OBSOLETE_MSG = "⚠️ This message is obsolete. Use the latest or ca
 UNKNOWN_COMMAND_ENTERED = "⚠️ Unknown command. Try again!"
 SELECT_MIN_ONE_SERVICE = "⚠️ Select at least one service before"
 ALL_SERVICES_CANCELLED = "ℹ️ All services have been canceled"
-CHOOSE_SERVICES_DAY = "👉Choose a day to receive the services: ⤵️"
+CHOOSE_SERVICES_DAY = "👉 Choose a day to continue enrolling services: ⤵️"
