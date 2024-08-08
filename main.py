@@ -8,6 +8,8 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
+from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
+from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
 from telegram.handlers_callback_pvt.continue_srcs_calendar_cb_hdr import continue_enroll_srcs_calendar_cb_router
 from telegram.handlers_callback_pvt.next_prev_month_calend_cb_hdr import next_prev_month_services_cb_router
 from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
@@ -52,6 +54,8 @@ dp.update.outer_middleware(AllUpdatesMiddleware())
 
 # Routers:
 dp.include_router(no_action_common_cb_router)
+dp.include_router(work_time_cb_query)
+dp.include_router(work_time_admin_btn_router)
 dp.include_router(return_button_router)
 dp.include_router(services_add_time_duration_cb_query)
 dp.include_router(services_remove_cb_query)
