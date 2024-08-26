@@ -1,12 +1,14 @@
 import calendar
 
 
-def month_list(date):
-    month = date.month
+def get_month_dict(month):
+    month_dict = {}
 
-    month_dict = []
+    for m in range(1, 13):
+        if month > m:
+            month_dict[calendar.month_name[m]] = None
+            continue
 
-    for m in range(month, 13):
-        month_dict.append(calendar.month_name[m])
+        month_dict[calendar.month_name[m]] = True
 
     return month_dict
