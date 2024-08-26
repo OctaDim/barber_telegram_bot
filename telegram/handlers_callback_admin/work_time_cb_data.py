@@ -1,31 +1,74 @@
 import re
 
+from datetime import timedelta
+
 from aiogram import Router, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
+from database.db_queries.work_time_queries import create_work_time
 from telegram.keyboard_inline.work_time_add_days_inl_kbd import (
     work_time_days_inl_kbd,
     DaysWorkTimeCbData,
     NextStepTimeWorkTimeCbData
 )
 
-from telegram.keyboard_inline.work_time_add_duration_services_inl_kbd import (
-    add_duration_services_work_time_services_inl_kbd,
-    TimeServicesWorkTimeCbData, AddServiceDurationWorkTimeCbData,
+from telegram.keyboard_inline.work_time_add_end_time_inl_kbd import EndWorkTimeCbData, add_end_time_work_inl_kbd, \
+    NextStepEndWorkTimeCbData
+
+from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData, YearWorkTimeCbData, \
+    work_time_month_inl_kbd
+from telegram.keyboard_inline.work_time_add_start_time_work_inl_kbd import add_start_time_work_inl_kbd, \
+    StartWorkTimeCbData, NextStepStartWorkTimeCbData
+
+from telegram.keyboard_inline.work_time_add_work_time_inl_kbd import add_work_time_inl_kbd, StartWorkCbData, \
+    EndWorkCbData, NextStepAddWorkTime
+
+from telegram.keyboard_inline.work_time_interval_add_inl_kbd import (
+    add_interval_work_time_services_inl_kbd,
+    HoursIntervalWorkTimeCbData,
+    IntervalNextStepTimeWorkTimeCbData
 )
-
-from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData
-from telegram.keyboard_inline.work_time_add_timetable_inl_kbd import (
-    add_hours_work_time_services_inl_kbd,
-    HoursWorkTimeCbData,
-    ServiceDurationTimeWorkTimeCbData,
-)
-
-from utilities.get_service_times import get_service_times
-
+from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
+from telegram.params.work_time_cb_data_message import SELECT_A_MONTH, PICK_DAY, PICK_ONE_DAY, ADD_INTERVAL, \
+    INTERVAL_CANNOT_BE_0H_OM, SELECT_WORKING_DAY, CHOOSE_TWO_VALUE, ADD_START_TIME, ADD_END_TIME, TIME_ADDED, \
+    TOTAL_OPERATING_TIME_LESS_INTERVAL, SELECT_START_AND_END_WORKING_DAY, PICK_END_OF_THE_DAY, PICK_START_OF_THE_DAY
+from utilities.tick_the_butthon import tick_the_button
+from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
 
 work_time_cb_query = Router(name=__name__)
+
+
+@work_time_cb_query.callback_query(YearWorkTimeCbData.filter())
+async def get_another_month(
+        callback_query: CallbackQuery,
+        callback_data: YearWorkTimeCbData,
+        bot: Bot
+):
+    year = callback_data.year
+    month = callback_query.message.date.month
+
+    if callback_data.action == 'next':
+        year += 1
+        if year != callback_query.message.date.year:
+            month = 1
+
+    else:
+        year -= 1
+
+        if year == callback_query.message.date.year:
+            pass
+        elif year < callback_query.message.date.year:
+            year += 1
+        else:
+            month = 1
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text=SELECT_A_MONTH,
+        reply_markup=work_time_month_inl_kbd(month=month, year=year)
+    )
 
 
 @work_time_cb_query.callback_query(MonthWorkTimeCbData.filter())
@@ -35,13 +78,14 @@ async def get_inl_kdb_add_days_work_time(
         bot: Bot,
         state: FSMContext):
     month = callback_data.mount
+    year = callback_data.year
 
-    await state.update_data(month=month)
+    await state.update_data(month=month, year=year)
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Выбери день или несколко дней',
+        text=PICK_DAY,
         reply_markup=work_time_days_inl_kbd(mount=callback_data.mount)
     )
 
@@ -75,7 +119,7 @@ async def save_work_days_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Выбери день или несколко дней',
+        text=PICK_DAY,
         reply_markup=new_keyboard
     )
 
@@ -95,182 +139,234 @@ async def get_inl_kbd_add_time(
                 active_days.append(re.sub('[^0-9]', '', button.text))
 
     if len(active_days) == 0:
-        return await callback_query.answer(text='Выбери что то из дней', show_alert=True)
+        return await callback_query.answer(text=PICK_ONE_DAY, show_alert=True)
 
     await state.update_data(
         days=active_days,
-        time=list(),
-        time_start=list(),
-        time_end=list(),
-        delta=list(),
-        block_hours=list(),
-        block_minutes=list()
     )
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время начало услуги.',
-        reply_markup=add_hours_work_time_services_inl_kbd()
+        text=ADD_INTERVAL,
+        reply_markup=add_interval_work_time_services_inl_kbd()
     )
 
 
-@work_time_cb_query.callback_query(HoursWorkTimeCbData.filter())
-async def add_start_time_work_time(
+@work_time_cb_query.callback_query(HoursIntervalWorkTimeCbData.filter())
+async def get_interval_work_time(
         callback_query: CallbackQuery,
         bot: Bot,
-        callback_data: HoursWorkTimeCbData):
+        callback_data: HoursIntervalWorkTimeCbData
+):
     old_keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    target_text = callback_data.time
-    new_text = '✅' + target_text
-
-    for row in old_keyboard:
-        for button in row:
-            if target_text[-1] in button.text:
-                if target_text == button.text:
-                    button.text = new_text
-                    cb_data = HoursWorkTimeCbData(time=target_text)
-                    button.callback_data = cb_data.pack()
-
-                else:
-                    button.text = button.text.replace('✅', '')
-                    cb_data = HoursWorkTimeCbData(time=button.text.replace('✅', ''))
-                    button.callback_data = cb_data.pack()
-
-    new_keyboard = InlineKeyboardMarkup(inline_keyboard=old_keyboard)
-
-    message_text = 'Добавьте время начало услуги.'
+    new_keyboard = tick_the_button(target_text=callback_data.time, keyboard=old_keyboard)
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text=message_text,
+        text=ADD_INTERVAL,
         reply_markup=new_keyboard
     )
 
 
-@work_time_cb_query.callback_query(ServiceDurationTimeWorkTimeCbData.filter())
-async def add_end_time_work_time(
+@work_time_cb_query.callback_query(IntervalNextStepTimeWorkTimeCbData.filter())
+async def interval_next_step(
         callback_query: CallbackQuery,
         bot: Bot,
-        state: FSMContext):
+        state: FSMContext
+):
+    keyboard = callback_query.message.reply_markup.inline_keyboard
 
+    time_interval = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
+
+    if len(time_interval) < 4:
+        return await callback_query.answer(text=CHOOSE_TWO_VALUE, show_alert=True)
+
+    if time_interval == '0:00':
+        return await callback_query.answer(text=INTERVAL_CANNOT_BE_0H_OM, show_alert=True)
+
+    hours, minutes = map(int, time_interval.split(':'))
+    interval = timedelta(hours=hours, minutes=minutes)
+
+    await state.update_data(interval=interval)
+
+    await bot.edit_message_text(
+        message_id=callback_query.message.message_id,
+        chat_id=callback_query.message.chat.id,
+        text=SELECT_WORKING_DAY,
+        reply_markup=add_work_time_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(StartWorkCbData.filter())
+async def create_start_time_work(
+        callback_query: CallbackQuery,
+        bot: Bot
+):
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text=SELECT_WORKING_DAY,
+        reply_markup=add_start_time_work_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(StartWorkTimeCbData.filter())
+async def get_start_work_time(
+        callback_query: CallbackQuery,
+        callback_data: StartWorkTimeCbData,
+        bot: Bot
+):
     old_keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    time = []
+    new_keyboard = tick_the_button(target_text=callback_data.time_start, keyboard=old_keyboard)
 
-    for row in old_keyboard:
-        for button in row:
-            if '✅' in button.text:
-                time.append(button.text.replace('✅', ''))
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text=ADD_START_TIME,
+        reply_markup=new_keyboard
+    )
 
-                button.text = button.text.replace('✅', '')
-                cb_data = HoursWorkTimeCbData(time=button.text)
-                button.callback_data = cb_data.pack()
+
+@work_time_cb_query.callback_query(NextStepStartWorkTimeCbData.filter())
+async def next_step_start_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot,
+        state: FSMContext
+):
+    keyboard = callback_query.message.reply_markup.inline_keyboard
+
+    time_start = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
+
+    if len(time_start) != 5:
+        return await callback_query.answer(text=CHOOSE_TWO_VALUE, show_alert=True)
+
+    hours, minutes = map(int, time_start.split(':'))
+    time_start = timedelta(hours=hours, minutes=minutes)
 
     state_data = await state.get_data()
-
-    time_start: list = state_data.get('time_start')
-    time_start.append(time)
-
     await state.update_data(time_start=time_start)
 
+    if state_data.get('time_end'):
+        time_end = state_data.get('time_end')
+
+    else:
+        time_end = timedelta(hours=00, minutes=00)
+
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите продолжительность услуги',
-        reply_markup=add_duration_services_work_time_services_inl_kbd()
+        reply_markup=add_work_time_inl_kbd(time_start=time_start, time_end=time_end),
+        text=SELECT_WORKING_DAY,
     )
 
 
-@work_time_cb_query.callback_query(TimeServicesWorkTimeCbData.filter())
-async def get_duration_services_work_time(
+@work_time_cb_query.callback_query(EndWorkCbData.filter())
+async def create_end_work_time(
         callback_query: CallbackQuery,
         bot: Bot,
-        callback_data: TimeServicesWorkTimeCbData):
+):
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text=ADD_END_TIME,
+        reply_markup=add_end_time_work_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(EndWorkTimeCbData.filter())
+async def get_end_work_time(
+        callback_query: CallbackQuery,
+        callback_data: EndWorkTimeCbData,
+        bot: Bot
+):
     old_keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    cb_data = callback_data.time_start.split()
-    target_text = cb_data[-1]
-
-    new_text = '✅' + target_text
-
-    for row in old_keyboard:
-        for button in row:
-            if target_text[-1] in button.text:
-                if target_text == button.text:
-                    button.text = new_text
-
-                else:
-                    button.text = button.text.replace('✅', '')
-
-    new_keyboard = InlineKeyboardMarkup(inline_keyboard=old_keyboard)
+    new_keyboard = tick_the_button(target_text=callback_data.time_end, keyboard=old_keyboard)
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите продолжительность услуги',
+        text=ADD_END_TIME,
         reply_markup=new_keyboard
     )
 
 
-@work_time_cb_query.callback_query(AddServiceDurationWorkTimeCbData.filter())
-async def add_duration_services_work_time(
+@work_time_cb_query.callback_query(NextStepEndWorkTimeCbData.filter())
+async def next_step_end_work_time(
         callback_query: CallbackQuery,
         bot: Bot,
-        state: FSMContext,):
+        state: FSMContext
+):
+    keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    old_keyboard = callback_query.message.reply_markup.inline_keyboard
+    time_end = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
 
-    time_duration = []
+    if len(time_end) != 5:
+        return await callback_query.answer(text=CHOOSE_TWO_VALUE, show_alert=True)
 
-    for row in old_keyboard:
-        for button in row:
-            if '✅' in button.text:
-                btn_cb_data = button.callback_data.split(':')
-                time_duration.append(btn_cb_data[-1])
-
-    if len(time_duration) != 2:
-        return await callback_query.answer(text='Выбери что то из времени', show_alert=True)
+    hours, minutes = map(int, time_end.split(':'))
+    time_end = timedelta(hours=hours, minutes=minutes)
 
     state_data = await state.get_data()
+    await state.update_data(time_end=time_end)
 
-    state_time_duration: list = state_data.get('time')
-    state_time_duration.append(time_duration)
+    if state_data.get('time_start'):
+        time_start = state_data.get('time_start')
 
-    state_block_minutes: list = state_data.get('block_minutes')
-
-    data = get_service_times(
-        start_time=state_data.get('time_start')[-1],
-        time_duration=state_time_duration[-1],
-        block_hour=state_data.get('block_hours'),
-        block_minutes=state_block_minutes
-    )
-
-    state_time_start: list = state_data.get('time_start')
-    state_time_start.append(data.get('start_time'))
-
-    state_time_end: list = state_data.get('time_end')
-    state_time_end.append(data.get('end_time'))
-
-    await state.update_data(
-        time_duration_service=state_time_duration,
-        block_hours=data.get('block_hour'),
-        block_minutes=data.get('block_minute'),
-        time_start=state_time_start,
-        time_end=state_time_end
-
-    )
+    else:
+        time_start = timedelta(hours=00, minutes=00)
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text=f'Начало {data.get('start_time')}, конец {data.get('end_time')}',
+        reply_markup=add_work_time_inl_kbd(time_start=time_start, time_end=time_end),
+        text=SELECT_WORKING_DAY,
+    )
+
+
+@work_time_cb_query.callback_query(NextStepAddWorkTime.filter())
+async def next_step_add_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot,
+        state: FSMContext
+):
+    state_data = await state.get_data()
+
+    time_start = state_data.get('time_start')
+    time_end = state_data.get('time_end')
+    interval = state_data.get('interval')
+
+    if time_start is None and time_end is None:
+        return await callback_query.answer(text=SELECT_START_AND_END_WORKING_DAY, show_alert=True)
+
+    if time_end is None:
+        return await callback_query.answer(text=PICK_END_OF_THE_DAY, show_alert=True)
+
+    if time_start is None:
+        return await callback_query.answer(text=PICK_START_OF_THE_DAY, show_alert=True)
+
+    total_operating_time = time_end - time_start
+
+    if total_operating_time < interval:
+        return await callback_query.answer(
+            text=TOTAL_OPERATING_TIME_LESS_INTERVAL + interval,
+            show_alert=True)
+
+    await bot.delete_message(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id
     )
 
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text='Отлично, давай еще',
-        reply_markup=add_hours_work_time_services_inl_kbd(block_hour=data.get('block_hour'))
+        text=TIME_ADDED,
+        reply_markup=get_admin_main_menu_kbd()
     )
+
+    create_work_time(data=state_data)
+
+    return state.clear()
