@@ -12,10 +12,10 @@ class NextStepTimeWorkTimeCbData(CallbackData, prefix='continue-work-time'):
     next_step: bool
 
 
-def work_time_days_inl_kbd(mount: str):
+def work_time_days_inl_kbd(mount: str, year: int):
     builder = InlineKeyboardBuilder()
 
-    data, month_name = get_days_in_month(month_name=mount)
+    data, month_name = get_days_in_month(month_name=mount, year=year)
     data_copy = data.copy()
 
     week_row = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
