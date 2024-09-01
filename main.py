@@ -8,9 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 from telegram.config.settings import BOT_CREDENTIALS
-from telegram.handlers_admin.logbook_btn_admin import logbook_admin_btn_router
 from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
-from telegram.handlers_callback_admin.logbook_cb_data import logbook_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
 from telegram.handlers_callback_pvt.continue_srcs_calendar_cb_hdr import continue_enroll_srcs_calendar_cb_router
 from telegram.handlers_callback_pvt.next_prev_month_calend_cb_hdr import next_prev_month_services_cb_router
@@ -56,7 +54,6 @@ dp.update.outer_middleware(AllUpdatesMiddleware())
 
 # Routers:
 dp.include_router(no_action_common_cb_router)
-dp.include_router(logbook_cb_query)
 dp.include_router(work_time_cb_query)
 dp.include_router(work_time_admin_btn_router)
 dp.include_router(return_button_router)
@@ -70,7 +67,6 @@ dp.include_router(next_prev_month_services_cb_router)
 dp.include_router(main_menu_common_cb_router)
 dp.include_router(return_common_cb_router)
 dp.include_router(admin_panel)
-dp.include_router(logbook_admin_btn_router)
 dp.include_router(services_admin_btn_router)
 dp.include_router(on_start_stop_router)
 dp.include_router(on_start_router)
