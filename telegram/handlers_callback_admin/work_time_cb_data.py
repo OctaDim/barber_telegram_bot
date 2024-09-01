@@ -86,7 +86,7 @@ async def get_inl_kdb_add_days_work_time(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
         text=PICK_DAY,
-        reply_markup=work_time_days_inl_kbd(mount=callback_data.mount)
+        reply_markup=work_time_days_inl_kbd(mount=callback_data.mount, year=year)
     )
 
 
