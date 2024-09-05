@@ -2,7 +2,7 @@ import calendar
 from datetime import datetime
 
 
-def get_days_in_month(month_name, year=datetime.now().year):
+def get_days_in_month(month_name, year):
     month_number = list(calendar.month_name).index(month_name.capitalize())
 
     _, num_days = calendar.monthrange(year, month_number)
