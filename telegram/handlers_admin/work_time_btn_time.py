@@ -19,6 +19,8 @@ class WorkTimes(StatesGroup):
     interval = State()
     time_start = State()
     time_end = State()
+    time_start_break = State()
+    time_end_break = State()
 
 
 @work_time_admin_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.WORK_TIME)

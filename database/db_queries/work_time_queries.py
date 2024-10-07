@@ -1,34 +1,47 @@
 import calendar
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from database.db_engine_url import db_engine_url
 from database.db_connection import DBConnection
 from sqlalchemy import extract, func
 
+from database.db_models.break_time_model import BreakTime
 from database.db_models.work_time_model import WorkTime
 
 manager = DBConnection(db_url=db_engine_url)
 
 
-def create_work_time(data: dict):
+def create_work_time(
+        time_start: datetime,
+        time_end: datetime,
+        slot_duration: timedelta,
+):
+
     with manager as session:
-        start_time = data.get('time_start')
-        end_time = data.get('time_end')
-        delta = data.get('interval')
-        year = data.get('year')
-        month = data.get('month')
-        days: list = data.get('days')
+        work_time = WorkTime(
+            time_start=time_start,
+            time_end=time_end,
+            slot_duration=slot_duration
+        )
 
-        for day in days:
-            base_date = datetime.strptime(f"{year}-{month}-{day}", "%Y-%B-%d")
+        session.add(work_time)
+        session.commit()
 
-            session.add(WorkTime(
-                start_time=base_date + start_time,
-                end_time=base_date + end_time,
-                delta=delta
-            ))
-            session.commit()
+
+
+def create_break_time(
+        start_break: datetime,
+        end_break: datetime,
+):
+    with manager as session:
+        break_time = BreakTime(
+            start_break=start_break,
+            end_break=end_break
+        )
+
+        session.add(break_time)
+        session.commit()
 
 
 def get_work_time_by_month(month, year):
@@ -52,9 +65,9 @@ def get_working_time_month_by_month_by_year(year):
         subquery = session.query(
             func.min(WorkTime.id).label('id')
         ).filter(
-            extract('year', WorkTime.start_time) == year
+            extract('year', WorkTime.time_start) == year
         ).group_by(
-            extract('month', WorkTime.start_time)
+            extract('month', WorkTime.time_start)
         ).subquery()
 
         work_months = session.query(WorkTime).join(
@@ -64,7 +77,7 @@ def get_working_time_month_by_month_by_year(year):
         data = []
 
         for month in work_months:
-            data.append(month.start_time.month)
+            data.append(month.time_start.month)
 
         return data
 
