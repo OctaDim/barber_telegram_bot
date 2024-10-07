@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from datetime import timedelta
@@ -7,6 +8,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
 from database.db_queries.work_time_queries import create_work_time
+from telegram.keyboard_inline.work_time_add_break_inl_kbd import add_break_or_not_inl_kbd, \
+    AddBreakResponseWorkTimeCbData, add_break_work_time_inl_kbd, AddStartBreakWorkTime, AddEndBreakWorkTime, \
+    NextStepAddBreakWorkTime
 from telegram.keyboard_inline.work_time_add_days_inl_kbd import (
     work_time_days_inl_kbd,
     DaysWorkTimeCbData,
@@ -18,6 +22,9 @@ from telegram.keyboard_inline.work_time_add_end_time_inl_kbd import EndWorkTimeC
 
 from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData, YearWorkTimeCbData, \
     work_time_month_inl_kbd
+from telegram.keyboard_inline.work_time_add_start_and_end_break_inl_kbd import StartBreakWorkTimeCbData, \
+    add_start_break_time_work_inl_kbd, EndBreakWorkTimeCbData, NextStepStartBreakWorkTimeCbData, \
+    add_end_break_time_work_inl_kbd, NextStepEndBreakWorkTimeCbData
 from telegram.keyboard_inline.work_time_add_start_time_work_inl_kbd import add_start_time_work_inl_kbd, \
     StartWorkTimeCbData, NextStepStartWorkTimeCbData
 
@@ -30,9 +37,11 @@ from telegram.keyboard_inline.work_time_interval_add_inl_kbd import (
     IntervalNextStepTimeWorkTimeCbData
 )
 from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
+from telegram.params.messages import SUCCESSFULLY
 from telegram.params.work_time_cb_data_message import SELECT_A_MONTH, PICK_DAY, PICK_ONE_DAY, ADD_INTERVAL, \
     INTERVAL_CANNOT_BE_0H_OM, SELECT_WORKING_DAY, CHOOSE_TWO_VALUE, ADD_START_TIME, ADD_END_TIME, TIME_ADDED, \
     TOTAL_OPERATING_TIME_LESS_INTERVAL, SELECT_START_AND_END_WORKING_DAY, PICK_END_OF_THE_DAY, PICK_START_OF_THE_DAY
+from utilities.save_work_time_data_in_db import save_work_time_data_in_db
 from utilities.tick_the_butthon import tick_the_button
 from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
 
@@ -356,6 +365,245 @@ async def next_step_add_work_time(
             text=TOTAL_OPERATING_TIME_LESS_INTERVAL + interval,
             show_alert=True)
 
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Желаете ли вы добавить перерыв?',
+        reply_markup=add_break_or_not_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(AddBreakResponseWorkTimeCbData.filter())
+async def get_response_add_break(
+        callback_query: CallbackQuery,
+        callback_data: AddBreakResponseWorkTimeCbData,
+        bot: Bot,
+        state: FSMContext
+):
+    cb_data = callback_data.response
+    state_data = await state.get_data()
+
+    if cb_data == 'no':
+        await bot.delete_message(
+            chat_id=callback_query.message.chat.id,
+            message_id=callback_query.message.message_id
+        )
+
+        await bot.send_message(
+            chat_id=callback_query.message.chat.id,
+            text=TIME_ADDED,
+            reply_markup=get_admin_main_menu_kbd()
+        )
+
+        save_work_time_data_in_db(
+            time_start=state_data.get('time_start'),
+            time_end=state_data.get('time_end'),
+            interval=state_data.get('interval'),
+            days=state_data.get('days'),
+            month=state_data.get('month'),
+            year=state_data.get('year'),
+            start_break=state_data.get('time_start_break'),
+            end_break=state_data.get('time_end_break')
+        )
+
+        return state.clear()
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Добавьте время перерыва',
+        reply_markup=add_break_work_time_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(AddStartBreakWorkTime.filter())
+async def create_start_break_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot
+):
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Добавьте время начало перерыва',
+        reply_markup=add_start_break_time_work_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(AddEndBreakWorkTime.filter())
+async def create_end_break_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot
+):
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Добавьте время конца перерыва',
+        reply_markup=add_end_break_time_work_inl_kbd()
+    )
+
+
+@work_time_cb_query.callback_query(StartBreakWorkTimeCbData.filter())
+async def get_start_break_work_time(
+        callback_query: CallbackQuery,
+        callback_data: StartBreakWorkTimeCbData,
+        bot: Bot
+):
+    old_keyboard = callback_query.message.reply_markup.inline_keyboard
+
+    new_keyboard = tick_the_button(target_text=callback_data.time_start, keyboard=old_keyboard)
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Добавьте время начало перерыва',
+        reply_markup=new_keyboard
+    )
+
+
+@work_time_cb_query.callback_query(EndBreakWorkTimeCbData.filter())
+async def get_end_break_work_time(
+        callback_query: CallbackQuery,
+        callback_data: EndBreakWorkTimeCbData,
+        bot: Bot
+):
+    old_keyboard = callback_query.message.reply_markup.inline_keyboard
+
+    new_keyboard = tick_the_button(target_text=callback_data.time_end, keyboard=old_keyboard)
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        text='Добавьте время конца перерыва',
+        reply_markup=new_keyboard
+    )
+
+
+@work_time_cb_query.callback_query(NextStepStartBreakWorkTimeCbData.filter())
+async def next_step_start_break_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot,
+        state: FSMContext
+):
+    keyboard = callback_query.message.reply_markup.inline_keyboard
+
+    time_start_break = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
+
+    if len(time_start_break) != 5:
+        return await callback_query.answer(text=CHOOSE_TWO_VALUE, show_alert=True)
+
+    hours, minutes = map(int, time_start_break.split(':'))
+    time_start_break = timedelta(hours=hours, minutes=minutes)
+
+    state_data = await state.get_data()
+
+    time_start = state_data.get('time_start')
+    time_end = state_data.get('time_end')
+    interval = state_data.get('interval')
+    time_end_break = state_data.get('time_end_break')
+
+    if time_start > time_start_break:
+        return await callback_query.answer(text='Перерыва не может начинаться раньше чем начало рабочего дня.',
+                                           show_alert=True)
+
+    if time_end < time_start_break:
+        return await callback_query.answer(text='Перерыв не может начинаться после конца рабочего дня.',
+                                           show_alert=True)
+
+    if time_start_break - time_start < interval or time_end - time_start_break <= interval:
+        return await callback_query.answer(
+            text=f'Начало перерыва не помещинается в выбранный вами интервал {interval}.',
+            show_alert=True)
+
+    if time_end_break:
+        if time_start_break >= time_end_break:
+            return await callback_query.answer(
+                text=f'Невозможно поставить начало времени перерыва после окончание перерыва {time_end_break}',
+                show_alert=True
+            )
+
+    await state.update_data(time_start_break=time_start_break)
+
+    if state_data.get('time_end_break'):
+        time_end_break = state_data.get('time_end_break')
+
+    else:
+        time_end_break = timedelta(hours=00, minutes=00)
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        reply_markup=add_break_work_time_inl_kbd(time_start_break=time_start_break, time_end_break=time_end_break),
+        text=SELECT_WORKING_DAY,
+    )
+
+
+@work_time_cb_query.callback_query(NextStepEndBreakWorkTimeCbData.filter())
+async def next_step_end_break_work_time(
+        callback_query: CallbackQuery,
+        bot: Bot,
+        state: FSMContext
+):
+    keyboard = callback_query.message.reply_markup.inline_keyboard
+
+    time_end_break = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
+
+    if len(time_end_break) != 5:
+        return await callback_query.answer(text=CHOOSE_TWO_VALUE, show_alert=True)
+
+    hours, minutes = map(int, time_end_break.split(':'))
+    time_end_break = timedelta(hours=hours, minutes=minutes)
+
+    state_data = await state.get_data()
+
+    time_start = state_data.get('time_start')
+    time_end = state_data.get('time_end')
+    interval = state_data.get('interval')
+    time_start_break = state_data.get('time_start_break')
+
+    if time_start > time_end_break:
+        return await callback_query.answer(text='Конец перерыва не может быть раньше чем начало рабочего дня.',
+                                           show_alert=True)
+
+    if time_end < time_end_break:
+        return await callback_query.answer(text='Перерыв не может заканчиваться после конца рабочего дня.',
+                                           show_alert=True)
+
+    if time_end_break - time_start <= interval or time_end - time_end_break < interval:
+        return await callback_query.answer(
+            text=f'Конец перерыва не помещинается в выбранный вами интервал {interval}.',
+            show_alert=True)
+
+    if time_start_break:
+        if time_end_break < time_start_break:
+            return await callback_query.answer(
+                text=f'У вас время окончание перерыва стоит перед началом {time_start_break}',
+                show_alert=True
+            )
+
+    await state.update_data(time_end_break=time_end_break)
+
+    if state_data.get('time_start_break'):
+        time_start_break = state_data.get('time_start_break')
+
+    else:
+        time_start_break = timedelta(hours=00, minutes=00)
+
+    await bot.edit_message_text(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        reply_markup=add_break_work_time_inl_kbd(time_start_break=time_start_break, time_end_break=time_end_break),
+        text=SELECT_WORKING_DAY,
+    )
+
+
+@work_time_cb_query.callback_query(NextStepAddBreakWorkTime.filter())
+async def next_step_add_break_work_time(
+        callback_query: CallbackQuery,
+        state: FSMContext,
+        bot: Bot
+):
+    state_data = await state.get_data()
+
     await bot.delete_message(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id
@@ -367,6 +615,15 @@ async def next_step_add_work_time(
         reply_markup=get_admin_main_menu_kbd()
     )
 
-    create_work_time(data=state_data)
+    save_work_time_data_in_db(
+        time_start=state_data.get('time_start'),
+        time_end=state_data.get('time_end'),
+        interval=state_data.get('interval'),
+        days=state_data.get('days'),
+        month=state_data.get('month'),
+        year=state_data.get('year'),
+        start_break=state_data.get('time_start_break'),
+        end_break=state_data.get('time_end_break')
+    )
 
     return state.clear()
