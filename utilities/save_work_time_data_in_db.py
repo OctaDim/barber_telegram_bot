@@ -72,8 +72,10 @@ def save_work_time_data_in_db(
             current_time = next_time
 
     for time_interval in time_intervals:
+        slot_duration = time_interval[1] - time_interval[0]
+
         create_work_time(
             time_start=time_interval[0],
             time_end=time_interval[1],
-            slot_duration=interval
+            slot_duration=slot_duration
         )

@@ -9,3 +9,8 @@ def create_json_file_from_event(event: TelegramObject,
 
     with open(json_filename, "w") as json_file:
         json.dump(event_dict, json_file, indent=4, ensure_ascii=True)
+
+
+def convert_dict_to_JSON_string(dict_or_list_dict: dict | list[dict]) -> str:
+    json_string = json.dumps(dict_or_list_dict)
+    return json_string
