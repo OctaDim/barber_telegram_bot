@@ -6,19 +6,16 @@ from aiogram.types import Message
 
 from telegram.config.configs import PAUSE_CONFIGS
 from telegram.filters.chat_types_filter import ChatTypesFilter
-
 from telegram.params.buttons_enroll_service import ENROLL_SERVICE_BUTTONS
 from telegram.params.messages import (ALL_SERVICES_CANCELLED,
                                       NONE_SERVICES_SELECTED)
-
-from utilities.numeric_utils import number_or_str_to_float
-
-from telegram.telegram_utils.enroll_services_utils import get_selected_services_ids
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_list_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handlers_stack_list,
     execute_last_stack_handler,
     get_handler_answer_flag_dict)
-
+from utilities.numeric_utils import number_or_str_to_float
 
 cancel_all_services_pvt_router = Router(name=__name__)
 cancel_all_services_pvt_router.message.filter(ChatTypesFilter(["private"]))
@@ -29,7 +26,9 @@ cancel_all_services_pvt_router.message.filter(ChatTypesFilter(["private"]))
 async def cancel_all_services_btn_handler(message: Message,
                                           state: FSMContext):
     state_data = await state.get_data()
-    selected_services_ids = await get_selected_services_ids(state=state_data)
+    selected_services_ids = await get_valid_list_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_ids_state")
 
     if selected_services_ids:
         text = ALL_SERVICES_CANCELLED
@@ -39,7 +38,6 @@ async def cancel_all_services_btn_handler(message: Message,
             selected_services_ids_state=None,
             selected_services_cost_state=None,
             selected_services_duration_state=None)
-
     else:
         text = NONE_SERVICES_SELECTED
 

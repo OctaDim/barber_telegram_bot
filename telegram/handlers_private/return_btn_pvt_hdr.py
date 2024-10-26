@@ -10,7 +10,7 @@ from utilities.list_utils import empty_list_if_none
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 from telegram.params.messages import CAN_USE_LEFT_MENU
 
-from telegram.telegram_utils.fsm_states_utils import clear_all_enroll_services_fsm_states
+from telegram.telegram_utils.enroll_services_utils import clear_all_enroll_services_fsm_states
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
     get_handlers_stack_list,
