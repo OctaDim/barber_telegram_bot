@@ -32,12 +32,15 @@ from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt
 from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
 from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
 from telegram.handlers_private.continue_enroll_services_btn_pvt import continue_enroll_srcs_pvt_router
-from telegram.handlers_callback_pvt.month_day_enroll_srcs_calendar_cb_hdr import month_day_enroll_srcs_calendar_cb_router
+from telegram.handlers_callback_pvt.month_day_enroll_srcs_calendar_cb_hdr import \
+    month_day_enroll_srcs_calendar_cb_router
 from telegram.handlers_callback_pvt.main_menu_common_cb_hdr import main_menu_common_cb_router
 from telegram.handlers_callback_pvt.no_action_common_cb_hdr import no_action_common_cb_router
 from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
 from telegram.handlers_private.cancel_all_services_btn_pvt import cancel_all_services_pvt_router
-
+from telegram.handlers_callback_pvt.slots_advising_note_cb_hdr import slots_advising_note_cb_router
+from telegram.handlers_callback_pvt.slot_selected_cb_hdr import slot_selected_cb_router
+from telegram.handlers_callback_pvt.continue_slot_saving_cb_hdr import continue_slot_saving_cb_router
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(name)s - "
@@ -80,6 +83,9 @@ dp.include_router(continue_enroll_srcs_pvt_router)
 dp.include_router(cancel_all_services_pvt_router)
 dp.include_router(services_btn_router)
 dp.include_router(contacts_btn_router)
+dp.include_router(slots_advising_note_cb_router)
+dp.include_router(slot_selected_cb_router)
+dp.include_router(continue_slot_saving_cb_router)
 # All unhandled update router:
 dp.include_router(unhandled_update_router)
 
