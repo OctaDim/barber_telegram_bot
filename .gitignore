@@ -197,10 +197,16 @@ Media/
 
 .LocalEndpoint*
 .Notes*
-.BackUp*
 .Back*
 .ToDo*
 .Test*
-.Examples*
-TestJSON*
 Test*.py
+Example*.py
+
+zBackUp
+zExamples
+zTest
+
+/zBackUp/*
+/zExamples/*
+/zTest/*
