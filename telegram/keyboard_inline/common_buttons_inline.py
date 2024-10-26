@@ -34,7 +34,7 @@ def create_main_menu_inline_button():
 
 def create_empty_no_action_inl_btn():
     inline_button = InlineKeyboardButton(
-        text=SPECIAL_CHARACTERS.NO_ACTION_EMPTY,
+        text=SPECIAL_CHARACTERS.NO_ACTION_EMPTY_u200B,
         callback_data=NoActionEmptyCBData().pack())
 
     return inline_button
