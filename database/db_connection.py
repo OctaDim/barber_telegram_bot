@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
+from telegram.config.logging import LOGGING
 
 # The common Base metamodel used to create models in a separate modules packages
 Base = declarative_base()
@@ -10,7 +11,7 @@ Base = declarative_base()
 class DBConnection:
     def __init__(self, db_url):
         self.db_url = db_url
-        self.engine = create_engine(db_url)
+        self.engine = create_engine(url=db_url, echo=LOGGING.ORM_RAW_SQL_CONSOLE)
         self.Session = sessionmaker(bind=self.engine)
 
     def __enter__(self):
