@@ -20,7 +20,6 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_timedelta_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
-    get_handlers_stack_list,
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import get_selected_services_summary
 from utilities.numeric_utils import number_or_str_to_float
@@ -44,7 +43,10 @@ async def continue_enroll_services_btn_handler(message: Message,
 
         sleep(number_or_str_to_float(PAUSE_CONFIGS.SHORT_MSG_DELAY))
 
-        handlers_list = await get_handlers_stack_list(state=state_data)
+        handlers_list = await get_valid_list_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="handlers_stack")
+
         await execute_last_stack_handler(handlers_list=handlers_list)
 
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)

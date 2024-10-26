@@ -1,9 +1,8 @@
+from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from aiogram.fsm.context import FSMContext
-
 from telegram.params.messages import CANNOT_USE_OBSOLETE_MSG
-from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
+from telegram.telegram_utils.fsm_states_utils import get_valid_int_by_fsm_state_key, get_valid_state_data_from_fsm_state
 
 
 async def inline_keyboard_is_actual(state: FSMContext | dict,
@@ -13,18 +12,19 @@ async def inline_keyboard_is_actual(state: FSMContext | dict,
             text=CANNOT_USE_OBSOLETE_MSG,
             show_alert=True)
 
-    if isinstance(state, FSMContext):  # if state was passed as FSMContext obj
-        state_data = await state.get_data()
-    else:
-        state_data = state  # if state argument was passed as dictionary
+    state_data = await get_valid_state_data_from_fsm_state(
+        fsm_state_or_dict_from=state)
 
-    ###### Check inline keyboard is obsolete because server was restarted
+    # ##### Check inline keyboard is obsolete because server was restarted
     if not state_data and "actual_message_min_id" not in state_data:
         await message_inline_kbd_is_obsolete()
         return False
 
-    ###### Check inline keyboard is obsolete because new inl kbd was called
-    minimal_actual_msg_id = state_data.get("actual_message_min_id")
+    # ##### Check inline keyboard is obsolete because new inl kbd was called
+    minimal_actual_msg_id = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="actual_message_min_id")
+
     if callback_query.message.message_id < minimal_actual_msg_id:
         await message_inline_kbd_is_obsolete()
         return False

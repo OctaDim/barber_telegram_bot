@@ -15,6 +15,8 @@ from telegram.keyboard_inline.calendar_inl_kbd import (
     PreviousMonthCBData,
     get_enroll_srcs_calendar_inl_kbd)
 from telegram.params.messages import CHOOSE_SERVICES_DAY
+from telegram.telegram_utils.fsm_states_utils import get_valid_int_by_fsm_state_key, \
+    get_valid_timedelta_by_fsm_state_key
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
 
@@ -34,8 +36,13 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.answer()
 
-    calendar_month = state_data.get("cur_month_enroll_srcs_calendar")
-    calendar_year = state_data.get("cur_year_enroll_srcs_calendar")
+    calendar_month = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="cur_month_enroll_srcs_calendar")
+
+    calendar_year = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="cur_year_enroll_srcs_calendar")
 
     if callback_data.__prefix__ == "next_month_enroll_srcs":
         calendar_month += 1
@@ -55,7 +62,9 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         calendar_month = datetime.now().month
         calendar_year = datetime.now().year
 
-    selected_services_duration = state_data.get("selected_services_duration_state")
+    selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_duration_state")
 
     master_id = None  # For the future, to define master_id selected by user/client
     all_slots_records = get_slots_from_now_for_month(

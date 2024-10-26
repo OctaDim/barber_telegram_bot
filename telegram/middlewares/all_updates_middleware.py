@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.types import TelegramObject
 
-from telegram.telegram_utils.handlers_stack_utils import get_handlers_stack_list
+from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
 from utilities.dict_utils import (
     empty_dict_if_none)
 
@@ -31,7 +31,11 @@ class AllUpdatesMiddleware(BaseMiddleware):
         # Automatically adding handler to the handlers stack if not skip_add_handler_stack flag
         if (handler_answer is not None
                 and not handler_answer.get("skip_add_handler_stack")):
-            handlers_list = await get_handlers_stack_list(state=state_data)
+
+            handlers_list = await get_valid_list_by_fsm_state_key(
+                fsm_state_or_dict_from=state_data,
+                fsm_state_literal_key="handlers_stack")
+
             handlers_list.append(current_handler_data)
             await state_data.update_data(handlers_stack=handlers_list)
 

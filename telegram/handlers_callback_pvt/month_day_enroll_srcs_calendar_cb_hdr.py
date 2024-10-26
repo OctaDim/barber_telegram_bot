@@ -14,6 +14,9 @@ from telegram.keyboard_inline.calendar_inl_kbd import (
     MonthDayCBData,
     get_enroll_srcs_calendar_inl_kbd)
 from telegram.params.messages import CHOOSE_SERVICES_DAY
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_int_by_fsm_state_key,
+    get_valid_timedelta_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
 
@@ -31,13 +34,21 @@ async def month_day_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
     selected_day = callback_data.month_day
-    selected_month = state_data.get("cur_month_enroll_srcs_calendar")
-    selected_year = state_data.get("cur_year_enroll_srcs_calendar")
+
+    selected_month = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="cur_month_enroll_srcs_calendar")
+
+    selected_year = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="cur_year_enroll_srcs_calendar")
 
     selected_date = datetime(selected_year, selected_month, selected_day)
     await state.update_data(selected_date_enroll_srcs_calendar=selected_date)
 
-    selected_services_duration = state_data.get("selected_services_duration_state")
+    selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_duration_state")
 
     master_id = None  # For the future, to define master_id selected by user/client
     all_slots_records = get_slots_from_now_for_month(

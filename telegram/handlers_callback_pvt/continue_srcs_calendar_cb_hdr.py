@@ -24,7 +24,7 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
-    get_valid_dict_by_fsm_state_key)
+    get_valid_dict_by_fsm_state_key, get_valid_datetime_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.messages_helpers import get_selected_services_summary
 from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
@@ -64,7 +64,9 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         total_cost=total_cost_selected,
         total_duration=total_duration_selected)
 
-    selected_date = state_data.get("selected_date_enroll_srcs_calendar")
+    selected_date = await get_valid_datetime_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_date_enroll_srcs_calendar")
 
     date_text = get_date_with_month_name(
         selected_date,

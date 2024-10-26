@@ -1,17 +1,5 @@
 from aiogram.fsm.context import FSMContext
 
-from utilities.list_utils import empty_list_if_none
-
-
-async def get_handlers_stack_list(state: FSMContext | dict) -> list:
-    if isinstance(state, FSMContext):
-        state_data = await state.get_data()
-    else:
-        state_data = state
-    handlers_list = state_data.get("handlers_stack")
-    handlers_list = empty_list_if_none(orig_list=handlers_list)
-    return handlers_list
-
 
 async def execute_last_stack_handler(handlers_list: list[dict]) -> None:
     if len(handlers_list):

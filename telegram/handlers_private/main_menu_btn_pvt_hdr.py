@@ -1,17 +1,12 @@
 from aiogram import Router, F
-from aiogram.types import Message
-
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
-
-from telegram.params.messages import SELECT_ACTION
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
-
-from telegram.telegram_utils.enroll_services_utils import clear_all_enroll_services_fsm_states
-from telegram.telegram_utils.handlers_stack_utils import get_handlers_stack_list
-
+from telegram.params.messages import SELECT_ACTION
+from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
 
 return_main_menu_pvt_router = Router(name=__name__)
 return_main_menu_pvt_router.message.filter(ChatTypesFilter(["private"]))
@@ -20,8 +15,10 @@ return_main_menu_pvt_router.message.filter(ChatTypesFilter(["private"]))
 @return_main_menu_pvt_router.message(F.text == COMMON_BUTTONS_PARAMS.MAIN_MENU)
 async def return_main_menu_btn_handler(message: Message,
                                        state: FSMContext):
+    handlers_list = await get_valid_list_by_fsm_state_key(
+        fsm_state_or_dict_from=state,
+        fsm_state_literal_key="handlers_stack")
 
-    handlers_list = await get_handlers_stack_list(state=state)
     new_handlers_list = handlers_list[:1]  # List with the first item only
     await state.clear()
     await state.update_data(handlers_stack=new_handlers_list)

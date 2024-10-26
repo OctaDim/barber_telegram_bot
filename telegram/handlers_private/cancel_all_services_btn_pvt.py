@@ -12,7 +12,6 @@ from telegram.params.messages import (ALL_SERVICES_CANCELLED,
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
-    get_handlers_stack_list,
     execute_last_stack_handler,
     get_handler_answer_flag_dict)
 from utilities.numeric_utils import number_or_str_to_float
@@ -46,7 +45,10 @@ async def cancel_all_services_btn_handler(message: Message,
     delay_seconds = number_or_str_to_float(PAUSE_CONFIGS.SHORT_MSG_DELAY)
     sleep(delay_seconds)
 
-    handlers_list = await get_handlers_stack_list(state=state)
+    handlers_list = await get_valid_list_by_fsm_state_key(
+        fsm_state_or_dict_from=state,
+        fsm_state_literal_key="handlers_stack")
+
     await execute_last_stack_handler(handlers_list=handlers_list)
 
     return get_handler_answer_flag_dict(skip_add_handler_stack=True)
