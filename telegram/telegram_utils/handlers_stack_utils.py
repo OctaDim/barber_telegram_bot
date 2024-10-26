@@ -9,7 +9,7 @@ async def get_handlers_stack_list(state: FSMContext | dict) -> list:
     else:
         state_data = state
     handlers_list = state_data.get("handlers_stack")
-    handlers_list = empty_list_if_none(original_list=handlers_list)
+    handlers_list = empty_list_if_none(orig_list=handlers_list)
     return handlers_list
 
 

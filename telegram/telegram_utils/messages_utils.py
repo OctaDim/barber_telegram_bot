@@ -8,7 +8,6 @@ from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag
 
 async def inline_keyboard_is_actual(state: FSMContext | dict,
                                     callback_query: CallbackQuery):
-
     async def message_inline_kbd_is_obsolete():
         await callback_query.answer(
             text=CANNOT_USE_OBSOLETE_MSG,
