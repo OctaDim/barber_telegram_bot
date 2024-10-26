@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from database.db_connection import Base
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -9,3 +12,9 @@ class Address(Base):
 
     street: Mapped[str] = mapped_column(unique=True)
     url: Mapped[str] = mapped_column(unique=True)
+
+    active: Mapped[bool] = mapped_column(default=True)
+
+    editor_id: Mapped[Optional[int]]
+    created: Mapped[datetime] = mapped_column(default=datetime.now())
+    updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(), nullable=True)

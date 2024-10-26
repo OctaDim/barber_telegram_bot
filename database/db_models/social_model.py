@@ -1,18 +1,19 @@
 from datetime import datetime
 from typing import Optional
 
-from database.db_connection import Base
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
+from database.db_connection import Base
 
-class BreakTime(Base):
-    __tablename__ = 'break_time'
+
+class Social(Base):
+    __tablename__ = 'social'
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    start_break: Mapped[datetime]
-    end_break: Mapped[datetime]
-    master_id: Mapped[int] = mapped_column(nullable=True)
+    name: Mapped[str]
+    url: Mapped[str] = mapped_column(nullable=True, unique=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 
