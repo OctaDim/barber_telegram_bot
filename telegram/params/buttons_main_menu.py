@@ -5,9 +5,9 @@ from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 @dataclass
 class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
-    ENROLL_SERVICES = "✍️ Enroll Services"
+    ENROLL_SERVICES = "✍️ Enroll Service"
     RESERVATIONS = "✅ My Reservations"
-    OUR_SERVICES = "✂️ Our Services"
+    OUR_SERVICES = "✂️ Our Service"
     PRICES = "Prices"
     PAYMENTS = "Payments"
     ASK_ADMINISTRATOR = "❓ Ask Administrator"
@@ -19,6 +19,6 @@ class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
 @dataclass()
 class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
     LOGBOOK = 'Logbook'
-    SERVICES = "Services"
+    SERVICES = "Service"
     CONTACTS = "CONTACTS"
     WORK_TIME = "Work time"
