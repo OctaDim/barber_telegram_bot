@@ -43,13 +43,24 @@ class AllUpdatesMiddleware(BaseMiddleware):
             print("\tTEST INFO: All updates middleware. Handlers stack skipped "
                   "because skip_add_handler_stack flag was returned from handler\n")
 
-
         # Updating message min id if any updates except inline kbd
         if event.message:
             actual_message_min_id = event.message.message_id
             await state_data.update_data(actual_message_min_id=actual_message_min_id)
 
+            print("\tTEST INFO: All updates middleware. Min message id updated "
+                  "because any updates from relpy kbd (event.message)\n")
+
         # Updating message min id if inline kbd and upd_actual_msg_min_id flag
         elif event.callback_query and handler_answer.get("upd_actual_msg_min_id"):
             actual_message_min_id = event.callback_query.message.message_id
             await state_data.update_data(actual_message_min_id=actual_message_min_id)
+
+            print("\tTEST INFO: All updates middleware. Min message id updated "
+                  "because inline keyboard (event.callback_query) "
+                  "and 'upd_actual_msg_min_id' flag\n")
+
+        else:  # Skipping updating min message id
+            print("\tTEST INFO: All updates middleware. Min message id not updated"
+                  "because inline keyboard (event.callback_query), "
+                  "but not 'upd_actual_msg_min_id' flag\n")
