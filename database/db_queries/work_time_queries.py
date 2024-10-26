@@ -1,11 +1,10 @@
 import calendar
-import time
 from datetime import datetime, timedelta
 
-from database.db_engine_url import db_engine_url
-from database.db_connection import DBConnection
 from sqlalchemy import extract, func
 
+from database.db_connection import DBConnection
+from database.db_engine_url import db_engine_url
 from database.db_models.break_time_model import BreakTime
 from database.db_models.work_time_model import WorkTime
 
@@ -17,7 +16,6 @@ def create_work_time(
         time_end: datetime,
         slot_duration: timedelta,
 ):
-
     with manager as session:
         work_time = WorkTime(
             time_start=time_start,
@@ -27,7 +25,6 @@ def create_work_time(
 
         session.add(work_time)
         session.commit()
-
 
 
 def create_break_time(
@@ -80,9 +77,6 @@ def get_working_time_month_by_month_by_year(year):
             data.append(month.time_start.month)
 
         return data
-
-
-get_working_time_month_by_month_by_year(2024)
 
 
 def get_one_day(id_day):
