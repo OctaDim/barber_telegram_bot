@@ -4,6 +4,7 @@ from aiogram.filters.command import CommandStart, Command
 
 from aiogram.fsm.context import FSMContext
 
+from database.db_queries.create_user_on_start_query import create_user_on_start
 from telegram.keyboard_reply.pvt_main_menu_kbd import get_pvt_main_menu_kbd
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
@@ -16,8 +17,14 @@ on_start_router.message.filter(ChatTypesFilter(["private"]))
 
 
 @on_start_router.message(CommandStart())
-async def start_command(state: FSMContext):
+async def start_command(message: Message, state: FSMContext):
     await state.update_data(handlers_stack=None)
+    data = message.from_user.dict()
+
+    await message.answer(text=f'Добро пожаловать!',
+                         reply_markup=get_pvt_main_menu_kbd())
+
+    create_user_on_start(data=data, master=False)
 
 
 @on_start_router.message(Command(COMMANDS_PARAMS.MENU_CMD.TEXT))

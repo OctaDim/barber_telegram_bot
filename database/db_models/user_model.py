@@ -1,3 +1,4 @@
+
 from datetime import datetime
 from typing import Optional
 
@@ -22,12 +23,14 @@ class User(Base):
 
     role_id: Mapped[int] = mapped_column(
         ForeignKey("user_role.id"),
-        nullable=True)
+        nullable=False)
 
     telegram_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
 
     full_name: Mapped[Optional[str]]
+    first_name: Mapped[str]
+    last_name: Mapped[Optional[str]]
     phone_number: Mapped[Optional[str]]
     birth_date: Mapped[Optional[datetime]]
     description: Mapped[Optional[str]]

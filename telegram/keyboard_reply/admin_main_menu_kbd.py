@@ -9,7 +9,7 @@ def get_admin_main_menu_kbd():
 
     builder.button(text=MAIN_MANU_ADMIN_PARAMS.SERVICES)
     builder.button(text=MAIN_MANU_ADMIN_PARAMS.WORK_TIME)
-    builder.button(text=MAIN_MANU_ADMIN_PARAMS.LOGBOOK)
+    builder.button(text=MAIN_MANU_ADMIN_PARAMS.TIMETABLE)
 
     builder.adjust(1, 1)
 
