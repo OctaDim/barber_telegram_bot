@@ -32,10 +32,11 @@ class ContinueSlotSavingCBData(CallbackData, prefix="continue_slot_saving"):
     pass
 
 
-def get_enrollment_intervals_inl_kbd(selected_date: datetime,
-                                     enrollment_intervals: list[dict],
-                                     selected_slot_id: int = None
-                                     ) -> InlineKeyboardMarkup:
+def get_enrollment_intervals_inl_kbd(
+        selected_date: datetime,
+        enrollment_intervals: dict[dict] | dict,
+        selected_slot_id: int = None
+) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
     date_now = get_date_with_month_name(date_value=selected_date,
@@ -49,7 +50,7 @@ def get_enrollment_intervals_inl_kbd(selected_date: datetime,
         builder_inl_kbd.button(text=advising_note_text,
                                callback_data=SlotsAdvisingNoteCBData())
 
-    for interval in enrollment_intervals:
+    for interval in enrollment_intervals.values():
         first_slot_id = interval.get("first slot id")
         slot_time_start = interval.get("slot time start")
         client_time_end = interval.get("client time end")

@@ -1,16 +1,15 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from sqlalchemy import Row
 
-from database.db_queries.all_slots_from_now_for_date import get_slots_from_now_for_date
 
-
-def get_available_enrollment_intervals(slots_records: list[Row],
-                                       selected_services_duration: timedelta) -> list[dict]:
+def get_available_enrollment_intervals(
+        slots_records: list[Row],
+        selected_services_duration: timedelta) -> dict[dict] | dict:
     if not slots_records:
-        return []
+        return {}
 
-    enrollment_intervals = []
+    enrollment_intervals = {}
     all_slots_number = len(slots_records)
 
     for start_index in range(all_slots_number):
@@ -22,7 +21,9 @@ def get_available_enrollment_intervals(slots_records: list[Row],
         if temp_interval_duration >= selected_services_duration:
             time_loss = temp_interval_duration - selected_services_duration
             client_time_end = first_slot_time_end - time_loss
-            enrollment_intervals.append({
+            first_slot_id = slots_records[start_index].id
+
+            enrollment_intervals[first_slot_id] = {
                 "first slot id": slots_records[start_index].id,
                 "all slots ids": temp_interval_slots,
                 "slot time start": first_slot_time_start,
@@ -30,7 +31,7 @@ def get_available_enrollment_intervals(slots_records: list[Row],
                 "client time end": client_time_end,
                 "all slots duration": temp_interval_duration,
                 "selected services duration": selected_services_duration,
-                "slot time loss": time_loss})
+                "slot time loss": time_loss}
             continue
 
         for cur_index in range(start_index + 1, all_slots_number):
@@ -51,7 +52,9 @@ def get_available_enrollment_intervals(slots_records: list[Row],
                 if temp_interval_duration >= selected_services_duration:
                     time_loss = temp_interval_duration - selected_services_duration
                     client_time_end = temp_time_end - time_loss
-                    enrollment_intervals.append({
+                    first_slot_id = slots_records[start_index].id
+
+                    enrollment_intervals[first_slot_id] = {
                         "first slot id": slots_records[start_index].id,
                         "all slots ids": temp_interval_slots,
                         "slot time start": temp_time_start,
@@ -59,11 +62,10 @@ def get_available_enrollment_intervals(slots_records: list[Row],
                         "client time end": client_time_end,
                         "all slots duration": temp_interval_duration,
                         "selected services duration": selected_services_duration,
-                        "slot time loss": time_loss})
+                        "slot time loss": time_loss}
                     break
 
     return enrollment_intervals
-
 
 # ##################### TEST CODE ######################################
 # ######################################################################

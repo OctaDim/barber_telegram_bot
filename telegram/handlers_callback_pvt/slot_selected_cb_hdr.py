@@ -12,7 +12,7 @@ from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     get_enrollment_intervals_inl_kbd)
 from telegram.params.messages import SELECT_ENROLLMENT_SLOTS
 from telegram.telegram_utils.fsm_states_utils import (
-    get_valid_list_by_fsm_state_key)
+    get_valid_dict_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
 
@@ -33,7 +33,7 @@ async def slot_selected_cb_hdr(callback_query: CallbackQuery,
 
     interval_first_slot_id = callback_data.first_slot_id
 
-    enrollment_intervals = await get_valid_list_by_fsm_state_key(
+    enrollment_intervals = await get_valid_dict_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="enrollment_intervals_state")
 

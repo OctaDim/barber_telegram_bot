@@ -9,8 +9,9 @@ from database.db_queries_hepers.enrollment_intervals_for_date import (
     get_available_enrollment_intervals)
 from database.db_queries_hepers.remove_intervals_by_time_loss import (
     remove_intervals_over_time_loss_limit)
-from telegram.config.configs import (LANGUAGE_CONFIGS,
-                                     DB_SLOTS_CONFIGS)
+from telegram.config.configs import (
+    LANGUAGE_CONFIGS,
+    DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.keyboard_inline.calendar_inl_kbd import MonthContinueCBData
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
@@ -24,7 +25,7 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
-    get_valid_dict_by_fsm_state_key, get_valid_datetime_by_fsm_state_key)
+    get_valid_datetime_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
 from telegram.telegram_utils.messages_helpers import get_selected_services_summary
 from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual

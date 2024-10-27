@@ -1,15 +1,13 @@
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery
 
+from database.db_queries.interval_slot_by_id_query import get_worktime_slot_by_id
 from telegram.config.configs import LANGUAGE_CONFIGS
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
-from telegram.params.calendar_icons import CALENDAR_ICONS
-from telegram.params.intervals_slots_icons import SLOT_ICONS
-from telegram.params.messages_inserts import MSG
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -43,11 +41,11 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
 
     selected_date = state_data.get("selected_date_enroll_srcs_calendar")
 
-    interval_first_slot_id = await get_valid_int_by_fsm_state_key(
+    selected_interval_first_slot_id = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_interval_first_slot_id")
 
-    enrollment_intervals = await get_valid_list_by_fsm_state_key(
+    all_enrollment_intervals = await get_valid_dict_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="enrollment_intervals_state")
 
@@ -67,13 +65,26 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
-    for interval_dict in enrollment_intervals:
-        for key, value in interval_dict.items():
-            print("#####", key, "#####", value)
-        print()
+    # for cur_interval in all_enrollment_intervals:
+    #     for key, value in cur_interval.items():
+    #         print("#####", key, "#####", value)
+    #     print()
 
-    for interval_dict in enrollment_intervals:
-        if interval_dict.get("first slot id") == interval_first_slot_id:
+    for cur_interval in all_enrollment_intervals:
+        all_selected_slots_ids = []
+        if cur_interval.get("first slot id") == selected_interval_first_slot_id:
+            all_selected_slots_ids = cur_interval.get("all slots ids")
+
+        for selected_slot_id in all_selected_slots_ids:
+            slot_object = get_worktime_slot_by_id(selected_slot_id)
+            if (slot_object
+                    and slot_object.active is True
+                    and slot_object.reserved is True):
+                reserved_slot_new_data = {
+                    "reserved": True
+                }
+                # slot_object(reserved = True)
+
             date_text = get_date_with_month_name(
                 selected_date,
                 language=LANGUAGE_CONFIGS.LANGUAGE)
@@ -92,12 +103,12 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             #     print(cur_selected_service.get(""))
             #     print()
 
-            slot_time_start = interval_dict.get("slot time start")
+            slot_time_start = cur_interval.get("slot time start")
             slot_time_start_text = get_time_flex_from_datetime(
                 date_value=slot_time_start,
                 language=LANGUAGE_CONFIGS.LANGUAGE)
 
-            client_time_end = interval_dict.get("client time end")
+            client_time_end = cur_interval.get("client time end")
             client_time_end_text = get_time_flex_from_datetime(
                 date_value=client_time_end,
                 language=LANGUAGE_CONFIGS.LANGUAGE)
@@ -110,6 +121,8 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
 
             await message.answer(text=complete_summary_text)
 
+    # for
+
     # await state.update_data(
     #     enrollment_intervals_state=filtered_intervals_dict)
 
@@ -118,17 +131,17 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
     return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
     # filtered_intervals_dict = {}
-    # for interval in enrollment_intervals:
-    #     first_slot_id = interval.get("first slot id")
+    # for cur_interval in all_enrollment_intervals:
+    #     first_slot_id = cur_interval.get("first slot id")
     #     filtered_intervals_dict[first_slot_id] = {
-    #         "first slot id": interval.get("first slot id"),
-    #         "all slots ids": interval.get("all slots ids"),
-    #         "slot time start": interval.get("slot time start"),
-    #         "slot time end": interval.get("slot time end"),
-    #         "client time end": interval.get("client time end"),
-    #         "all slots duration": interval.get("all slots duration"),
-    #         "selected services duration": interval.get("selected services duration"),
-    #         "slot time loss": interval.get("slot time loss")}
+    #         "first slot id": cur_interval.get("first slot id"),
+    #         "all slots ids": cur_interval.get("all slots ids"),
+    #         "slot time start": cur_interval.get("slot time start"),
+    #         "slot time end": cur_interval.get("slot time end"),
+    #         "client time end": cur_interval.get("client time end"),
+    #         "all slots duration": cur_interval.get("all slots duration"),
+    #         "selected services duration": cur_interval.get("selected services duration"),
+    #         "slot time loss": cur_interval.get("slot time loss")}
     #
     # await state.update_data(
     #     enrollment_intervals_state=filtered_intervals_dict)
