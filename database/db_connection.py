@@ -3,8 +3,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from telegram.config.logging import LOGGING
+from telegram.params.user_role_text import USER_ROLES_ENUM
 
-# The common Base metamodel used to create models in a separate modules packages
 Base = declarative_base()
 
 
@@ -19,7 +19,19 @@ class DBConnection:
         return self.session
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        return self.session.close()
+        self.session.close()
 
     def create_tables(self, base: DeclarativeMeta):
         base.metadata.create_all(self.engine, checkfirst=True)
+        self._create_user_roles(base)
+
+    def _create_user_roles(self, base: DeclarativeMeta):
+        UserRole = base.registry._class_registry['UserRole']
+
+        with self as session:
+            roles = USER_ROLES_ENUM.roles
+
+            for role_name in roles:
+                session.add(UserRole(name=role_name))
+
+            session.commit()

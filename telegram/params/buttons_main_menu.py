@@ -18,7 +18,7 @@ class MAIN_MENU_BUTTONS_PARAMS(COMMON_BUTTONS_PARAMS):
 
 @dataclass()
 class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
-    LOGBOOK = 'Logbook'
+    TIMETABLE = 'Timetable'
     SERVICES = "Service"
     CONTACTS = "CONTACTS"
     WORK_TIME = "Work time"
