@@ -87,10 +87,10 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         return get_handler_answer_flag_dict(upd_actual_msg_min_id=True,
                                             skip_add_handler_stack=True)
 
-    if DB_SLOTS_CONFIGS.LIMIT_SLOTS_BY_TIME_LOSS:
+    if DB_SLOTS_CONFIGS.HIDE_SLOTS_MORE_TIME_LOSS_LIMIT:
         remove_intervals_over_time_loss_limit(
             enrollment_intervals=enrollment_intervals,
-            time_loss_max_limit=DB_SLOTS_CONFIGS.SLOT_TIME_LOSS_MAX_LIMIT)
+            time_loss_max_limit=DB_SLOTS_CONFIGS.TIME_LOSS_MAX_LIMIT_FOR_SLOTS)
 
     await message.answer(
         text=f"{CALENDAR_ICONS.CALENDAR} {MSG.SELECTED_DATE}:\n"
