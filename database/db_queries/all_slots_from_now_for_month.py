@@ -13,7 +13,10 @@ from utilities.decorators_global import execution_time_decorator
                           note="All slots_records from now for month",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
 def get_slots_from_now_for_month(year: int, month: int,
-                                 master_id: int = None) -> list[Row]:
+                                 master_id: int = None,
+                                 reserved: bool = False,
+                                 active: bool = True,
+                                 admin_only: bool = False) -> list[Row]:
     with (DBConnection(db_url=db_engine_url) as session):
         slot_records_for_month = session.query(
             cast(extract(
@@ -35,8 +38,9 @@ def get_slots_from_now_for_month(year: int, month: int,
             WorkTime.time_start > datetime.now(),
             extract("YEAR", WorkTime.time_start) == year,
             extract("MONTH", WorkTime.time_start) == month,
-            WorkTime.active.is_(True),
-            WorkTime.reserved.is_(False),
+            WorkTime.active.is_(active),
+            WorkTime.reserved.is_(reserved),
+            WorkTime.admin_only.is_(admin_only),
             WorkTime.master_id == master_id
         ).order_by(
             "day_of_month",

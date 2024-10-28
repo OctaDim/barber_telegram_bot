@@ -13,7 +13,10 @@ from utilities.decorators_global import execution_time_decorator
                           note="All slots_records from now for date",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
 def get_slots_from_now_for_date(required_date: date,
-                                master_id: int = None) -> list[Row]:
+                                master_id: int = None,
+                                reserved: bool = False,
+                                active: bool = True,
+                                admin_only: bool = False) -> list[Row]:
     with (DBConnection(db_url=db_engine_url) as session):
         slot_records_for_date = session.query(
             WorkTime.id,
@@ -34,8 +37,9 @@ def get_slots_from_now_for_date(required_date: date,
         ).filter(
             WorkTime.time_start >= datetime.now(),
             func.date(WorkTime.time_start) == required_date,
-            WorkTime.active.is_(True),
-            WorkTime.reserved.is_(False),
+            WorkTime.active.is_(active),
+            WorkTime.reserved.is_(reserved),
+            WorkTime.admin_only.is_(admin_only),
             WorkTime.master_id == master_id
         ).order_by(
             "time_start",
