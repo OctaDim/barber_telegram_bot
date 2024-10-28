@@ -1,3 +1,5 @@
+from typing import Optional
+
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
 from database.db_models.address_model import Address
@@ -9,7 +11,7 @@ from utilities.decorators_global import execution_time_decorator
 
 @execution_time_decorator(in_seconds=True, note="Social, phones, address",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
-def get_company_contacts(company_id: int = None) -> dict | None:
+def get_company_contacts(company_id: int = None) -> Optional[dict]:
     with DBConnection(db_url=db_engine_url) as session:
         if not company_id:
             socials = session.query(Social.name, Social.url).all()
