@@ -52,19 +52,22 @@ class AllUpdatesMiddleware(BaseMiddleware):
             actual_message_min_id = event.message.message_id
             await state_data.update_data(actual_message_min_id=actual_message_min_id)
 
-            print("\tTEST INFO: All updates middleware. Min message id updated "
-                  "because any updates from relpy kbd (event.message)\n")
+            print(f"\tTEST INFO: All updates middleware. Min message id updated "
+                  f"because any updates from relpy kbd (event.message).\n"
+                  f"\tTEST INFO: actual_message_min_id = {actual_message_min_id}\n")
 
         # Updating message min id if inline kbd and upd_actual_msg_min_id flag
         elif event.callback_query and handler_answer.get("upd_actual_msg_min_id"):
             actual_message_min_id = event.callback_query.message.message_id
             await state_data.update_data(actual_message_min_id=actual_message_min_id)
 
-            print("\tTEST INFO: All updates middleware. Min message id updated "
-                  "because inline keyboard (event.callback_query) "
-                  "and 'upd_actual_msg_min_id' flag\n")
+            print(f"\tTEST INFO: All updates middleware. Min message id updated "
+                  f"because inline keyboard (event.callback_query) "
+                  f"and 'upd_actual_msg_min_id' flag\n"
+                  f"\tTEST INFO: actual_message_min_id = {actual_message_min_id}\n")
 
         else:  # Skipping updating min message id
-            print("\tTEST INFO: All updates middleware. Min message id not updated"
-                  "because inline keyboard (event.callback_query), "
-                  "but not 'upd_actual_msg_min_id' flag\n")
+            data = await state_data.update_data()
+            actual_message_min_id = data.get("actual_message_min_id")
+            print(f"\tTEST INFO: All updates middleware. Min message id not updated\n"
+                  f"\tTEST INFO: actual_message_min_id = {actual_message_min_id}\n")
