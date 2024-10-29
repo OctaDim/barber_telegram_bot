@@ -1,27 +1,45 @@
+from datetime import timedelta
+
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.interval_slot_by_id_query import get_worktime_slot_by_id
-from telegram.config.configs import LANGUAGE_CONFIGS
+from database.db_connection import DBConnection
+from database.db_engine_url import db_engine_url
+from database.db_models.work_time_model import WorkTime
+from database.db_queries.get_user_obj_by_telegram_id import (
+    get_user_obj_by_telegram_id)
+from database.db_queries.worktime_slot_by_id_query import (
+    get_worktime_slot_by_id)
+from database.db_utilities.model_object_update import (
+    update_object_without_db_commit)
+from telegram.config.configs import (
+    LANGUAGE_CONFIGS,
+    DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import ChatTypesFilter
+from telegram.handlers_private.main_menu_btn_pvt_hdr import (
+    return_main_menu_btn_handler)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
+from telegram.params.messages import SLOT_ALREADY_TAKEN
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
-    get_valid_timedelta_by_fsm_state_key, get_valid_int_by_fsm_state_key)
+    get_valid_timedelta_by_fsm_state_key,
+    get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
-    get_selected_services_summary, get_summary_services_with_slot)
+    get_selected_services_summary,
+    get_summary_services_with_slot)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 from utilities.calendar_utils import (
     get_date_with_month_name,
     get_time_flex_from_datetime)
+from utilities.numeric_utils import number_or_str_to_integer
 
 continue_slot_saving_cb_router = Router(name=__name__)
 continue_slot_saving_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -36,112 +54,200 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
-    await callback_query.answer()
     message = callback_query.message
 
-    selected_date = state_data.get("selected_date_enroll_srcs_calendar")
+    current_user_telegram_id = callback_query.from_user.dict().get("id")
+    current_user_obj = get_user_obj_by_telegram_id(
+        telegram_id=current_user_telegram_id)
+    current_user_id = current_user_obj.id
 
     selected_interval_first_slot_id = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_interval_first_slot_id")
 
-    all_enrollment_intervals = await get_valid_dict_by_fsm_state_key(
+    enrollment_intervals = await get_valid_dict_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="enrollment_intervals_state")
 
-    selected_services_ids = await get_valid_list_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_services_ids_state")
+    selected_interval = enrollment_intervals.get(
+        selected_interval_first_slot_id)
+    selected_slots_ids = selected_interval.get("all slots ids")
 
-    all_services_info = await get_valid_dict_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="all_services_info_state")
+    selected_slots_ids_except_last_id = selected_slots_ids[:-1]
+    last_selected_slot_id = selected_slots_ids[-1]
 
-    selected_services_cost = await get_valid_float_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_services_cost_state")
+    last_slot_time_loss = selected_interval.get("slot time loss")
 
-    services_services_duration = await get_valid_timedelta_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_services_duration_state")
+    with (DBConnection(db_url=db_engine_url) as session):
+        for slot_id in selected_slots_ids:
+            slot_obj = get_worktime_slot_by_id(slot_id)
 
-    # for cur_interval in all_enrollment_intervals:
-    #     for key, value in cur_interval.items():
-    #         print("#####", key, "#####", value)
-    #     print()
+            if not slot_obj or slot_obj.reserved or not slot_obj.active:
+                await message.answer(text=SLOT_ALREADY_TAKEN)
+                session.rollback()
 
-    for cur_interval in all_enrollment_intervals:
-        all_selected_slots_ids = []
-        if cur_interval.get("first slot id") == selected_interval_first_slot_id:
-            all_selected_slots_ids = cur_interval.get("all slots ids")
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
+                return
 
-        for selected_slot_id in all_selected_slots_ids:
-            slot_object = get_worktime_slot_by_id(selected_slot_id)
-            if (slot_object
-                    and slot_object.active is True
-                    and slot_object.reserved is True):
-                reserved_slot_new_data = {
-                    "reserved": True
-                }
-                # slot_object(reserved = True)
+            if (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
+                    and slot_obj.admin_only):
+                await message.answer(text=SLOT_ALREADY_TAKEN)
+                session.rollback()
 
-            date_text = get_date_with_month_name(
-                selected_date,
-                language=LANGUAGE_CONFIGS.LANGUAGE)
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
+                return
 
-            summary_text = get_selected_services_summary(
-                services_count=len(selected_services_ids),
-                total_cost=selected_services_cost,
-                total_duration=services_services_duration)
+            # #################################################################
+            # Ordinary updating all slots except last slot with optional time loss
+            # #################################################################
+            if slot_id in selected_slots_ids_except_last_id:
+                update_data = {
+                    "client_user_id": current_user_id,
+                    "reserved": True,
+                    "editor_id": current_user_id}
 
-            for key, value in all_services_info.items():
-                print("#####", key, "#####", value)
-            print()
+                slot_obj = update_object_without_db_commit(
+                    model_object=slot_obj,
+                    new_update_data=update_data)
 
-            # for service_id in selected_services_ids:
-            #     cur_selected_service = all_services_info.get(service_id)
-            #     print(cur_selected_service.get(""))
-            #     print()
+                session.merge(slot_obj)
+                print(f"\tTEST INFO: Ordinary updating all slots "
+                      "(except last slot with optional time loss)\n")
 
-            slot_time_start = cur_interval.get("slot time start")
-            slot_time_start_text = get_time_flex_from_datetime(
-                date_value=slot_time_start,
-                language=LANGUAGE_CONFIGS.LANGUAGE)
+            # #################################################################
+            # Ordinary updating last slot if not time loss (effective slot)
+            # #################################################################
+            if slot_id == last_selected_slot_id and not last_slot_time_loss:
+                update_data = {
+                    "client_user_id": current_user_id,
+                    "reserved": True,
+                    "editor_id": current_user_id}
 
-            client_time_end = cur_interval.get("client time end")
-            client_time_end_text = get_time_flex_from_datetime(
-                date_value=client_time_end,
-                language=LANGUAGE_CONFIGS.LANGUAGE)
+                slot_obj = update_object_without_db_commit(
+                    model_object=slot_obj,
+                    new_update_data=update_data)
 
-            complete_summary_text = get_summary_services_with_slot(
-                date_text=date_text,
-                summary_text=summary_text,
-                slot_time_start=slot_time_start_text,
-                slot_time_end=client_time_end_text)
+                session.merge(slot_obj)
+                print(f"\tTEST INFO: Ordinary updating last slot "
+                      f"if not time loss (slot is very effective)\n")
 
-            await message.answer(text=complete_summary_text)
+            time_loss_min_limit = number_or_str_to_integer(
+                DB_SLOTS_CONFIGS.MIN_TIME_LOSS_WHEN_CREATING_NEW_SLOT,
+                positive=True)
+            time_loss_min_limit = timedelta(minutes=time_loss_min_limit)
 
-    # for
+            # #################################################################
+            # Ordinary updating last slot (because tyme loss is less min limit)
+            # #################################################################
+            if (slot_id == last_selected_slot_id and last_slot_time_loss
+                    and last_slot_time_loss < time_loss_min_limit):
+                update_data = {
+                    "client_user_id": current_user_id,
+                    "reserved": True,
+                    "editor_id": current_user_id}
 
-    # await state.update_data(
-    #     enrollment_intervals_state=filtered_intervals_dict)
+                slot_obj = update_object_without_db_commit(
+                    model_object=slot_obj,
+                    new_update_data=update_data)
+                session.merge(slot_obj)
+                print(f"\tTEST INFO: Ordinary updating last slot "
+                      f"if not time loss (slot is very effective slot)\n")
 
-    await state.clear()
+            # #################################################################
+            # Ordinary updating last slot if time loss, but NOT make split flag
+            # #################################################################
+            if (slot_id == last_selected_slot_id and last_slot_time_loss
+                    and last_slot_time_loss >= time_loss_min_limit
+                    and not DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
+                update_data = {
+                    "client_user_id": current_user_id,
+                    "reserved": True,
+                    "editor_id": current_user_id}
 
-    return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                slot_obj = update_object_without_db_commit(
+                    model_object=slot_obj,
+                    new_update_data=update_data)
+                session.merge(slot_obj)
+                print(f"\tTEST INFO: Ordinary updating last slot "
+                      f"if not time loss (slot is very effective slot)\n")
 
-    # filtered_intervals_dict = {}
-    # for cur_interval in all_enrollment_intervals:
-    #     first_slot_id = cur_interval.get("first slot id")
-    #     filtered_intervals_dict[first_slot_id] = {
-    #         "first slot id": cur_interval.get("first slot id"),
-    #         "all slots ids": cur_interval.get("all slots ids"),
-    #         "slot time start": cur_interval.get("slot time start"),
-    #         "slot time end": cur_interval.get("slot time end"),
-    #         "client time end": cur_interval.get("client time end"),
-    #         "all slots duration": cur_interval.get("all slots duration"),
-    #         "selected services duration": cur_interval.get("selected services duration"),
-    #         "slot time loss": cur_interval.get("slot time loss")}
-    #
-    # await state.update_data(
-    #     enrollment_intervals_state=filtered_intervals_dict)
+            # #################################################################
+            # Last slot splitting into effective parts (time loss and make split flag)
+            # #################################################################
+            if (slot_id == last_selected_slot_id and last_slot_time_loss
+                    and last_slot_time_loss >= time_loss_min_limit
+                    and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
+                client_time_end = selected_interval.get("client time end")
+                last_slot_obj = get_worktime_slot_by_id(last_selected_slot_id)
+
+                new_client_reserved_last_slot_obj = WorkTime(
+                    master_id=last_slot_obj.master_id,
+                    client_user_id=current_user_id,
+                    time_start=last_slot_obj.time_start,
+                    time_end=client_time_end,
+                    slot_duration=client_time_end - last_slot_obj.time_start,
+                    reserved=True,
+                    admin_only=False,
+                    editor_id=current_user_id)
+
+                new_slot_obj_from_loss_time = WorkTime(
+                    master_id=last_slot_obj.master_id,
+                    client_user_id=None,
+                    time_start=client_time_end,
+                    time_end=last_slot_obj.time_end,
+                    slot_duration=last_slot_obj.time_end - client_time_end,
+                    reserved=False,
+                    admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
+                    editor_id=current_user_id)
+
+                session.add(new_client_reserved_last_slot_obj)
+                session.add(new_slot_obj_from_loss_time)
+                session.delete(last_slot_obj)
+                print(f"\tTEST INFO: Last slot splitting into reserved part"
+                      f" and effective free part because time loss\n")
+        session.commit()
+
+        selected_date = state_data.get("selected_date_enroll_srcs_calendar")
+        selected_services_ids = await get_valid_list_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="selected_services_ids_state")
+
+        selected_services_cost = await get_valid_float_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="selected_services_cost_state")
+
+        selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="selected_services_duration_state")
+
+        date_text = get_date_with_month_name(
+            selected_date,
+            language=LANGUAGE_CONFIGS.LANGUAGE)
+
+        summary_text = get_selected_services_summary(
+            services_count=len(selected_services_ids),
+            total_cost=selected_services_cost,
+            total_duration=selected_services_duration)
+
+        slot_time_start = selected_interval.get("slot time start")
+        slot_time_start_text = get_time_flex_from_datetime(
+            date_value=slot_time_start,
+            language=LANGUAGE_CONFIGS.LANGUAGE)
+
+        client_time_end = selected_interval.get("client time end")
+        client_time_end_text = get_time_flex_from_datetime(
+            date_value=client_time_end,
+            language=LANGUAGE_CONFIGS.LANGUAGE)
+
+        complete_summary_text = get_summary_services_with_slot(
+            date_text=date_text,
+            summary_text=summary_text,
+            slot_time_start=slot_time_start_text,
+            slot_time_end=client_time_end_text)
+
+        await message.answer(text=complete_summary_text)
+
+        await state.clear()
+        return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
