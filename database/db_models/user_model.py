@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
@@ -25,7 +25,7 @@ class User(Base):
         ForeignKey("user_role.id"),
         nullable=False)
 
-    telegram_id: Mapped[int] = mapped_column(nullable=False, unique=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
 
     full_name: Mapped[Optional[str]]

@@ -26,10 +26,14 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_float_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
     get_valid_datetime_by_fsm_state_key)
-from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
-from telegram.telegram_utils.messages_helpers import get_selected_services_summary
-from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
+from telegram.telegram_utils.handlers_stack_utils import (
+    get_handler_answer_flag_dict)
+from telegram.telegram_utils.messages_helpers import (
+    get_selected_services_summary)
+from telegram.telegram_utils.messages_utils import (
+    inline_keyboard_is_actual)
 from utilities.calendar_utils import get_date_with_month_name
+from utilities.numeric_utils import number_or_str_to_integer
 
 continue_enroll_srcs_calendar_cb_router = Router(name=__name__)
 continue_enroll_srcs_calendar_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -87,10 +91,14 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         return get_handler_answer_flag_dict(upd_actual_msg_min_id=True,
                                             skip_add_handler_stack=True)
 
-    if DB_SLOTS_CONFIGS.HIDE_SLOTS_MORE_TIME_LOSS_LIMIT:
+    if DB_SLOTS_CONFIGS.HIDE_SLOTS_MORE_TIME_LOSS_MAX_LIMIT:
+        time_loss_max_limit = number_or_str_to_integer(
+            DB_SLOTS_CONFIGS.TIME_LOSS_MAX_LIMIT_FOR_HIDE_SLOTS,
+            positive=True)
+
         remove_intervals_over_time_loss_limit(
             enrollment_intervals=enrollment_intervals,
-            time_loss_max_limit=DB_SLOTS_CONFIGS.TIME_LOSS_MAX_LIMIT_FOR_SLOTS)
+            time_loss_max_limit=time_loss_max_limit)
 
     await message.answer(
         text=f"{CALENDAR_ICONS.CALENDAR} {MSG.SELECTED_DATE}:\n"
