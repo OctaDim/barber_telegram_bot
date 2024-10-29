@@ -16,19 +16,24 @@ class CALENDAR:
 
 @dataclass
 class DB_SLOTS_CONFIGS:
-    LIMIT_SLOTS_BY_TIME_LOSS: bool = False
-    SLOT_TIME_LOSS_MAX_LIMIT: Union[int, None, 0] = 90  # In minutes. None or 0 to switch off
+    HIDE_SLOTS_MORE_TIME_LOSS_MAX_LIMIT: bool = False
+    # 0 - hide all slots with time loss, very big (99999) - show all slots with time loss
+    TIME_LOSS_MAX_LIMIT_FOR_HIDE_SLOTS: Union[int, 0] = 60  # In minutes
 
+    MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS: bool = True
+    NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY: bool = True
+    # 0 - all slots will be split anyway, very big (99999) - no one slot will be split anyway
+    MIN_TIME_LOSS_WHEN_CREATING_NEW_SLOT: Union[int, 0] = 15  # In minutes
 
 @dataclass
 class SLOTS_CONFIGS:
     SHOW_SLOTS_ADVISES: bool = True
-    MOST_ADVISED_TIME_LOSS_LIMIT: Union[int, None, 0] = 15  # In minutes. None or 0 to switch off
-    VERY_ADVISED_TIME_LOSS_LIMIT: Union[int, None, 0] = 30  # In minutes. None or 0 to switch off
-    ADVISED_TIME_LOSS_LIMIT: Union[int, None, 0] = 45  # In minutes. None or 0 to switch off
-    UNADVISED_TIME_LOSS_LIMIT: Union[int, None, 0] = 60  # In minutes. None or 0 to switch off
-    # All others. Very big number should be, ex. 99999
-    VERY_UNADVISED_TIME_LOSS_LIMIT: Union[int, None, 0] = 999999  # In minutes. None or 0 to switch off
+    MOST_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 15  # In minutes. 0 to switch off diapason
+    VERY_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 30  # In minutes. 0 to switch off diapason
+    ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 45  # In minutes. 0 to switch off diapason
+    UNADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 60  # In minutes. or 0 to switch off diapason
+    # Very big number (99999) - all other slots except those diapasons above
+    VERY_UNADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 99999  # In minutes. 0 to switch off
 
 
 @dataclass
