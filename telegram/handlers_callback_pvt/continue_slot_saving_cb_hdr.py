@@ -12,17 +12,16 @@ from database.db_queries.get_user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
     get_worktime_slot_by_id)
-from database.db_utilities.model_object_update import (
-    update_object_without_db_commit)
+from database.db_utilities.merge_object_transaction_update import (
+    merge_obj_to_session_group_update)
+from database.db_utilities.slot_taken_msg_rollback_main_menu import (
+    slot_taken_msg_rollback_main_menu)
 from telegram.config.configs import (
     LANGUAGE_CONFIGS,
     DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import ChatTypesFilter
-from telegram.handlers_private.main_menu_btn_pvt_hdr import (
-    return_main_menu_btn_handler)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
-from telegram.params.messages import SLOT_ALREADY_TAKEN
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -75,44 +74,36 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
 
     selected_slots_ids_except_last_id = selected_slots_ids[:-1]
     last_selected_slot_id = selected_slots_ids[-1]
-
     last_slot_time_loss = selected_interval.get("slot time loss")
 
+    # Slot group saving and updating Transaction start
     with (DBConnection(db_url=db_engine_url) as session):
         for slot_id in selected_slots_ids:
             slot_obj = get_worktime_slot_by_id(slot_id)
 
             if not slot_obj or slot_obj.reserved or not slot_obj.active:
-                await message.answer(text=SLOT_ALREADY_TAKEN)
-                session.rollback()
-
-                # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
-                return
+                await slot_taken_msg_rollback_main_menu(
+                    message=message, session=session, state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             if (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
                     and slot_obj.admin_only):
-                await message.answer(text=SLOT_ALREADY_TAKEN)
-                session.rollback()
+                await slot_taken_msg_rollback_main_menu(
+                    message=message, session=session, state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
-                # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
-                return
+            new_update_data = {"client_user_id": current_user_id,
+                               "reserved": True,
+                               "editor_id": current_user_id}
 
             # #################################################################
             # Ordinary updating all slots except last slot with optional time loss
             # #################################################################
             if slot_id in selected_slots_ids_except_last_id:
-                update_data = {
-                    "client_user_id": current_user_id,
-                    "reserved": True,
-                    "editor_id": current_user_id}
-
-                slot_obj = update_object_without_db_commit(
-                    model_object=slot_obj,
-                    new_update_data=update_data)
-
-                session.merge(slot_obj)
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    session=session)
                 print(f"\tTEST INFO: Ordinary updating all slots "
                       "(except last slot with optional time loss)\n")
 
@@ -120,21 +111,15 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             # Ordinary updating last slot if not time loss (effective slot)
             # #################################################################
             if slot_id == last_selected_slot_id and not last_slot_time_loss:
-                update_data = {
-                    "client_user_id": current_user_id,
-                    "reserved": True,
-                    "editor_id": current_user_id}
-
-                slot_obj = update_object_without_db_commit(
-                    model_object=slot_obj,
-                    new_update_data=update_data)
-
-                session.merge(slot_obj)
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    session=session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective)\n")
 
             time_loss_min_limit = number_or_str_to_integer(
-                DB_SLOTS_CONFIGS.MIN_TIME_LOSS_WHEN_CREATING_NEW_SLOT,
+                DB_SLOTS_CONFIGS.MIN_TIME_LOSS_FOR_CREATING_NEW_SLOT,
                 positive=True)
             time_loss_min_limit = timedelta(minutes=time_loss_min_limit)
 
@@ -143,15 +128,10 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             # #################################################################
             if (slot_id == last_selected_slot_id and last_slot_time_loss
                     and last_slot_time_loss < time_loss_min_limit):
-                update_data = {
-                    "client_user_id": current_user_id,
-                    "reserved": True,
-                    "editor_id": current_user_id}
-
-                slot_obj = update_object_without_db_commit(
-                    model_object=slot_obj,
-                    new_update_data=update_data)
-                session.merge(slot_obj)
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    session=session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -161,15 +141,10 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             if (slot_id == last_selected_slot_id and last_slot_time_loss
                     and last_slot_time_loss >= time_loss_min_limit
                     and not DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
-                update_data = {
-                    "client_user_id": current_user_id,
-                    "reserved": True,
-                    "editor_id": current_user_id}
-
-                slot_obj = update_object_without_db_commit(
-                    model_object=slot_obj,
-                    new_update_data=update_data)
-                session.merge(slot_obj)
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    session=session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -207,7 +182,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 session.delete(last_slot_obj)
                 print(f"\tTEST INFO: Last slot splitting into reserved part"
                       f" and effective free part because time loss\n")
-        session.commit()
+        session.commit()  # Slot group saving and updating Transaction end
 
         selected_date = state_data.get("selected_date_enroll_srcs_calendar")
         selected_services_ids = await get_valid_list_by_fsm_state_key(
