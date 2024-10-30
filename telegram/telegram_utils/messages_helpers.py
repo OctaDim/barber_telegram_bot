@@ -7,6 +7,7 @@ from telegram.params.calendar_icons import CALENDAR_ICONS
 from telegram.params.intervals_slots_icons import SLOT_ICONS
 from telegram.params.messages import BETTER_SLOTS_TO_CHOOSE, CHOOSE_OTHER_SLOTS, SLOTS_RECOMMENDATIONS
 from telegram.params.messages_inserts import MSG
+from telegram.params.messages_multiline import SELECTED_SERVICES_CONGRATS
 from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
 
 
@@ -139,11 +140,12 @@ def get_summary_services_with_slot(date_text: str,
                                    slot_time_start: str,
                                    slot_time_end: str) -> str:
     complete_text = (
-        f"{CALENDAR_ICONS.CALENDAR} {MSG.SELECTED_DATE}:\n"
+        f"{SELECTED_SERVICES_CONGRATS}\n\n"
+        f"{CALENDAR_ICONS.CALENDAR} <b>{MSG.SELECTED_DATE}:</b>\n"
         f"{date_text}\n\n"
         f"{summary_text}\n\n"
-        f"{MSG.SELECTED_INTERVAL_SLOT}:\n"
-        f"{SLOT_ICONS.TIME_SLOT_START_ICON} "
-        f"{slot_time_start}  -  {slot_time_end} "
+        f"<b>{MSG.SELECTED_INTERVAL_SLOT}:</b>\n"
+        f"{SLOT_ICONS.TIME_SLOT_START_ICON}  "
+        f"{slot_time_start}  -  {slot_time_end}  "
         f"{SLOT_ICONS.TIME_SLOT_END_ICON}")
     return complete_text
