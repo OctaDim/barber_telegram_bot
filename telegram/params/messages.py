@@ -26,4 +26,4 @@ NO_FREE_ENROLLMENT_SLOTS = "ℹ️ No free time slots. Change selected services 
 SLOTS_RECOMMENDATIONS = "ℹ️ Slot recommendations"
 BETTER_SLOTS_TO_CHOOSE = "Highly rated slots, the best ones to choose from"
 CHOOSE_OTHER_SLOTS = "Available slots to choose, but it's better to select other slots with higher ratings."
-SLOT_ALREADY_TAKEN = "⚠️ Sorry, someone has already booked the time slot before you. Start from the beginning"
+SLOT_ALREADY_TAKEN = "⚠️ Sorry, someone else caught the slot before you. Please, start from the beginning"
