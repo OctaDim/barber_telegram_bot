@@ -6,10 +6,10 @@ from telegram.params.messages import SLOT_ALREADY_TAKEN
 
 
 async def slot_taken_msg_rollback_main_menu(message: Message,
-                                            session,
+                                            ongoing_session,
                                             state: FSMContext) -> None:
     await message.answer(text=SLOT_ALREADY_TAKEN)
-    session.rollback()
+    ongoing_session.rollback()
 
     # Call the same functionality handler of the reply keyboard button
     await return_main_menu_btn_handler(message=message, state=state)
