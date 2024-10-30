@@ -19,7 +19,7 @@ def get_slots_from_now_for_month(year: int, month: int,
                                  active: bool = True,
                                  admin_only: bool = False
                                  ) -> Optional[list[WorkTime]]:
-    with (DBConnection(db_url=db_engine_url) as session):
+    with DBConnection(db_url=db_engine_url) as session:
         slot_records_for_month = session.query(
             cast(extract(
                 "DAY", WorkTime.time_start), Integer).label("day_of_month"),
