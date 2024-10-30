@@ -14,6 +14,7 @@ from database.db_queries.get_user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
     get_worktime_slot_by_id_in_session)
+from database.db_utilities.add_service_worktime_assoc_explicit import add_service_worktime_association
 from database.db_utilities.merge_object_transaction_update import (
     merge_obj_to_session_group_update)
 from database.db_utilities.slot_taken_msg_rollback_main_menu import (
@@ -22,6 +23,8 @@ from telegram.config.configs import (
     LANGUAGE_CONFIGS,
     DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import ChatTypesFilter
+from telegram.handlers_private.main_menu_btn_pvt_hdr import (
+    return_main_menu_btn_handler)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -82,99 +85,83 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
     last_selected_slot_id = selected_slots_ids[-1]
     last_slot_time_loss = selected_interval.get("slot time loss")
 
-    # ##################################################################
-    # Slots group saving and updating Transaction start
-    # ##################################################################
-    with DBConnection(db_url=db_engine_url) as ongoing_session:
+    # Transaction start (with group adding and updating)
+    with DBConnection(db_url=db_engine_url) as session:
         for slot_id in selected_slots_ids:
             slot_obj = get_worktime_slot_by_id_in_session(
                 worktime_slot_id=slot_id,
-                ongoing_session=ongoing_session)
-
-            # #################################################################
-            # Checking if any slot of selected ones is reserved or not active
-            # #################################################################
-            if not slot_obj or slot_obj.reserved or not slot_obj.active:
-                await slot_taken_msg_rollback_main_menu(
-                    message=message,
-                    ongoing_session=ongoing_session,
-                    state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
-
-            # #################################################################
-            # Checking if any slot of selected ones is defined as admin only
-            # #################################################################
-            if (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
-                    and slot_obj.admin_only):
-                await slot_taken_msg_rollback_main_menu(
-                    message=message,
-                    ongoing_session=ongoing_session,
-                    state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                ongoing_session=session)
 
             new_update_data = {"client_user_id": current_user_id,
                                "selected_services": selected_services_ids,
                                "reserved": True,
                                "editor_id": current_user_id}
 
-            # #################################################################
-            # Ordinary updating all slots except last one with optional time loss
-            # #################################################################
-            if slot_id in selected_slots_ids_except_last_id:
-                merge_obj_to_session_group_update(
-                    object_to_merge=slot_obj,
-                    new_update_data=new_update_data,
-                    ongoing_session=ongoing_session)
-                print(f"\tTEST INFO: Ordinary updating all slots "
-                      "(except last slot with optional time loss)\n")
-
-            # #################################################################
-            # Ordinary updating last slot if not time loss (effective slot)
-            # #################################################################
-            if slot_id == last_selected_slot_id and not last_slot_time_loss:
-                merge_obj_to_session_group_update(
-                    object_to_merge=slot_obj,
-                    new_update_data=new_update_data,
-                    ongoing_session=ongoing_session)
-                print(f"\tTEST INFO: Ordinary updating last slot "
-                      f"if not time loss (slot is very effective)\n")
-
             time_loss_min_limit = number_or_str_to_integer(
                 DB_SLOTS_CONFIGS.MIN_TIME_LOSS_FOR_CREATING_NEW_SLOT,
                 positive=True)
             time_loss_min_limit = timedelta(minutes=time_loss_min_limit)
 
-            # #################################################################
+            # Checking if any slot of selected ones is reserved or not active
+            if not slot_obj or slot_obj.reserved or not slot_obj.active:
+                await slot_taken_msg_rollback_main_menu(
+                    message=message,
+                    ongoing_session=session,
+                    state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+
+            # Checking if any slot of selected ones is defined as admin only
+            elif (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
+                  and slot_obj.admin_only):
+                await slot_taken_msg_rollback_main_menu(
+                    message=message,
+                    ongoing_session=session,
+                    state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+
+            # Ordinary updating all slots except last one with optional time loss
+            elif slot_id in selected_slots_ids_except_last_id:
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    ongoing_session=session)
+                print(f"\tTEST INFO: Ordinary updating all slots "
+                      "(except last slot with optional time loss)\n")
+
+            # Ordinary updating last slot if not time loss (effective slot)
+            elif slot_id == last_selected_slot_id and not last_slot_time_loss:
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    ongoing_session=session)
+                print(f"\tTEST INFO: Ordinary updating last slot "
+                      f"if not time loss (slot is very effective)\n")
+
             # Ordinary updating last slot (because tyme loss is less min limit)
-            # #################################################################
-            if (slot_id == last_selected_slot_id and last_slot_time_loss
-                    and last_slot_time_loss < time_loss_min_limit):
+            elif (slot_id == last_selected_slot_id and last_slot_time_loss
+                  and last_slot_time_loss < time_loss_min_limit):
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=ongoing_session)
+                    ongoing_session=session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
-            # #################################################################
             # Ordinary updating last slot if time loss, but NOT make split flag
-            # #################################################################
-            if (slot_id == last_selected_slot_id and last_slot_time_loss
-                    and last_slot_time_loss >= time_loss_min_limit
-                    and not DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
+            elif (slot_id == last_selected_slot_id and last_slot_time_loss
+                  and last_slot_time_loss >= time_loss_min_limit
+                  and not DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=ongoing_session)
+                    ongoing_session=session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
-            # #################################################################
             # Last slot splitting into effective parts (time loss and make split flag)
-            # #################################################################
-            if (slot_id == last_selected_slot_id and last_slot_time_loss
-                    and last_slot_time_loss >= time_loss_min_limit
-                    and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
+            elif (slot_id == last_selected_slot_id and last_slot_time_loss
+                  and last_slot_time_loss >= time_loss_min_limit
+                  and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
                 client_time_end = selected_interval.get("client time end")
 
                 # getting values before slot object will be updated
@@ -197,36 +184,25 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
                     creator_id=current_user_id)
 
-                # Updating split slot with new values
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=ongoing_session)
+                    ongoing_session=session)
 
-                # Adding new effective slot from time loss
-                ongoing_session.add(new_slot_obj_from_loss_time)
-
+                session.add(new_slot_obj_from_loss_time)
                 print(f"\tTEST INFO: Last slot split into reserved part"
                       f" and effective free part because time loss\n")
 
-            # #################################################################
-            # Explicit adding assoc to save repeated services for each work time
-            # #################################################################
-            for service_id in selected_services_ids:
-                service_worktime_assoc = ServiceWorkTimeAssociation(
-                    service_id=service_id,
-                    work_time_id=slot_id,
-                    updated=datetime.now(),
-                    creator_id=current_user_id)
-                ongoing_session.add(service_worktime_assoc)
+            add_service_worktime_association(
+                selected_services_ids=selected_services_ids,
+                worktime_slot_id=slot_id,
+                current_user_id=current_user_id,
+                ongoing_session=session)
 
-        # Transaction end (work time slot and association
-        # service - work time group saving and updating)
-        ongoing_session.commit()
+        # Transaction end (with group adding and updating)
+        session.commit()
 
-        # #################################################################
-        # Info block displaying selected services and time interval summary
-        # #################################################################
+        # Info block showing selected services and time interval summary
         selected_date = state_data.get("selected_date_enroll_srcs_calendar")
 
         selected_services_cost = await get_valid_float_by_fsm_state_key(
@@ -263,6 +239,9 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             slot_time_end=client_time_end_text)
 
         await message.answer(text=complete_summary_text)
-
         await state.clear()
+
+        # Call the same functionality handler of the reply keyboard button
+        await return_main_menu_btn_handler(message=message, state=state)
+
         return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
