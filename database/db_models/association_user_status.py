@@ -10,15 +10,11 @@ from database.db_connection import Base
 class UserStatusAssociation(Base):
     __tablename__ = "user_status_association"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"),
+                                         primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id"),
-        primary_key=True)
-
-    status_id: Mapped[int] = mapped_column(
-        ForeignKey("user_status.id"),
-        primary_key=True)
+    status_id: Mapped[int] = mapped_column(ForeignKey("user_status.id"),
+                                           primary_key=True)
 
     editor_id: Mapped[Optional[int]]
     created: Mapped[datetime] = mapped_column(default=datetime.now())
