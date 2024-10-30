@@ -22,7 +22,7 @@ class DB_SLOTS_CONFIGS:
 
     MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS: bool = True
     NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY: bool = True
-    # 0 - all slots will be split anyway, very big (99999) - no one slot will be split anyway
+    # 0 - all slots will be split, very big (99999) - no one slot will be split
     MIN_TIME_LOSS_FOR_CREATING_NEW_SLOT: Union[int, 0] = 15  # In minutes
 
 
