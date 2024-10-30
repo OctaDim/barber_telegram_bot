@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
@@ -7,11 +7,13 @@ from aiogram.types import CallbackQuery
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
+from database.db_models.association_service_worktime import (
+    ServiceWorkTimeAssociation)
 from database.db_models.work_time_model import WorkTime
 from database.db_queries.get_user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
-    get_worktime_slot_by_id)
+    get_worktime_slot_by_id_in_session)
 from database.db_utilities.merge_object_transaction_update import (
     merge_obj_to_session_group_update)
 from database.db_utilities.slot_taken_msg_rollback_main_menu import (
@@ -60,6 +62,10 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
         telegram_id=current_user_telegram_id)
     current_user_id = current_user_obj.id
 
+    selected_services_ids = await get_valid_list_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_ids_state")
+
     selected_interval_first_slot_id = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_interval_first_slot_id")
@@ -76,20 +82,34 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
     last_selected_slot_id = selected_slots_ids[-1]
     last_slot_time_loss = selected_interval.get("slot time loss")
 
-    # Slot group saving and updating Transaction start
-    with (DBConnection(db_url=db_engine_url) as session):
+    # ##################################################################
+    # Slots group saving and updating Transaction start
+    # ##################################################################
+    with DBConnection(db_url=db_engine_url) as ongoing_session:
         for slot_id in selected_slots_ids:
-            slot_obj = get_worktime_slot_by_id(slot_id)
+            slot_obj = get_worktime_slot_by_id_in_session(
+                worktime_slot_id=slot_id,
+                ongoing_session=ongoing_session)
 
+            # #################################################################
+            # Checking if any slot of selected ones is reserved or not active
+            # #################################################################
             if not slot_obj or slot_obj.reserved or not slot_obj.active:
                 await slot_taken_msg_rollback_main_menu(
-                    message=message, session=session, state=state)
+                    message=message,
+                    ongoing_session=ongoing_session,
+                    state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
+            # #################################################################
+            # Checking if any slot of selected ones is defined as admin only
+            # #################################################################
             if (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
                     and slot_obj.admin_only):
                 await slot_taken_msg_rollback_main_menu(
-                    message=message, session=session, state=state)
+                    message=message,
+                    ongoing_session=ongoing_session,
+                    state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             new_update_data = {"client_user_id": current_user_id,
@@ -97,13 +117,13 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                                "editor_id": current_user_id}
 
             # #################################################################
-            # Ordinary updating all slots except last slot with optional time loss
+            # Ordinary updating all slots except last one with optional time loss
             # #################################################################
             if slot_id in selected_slots_ids_except_last_id:
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    session=session)
+                    ongoing_session=ongoing_session)
                 print(f"\tTEST INFO: Ordinary updating all slots "
                       "(except last slot with optional time loss)\n")
 
@@ -114,7 +134,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    session=session)
+                    ongoing_session=ongoing_session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective)\n")
 
@@ -131,7 +151,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    session=session)
+                    ongoing_session=ongoing_session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -144,7 +164,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    session=session)
+                    ongoing_session=ongoing_session)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -155,39 +175,56 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     and last_slot_time_loss >= time_loss_min_limit
                     and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
                 client_time_end = selected_interval.get("client time end")
-                last_slot_obj = get_worktime_slot_by_id(last_selected_slot_id)
 
-                new_client_reserved_last_slot_obj = WorkTime(
-                    master_id=last_slot_obj.master_id,
-                    client_user_id=current_user_id,
-                    time_start=last_slot_obj.time_start,
-                    time_end=client_time_end,
-                    slot_duration=client_time_end - last_slot_obj.time_start,
-                    reserved=True,
-                    admin_only=False,
-                    editor_id=current_user_id)
+                # getting values before slot object will be updated
+                new_update_data = {
+                    "client_user_id": current_user_id,
+                    "time_start": slot_obj.time_start,
+                    "time_end": client_time_end,
+                    "slot_duration": client_time_end - slot_obj.time_start,
+                    "reserved": True,
+                    "editor_id": current_user_id}
 
                 new_slot_obj_from_loss_time = WorkTime(
-                    master_id=last_slot_obj.master_id,
+                    master_id=slot_obj.master_id,
                     client_user_id=None,
                     time_start=client_time_end,
-                    time_end=last_slot_obj.time_end,
-                    slot_duration=last_slot_obj.time_end - client_time_end,
+                    time_end=slot_obj.time_end,
+                    slot_duration=slot_obj.time_end - client_time_end,
                     reserved=False,
                     admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
-                    editor_id=current_user_id)
+                    creator_id=current_user_id)
 
-                session.add(new_client_reserved_last_slot_obj)
-                session.add(new_slot_obj_from_loss_time)
-                session.delete(last_slot_obj)
-                print(f"\tTEST INFO: Last slot splitting into reserved part"
+                # Updating split slot with new values
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    ongoing_session=ongoing_session)
+
+                # Adding new effective slot from time loss
+                ongoing_session.add(new_slot_obj_from_loss_time)
+
+                print(f"\tTEST INFO: Last slot split into reserved part"
                       f" and effective free part because time loss\n")
-        session.commit()  # Slot group saving and updating Transaction end
 
+            # #################################################################
+            # Explicit adding assoc to save repeated services for each work time
+            # #################################################################
+            for service_id in selected_services_ids:
+                service_worktime_assoc = ServiceWorkTimeAssociation(
+                    service_id=service_id,
+                    work_time_id=slot_id,
+                    updated=datetime.now(),
+                    creator_id=current_user_id)
+
+                ongoing_session.add(service_worktime_assoc)
+
+        ongoing_session.commit()  # Slot group saving and updating Transaction end
+
+        # #################################################################
+        # Info block displaying selected services and time interval summary
+        # #################################################################
         selected_date = state_data.get("selected_date_enroll_srcs_calendar")
-        selected_services_ids = await get_valid_list_by_fsm_state_key(
-            fsm_state_or_dict_from=state_data,
-            fsm_state_literal_key="selected_services_ids_state")
 
         selected_services_cost = await get_valid_float_by_fsm_state_key(
             fsm_state_or_dict_from=state_data,
