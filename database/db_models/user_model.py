@@ -38,6 +38,7 @@ class User(Base):
     blocked: Mapped[bool] = mapped_column(default=False)
     active: Mapped[bool] = mapped_column(default=True)
 
+    creator_id: Mapped[Optional[int]]
     editor_id: Mapped[Optional[int]]
     created: Mapped[datetime] = mapped_column(default=datetime.now())
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(),
