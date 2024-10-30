@@ -113,6 +113,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             new_update_data = {"client_user_id": current_user_id,
+                               "selected_services": selected_services_ids,
                                "reserved": True,
                                "editor_id": current_user_id}
 
@@ -182,6 +183,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     "time_start": slot_obj.time_start,
                     "time_end": client_time_end,
                     "slot_duration": client_time_end - slot_obj.time_start,
+                    "selected_services": selected_services_ids,
                     "reserved": True,
                     "editor_id": current_user_id}
 
@@ -216,10 +218,11 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     work_time_id=slot_id,
                     updated=datetime.now(),
                     creator_id=current_user_id)
-
                 ongoing_session.add(service_worktime_assoc)
 
-        ongoing_session.commit()  # Slot group saving and updating Transaction end
+        # Transaction end (work time slot and association
+        # service - work time group saving and updating)
+        ongoing_session.commit()
 
         # #################################################################
         # Info block displaying selected services and time interval summary

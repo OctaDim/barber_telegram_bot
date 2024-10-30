@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime
-from typing import Optional
+from typing import Optional, List
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, ARRAY, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
@@ -28,6 +28,9 @@ class WorkTime(Base):
     time_start: Mapped[datetime]
     time_end: Mapped[datetime]
     slot_duration: Mapped[timedelta]
+
+    selected_services: Mapped[List[int]] = mapped_column(ARRAY(Integer),
+                                                         nullable=True)
 
     reserved: Mapped[bool] = mapped_column(default=False)
     admin_only: Mapped[bool] = mapped_column(default=False)
