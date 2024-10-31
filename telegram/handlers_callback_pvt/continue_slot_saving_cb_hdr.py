@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
@@ -7,14 +7,13 @@ from aiogram.types import CallbackQuery
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
-from database.db_models.association_service_worktime import (
-    ServiceWorkTimeAssociation)
 from database.db_models.work_time_model import WorkTime
-from database.db_queries.get_user_obj_by_telegram_id import (
+from database.db_queries.user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
     get_worktime_slot_by_id_in_session)
-from database.db_utilities.add_service_worktime_assoc_explicit import add_service_worktime_association
+from database.db_utilities.add_service_worktime_assoc_explicit import (
+    add_service_worktime_association)
 from database.db_utilities.merge_object_transaction_update import (
     merge_obj_to_session_group_update)
 from database.db_utilities.slot_taken_msg_rollback_main_menu import (
