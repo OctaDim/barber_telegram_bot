@@ -26,9 +26,11 @@ class Master(Base):
     full_name: Mapped[Optional[str]]
     first_name: Mapped[str]
     last_name: Mapped[str]
+
     qualification: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     note: Mapped[Optional[str]]
+
     image: Mapped[bytes] = mapped_column(LargeBinary, nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
