@@ -14,7 +14,8 @@ class SLOT_ICONS():
     UNADVISED_SLOT: str = "❄️"
     VERY_UNADVISED_SLOT: str = "❄️❄️"
     UNSELECTED_SLOT = ""
-    SELECTED_SLOT: str = "✅"
+    SELECTED_SLOT_START_ICON: str = "✅"
+    SELECTED_SLOT_END_ICON: str = "✅"
 
     # CHECK_MARK: str = "📌"
     # TEST: str = "🔆"

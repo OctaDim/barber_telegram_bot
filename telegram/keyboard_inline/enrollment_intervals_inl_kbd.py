@@ -65,9 +65,11 @@ def get_enrollment_intervals_inl_kbd(
                                    callback_data=cur_slot_callback_data)
 
         if selected_slot_id == first_slot_id:
-            selected_icon = SLOT_ICONS.SELECTED_SLOT
+            selected_left_icon = SLOT_ICONS.SELECTED_SLOT_START_ICON
+            selected_right_icon = SLOT_ICONS.SELECTED_SLOT_END_ICON
         else:
-            selected_icon = SLOT_ICONS.UNSELECTED_SLOT
+            selected_left_icon = SLOT_ICONS.UNSELECTED_SLOT
+            selected_right_icon = SLOT_ICONS.UNSELECTED_SLOT
 
         slot_time_start_text = get_time_flex_from_datetime(
             date_value=slot_time_start,
@@ -77,10 +79,10 @@ def get_enrollment_intervals_inl_kbd(
             date_value=client_time_end,
             language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        enrolment_slot_text = (f"{selected_icon} "
+        enrolment_slot_text = (f"{selected_left_icon} "
                                f"{slot_time_start_text} - "
                                f"{client_time_end_text} "
-                               f"{selected_icon}")
+                               f"{selected_right_icon}")
         builder_inl_kbd.button(text=enrolment_slot_text,
                                callback_data=cur_slot_callback_data)
 
