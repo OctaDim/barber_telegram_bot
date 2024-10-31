@@ -74,11 +74,10 @@ async def continue_enroll_services_btn_handler(message: Message,
         cur_month_enroll_srcs_calendar=month_now,
         cur_year_enroll_srcs_calendar=year_now)
 
-    master_id = None  # For the future, to define master_id selected by user/client
-
     all_slots_records = get_slots_from_now_for_month(
         year=year_now, month=month_now,
-        master_id=master_id)
+        master_id="all",  # For the future, to define master_id selected by user/client
+        reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(
         slots_records=all_slots_records,

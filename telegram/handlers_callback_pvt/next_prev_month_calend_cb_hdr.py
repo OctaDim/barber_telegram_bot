@@ -66,10 +66,10 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
-    master_id = None  # For the future, to define master_id selected by user/client
     all_slots_records = get_slots_from_now_for_month(
         year=calendar_year, month=calendar_month,
-        master_id=master_id)
+        master_id="all",  # For the future, to define master_id selected by user/client
+        reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(
         slots_records=all_slots_records,

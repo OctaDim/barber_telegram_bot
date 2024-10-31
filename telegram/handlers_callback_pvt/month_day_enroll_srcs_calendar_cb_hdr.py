@@ -6,9 +6,12 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.all_slots_from_now_for_month import get_slots_from_now_for_month
-from database.db_queries_hepers.enrollment_days_for_month import get_available_enrollment_days
-from telegram.errors_api_telegram.telegram_exception_errors import TG_EXCEPT_ERRORS
+from database.db_queries.all_slots_from_now_for_month import (
+    get_slots_from_now_for_month)
+from database.db_queries_hepers.enrollment_days_for_month import (
+    get_available_enrollment_days)
+from telegram.errors_api_telegram.telegram_exception_errors import (
+    TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.keyboard_inline.calendar_inl_kbd import (
     MonthDayCBData,
@@ -17,8 +20,10 @@ from telegram.params.messages import CHOOSE_SERVICES_DAY
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key)
-from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
-from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
+from telegram.telegram_utils.handlers_stack_utils import (
+    get_handler_answer_flag_dict)
+from telegram.telegram_utils.messages_utils import (
+    inline_keyboard_is_actual)
 
 month_day_enroll_srcs_calendar_cb_router = Router(name=__name__)
 month_day_enroll_srcs_calendar_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -50,10 +55,10 @@ async def month_day_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
-    master_id = None  # For the future, to define master_id selected by user/client
     all_slots_records = get_slots_from_now_for_month(
         year=selected_year, month=selected_month,
-        master_id=master_id)
+        master_id="all",  # For the future, to define master_id selected by user/client
+        reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(
         slots_records=all_slots_records,

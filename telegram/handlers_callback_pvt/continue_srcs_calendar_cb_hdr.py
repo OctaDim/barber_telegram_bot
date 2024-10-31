@@ -77,10 +77,10 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         selected_date,
         language=LANGUAGE_CONFIGS.LANGUAGE)
 
-    master_id = None  # For the future, to define master_id selected by user/client
     all_slots_records = get_slots_from_now_for_date(
         required_date=selected_date,
-        master_id=None)
+        master_id="all",  # For the future, to define master_id selected by user/client
+        reserved=False, active=True, admin_only=False)
 
     enrollment_intervals = get_available_enrollment_intervals(
         slots_records=all_slots_records,

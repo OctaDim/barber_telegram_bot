@@ -4,7 +4,10 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from database.db_queries.user_queries import get_services_list
+from database.db_queries.all_categories_ordered_query import (
+    get_all_categories_ordered)
+from database.db_queries.all_services_ordered_queries import (
+    get_all_services_ordered)
 from telegram.config.configs import PAUSE_CONFIGS
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.keyboard_inline.enroll_services_inl_kbd import (
@@ -37,7 +40,15 @@ async def enroll_services_btn_handler(message: Message,
                                       state: FSMContext):
     state_data = await state.get_data()
 
-    all_services_records = get_services_list()
+    all_categories_objs = get_all_categories_ordered(active=True,
+                                                     order_by_fields="name")
+
+    all_services_records = get_all_services_ordered(
+        category_id="all",
+        master_id="all",
+        active=True,
+        order_by_fields=("name", "price"))
+
     if not all_services_records:
         await message.answer(
             text=NO_SERVICES,
@@ -50,21 +61,8 @@ async def enroll_services_btn_handler(message: Message,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_ids_state")
 
-    # For the future
-    # max_service_name = ""
-    # for service_record in all_services_records:
-    #     if len(service_record.name) > len(max_service_name):
-    #         max_service_name = service_record.name
-
     all_services_info_dict = {}
-
     for service_record in all_services_records:
-        # For the future
-        # fill_symbols_number = get_fill_symbols_number_via_pixels(
-        #     text_long=max_service_name,
-        #     text_short=service_record.name,
-        #     fill_symbol=SPECIAL_CHARACTERS.FILL_IN_BLANK_SYMBOL)
-
         service_brief_text = get_service_brief_info(
             service_record=service_record)
 
