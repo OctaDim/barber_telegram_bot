@@ -1,11 +1,13 @@
 from datetime import datetime, date
-from typing import Optional
+from typing import Union, Optional, Tuple
 
 from sqlalchemy import extract, func, cast, Integer, case
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
 from database.db_models.work_time_model import WorkTime
+from database.db_utilities.create_order_by_partial_query import (
+    create_order_by_partial_query)
 from telegram.config.logging import LOGGING
 from utilities.decorators_global import execution_time_decorator
 
@@ -13,14 +15,17 @@ from utilities.decorators_global import execution_time_decorator
 @execution_time_decorator(in_seconds=True,
                           note="All slots_records from now for date",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
-def get_slots_from_now_for_date(required_date: date,
-                                master_id: int = None,
-                                reserved: bool = False,
-                                active: bool = True,
-                                admin_only: bool = False
-                                ) -> Optional[list[WorkTime]]:
+def get_slots_from_now_for_date(
+        required_date: date,
+        master_id: Union[int, "all"] = "all",
+        client_user_id: Union[int, "all"] = "all",
+        reserved: Union[bool, "all"] = "all",
+        active: Union[bool, "all"] = "all",
+        admin_only: Union[bool, "all"] = "all",
+        order_by_fields: Optional[Union[str, Tuple[str, ...]]] = ("time_start",)
+) -> list[WorkTime]:
     with (DBConnection(db_url=db_engine_url) as session):
-        slot_records_for_date = session.query(
+        base_query = session.query(
             WorkTime.id,
             cast(extract(
                 "DAY", WorkTime.time_start), Integer).label("day_of_month"),
@@ -35,29 +40,49 @@ def get_slots_from_now_for_date(required_date: date,
             case(
                 (WorkTime.time_start == func.lag(WorkTime.time_end).over(
                     order_by=WorkTime.time_start), True),
-                else_=False).label("continuing")
-        ).filter(
-            WorkTime.time_start >= datetime.now(),
-            func.date(WorkTime.time_start) == required_date,
-            WorkTime.active.is_(active),
-            WorkTime.reserved.is_(reserved),
-            WorkTime.admin_only.is_(admin_only),
-            WorkTime.master_id == master_id
-        ).order_by(
-            "time_start",
-            "master_id"
-        ).all()
+                else_=False).label("continuing"))
 
+        filter_query = base_query.filter(
+            WorkTime.time_start >= datetime.now(),
+            func.date(WorkTime.time_start) == required_date)
+
+        if master_id != "all":
+            filter_query = filter_query.filter(
+                WorkTime.master_id == master_id)
+
+        if client_user_id != "all":
+            filter_query = filter_query.filter(
+                WorkTime.client_user_id == client_user_id)
+
+        if reserved != "all":
+            filter_query = filter_query.filter(
+                WorkTime.reserved.is_(reserved))
+
+        if active != "all":
+            filter_query = filter_query.filter(
+                WorkTime.active.is_(active))
+
+        if admin_only != "all":
+            filter_query = filter_query.filter(
+                WorkTime.admin_only.is_(admin_only))
+
+        order_query = create_order_by_partial_query(
+            model_class=WorkTime,
+            prior_filter_query=filter_query,
+            order_by_fields=order_by_fields)
+
+        slot_records_for_date = order_query.all()
         return slot_records_for_date
 
 # ##################### TEST CODE ######################################
 # ######################################################################
 # YEAR = 2024
 # MONTH = 10
-# DAY = 22
+# DAY = 31
+# master_id = 1
 # test_date = datetime(year=YEAR, month=MONTH, day=DAY)
-# days_records = get_slots_from_now_for_date(required_date=test_date,
-#                                            master_id=None)
+# days_records = get_slots_from_now_for_date(
+#     required_date=test_date)
 # for record in days_records:
 #     print(f"{record.id}\t\t"
 #           f"{record.day_of_month}\t\t"
@@ -70,5 +95,19 @@ def get_slots_from_now_for_date(required_date: date,
 #           f"{record.continuing}\t\t"
 #           f"{record.prior_slot_time_end}\t\t")
 # print()
+# days_records = get_slots_from_now_for_date(
+#     required_date=test_date,
+#     master_id=master_id)
+# for record in days_records:
+#     print(f"{record.id}\t\t"
+#           f"{record.day_of_month}\t\t"
+#           f"{record.master_id}\t\t"
+#           f"{record.active}\t\t"
+#           f"{record.reserved}\t\t"
+#           f"{record.time_start}\t\t"
+#           f"{record.time_end}\t\t"
+#           f"{record.slot_duration}\t\t"
+#           f"{record.continuing}\t\t"
+#           f"{record.prior_slot_time_end}\t\t")
 # ######################################################################
 # ##################### END TEST CODE ##################################
