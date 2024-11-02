@@ -1,24 +1,29 @@
 from datetime import datetime
 
 from aiogram import Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.all_slots_from_now_for_month import get_slots_from_now_for_month
-from database.db_queries_hepers.enrollment_days_for_month import get_available_enrollment_days
-from telegram.errors_api_telegram.telegram_exception_errors import TG_EXCEPT_ERRORS
-from telegram.filters.chat_types_filter import ChatTypesFilter
+from database.db_queries.all_slots_from_now_for_month import (
+    get_slots_from_now_for_month)
+from database.db_queries_hepers.enrollment_days_for_month import (
+    get_available_enrollment_days)
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
 from telegram.keyboard_inline.calendar_inl_kbd import (
     NextMonthCBData,
     PreviousMonthCBData,
     get_enroll_srcs_calendar_inl_kbd)
-from telegram.params.messages import CHOOSE_SERVICES_DAY
-from telegram.telegram_utils.fsm_states_utils import get_valid_int_by_fsm_state_key, \
-    get_valid_timedelta_by_fsm_state_key
-from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
-from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
+from telegram.params.messages import (
+    CHOOSE_SERVICES_DAY)
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_int_by_fsm_state_key,
+    get_valid_timedelta_by_fsm_state_key)
+from telegram.telegram_utils.handlers_stack_utils import (
+    get_handler_answer_flag_dict)
+from telegram.telegram_utils.messages_utils import (
+    inline_keyboard_is_actual)
 
 next_prev_month_services_cb_router = Router(name=__name__)
 next_prev_month_services_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -75,18 +80,12 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         slots_records=all_slots_records,
         services_duration=selected_services_duration)
 
-    try:
-        await callback_query.message.edit_text(
-            text=CHOOSE_SERVICES_DAY,
-            reply_markup=get_enroll_srcs_calendar_inl_kbd(
-                calendar_year=calendar_year,
-                calendar_month=calendar_month,
-                enrollment_days=enrollment_days))
-    except TelegramBadRequest as error:
-        if error.message == TG_EXCEPT_ERRORS.MSG_NOT_MODIFIED:
-            print("\tLOG INFO: 'Message not modified' tg exception was intercepted\n")
-
-            pass
+    await callback_query.message.edit_text(
+        text=CHOOSE_SERVICES_DAY,
+        reply_markup=get_enroll_srcs_calendar_inl_kbd(
+            calendar_year=calendar_year,
+            calendar_month=calendar_month,
+            enrollment_days=enrollment_days))
 
     await state.update_data(
         cur_month_enroll_srcs_calendar=calendar_month,
