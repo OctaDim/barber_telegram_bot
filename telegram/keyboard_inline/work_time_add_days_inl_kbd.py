@@ -1,4 +1,4 @@
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
 from utilities.get_days_calendar import get_days_in_month
@@ -9,7 +9,13 @@ class DaysWorkTimeCbData(CallbackData, prefix='days-work-time'):
 
 
 class NextStepTimeWorkTimeCbData(CallbackData, prefix='continue-work-time'):
-    next_step: bool
+    mount: str
+    year: int
+    active_return: bool
+
+
+class ReturnStepToMonthWorkTimeCbData(CallbackData, prefix='return-to-month-work-time'):
+    active: bool
 
 
 def work_time_days_inl_kbd(mount: str, year: int):
@@ -50,8 +56,18 @@ def work_time_days_inl_kbd(mount: str, year: int):
         callback_data = DaysWorkTimeCbData(days=day)
         builder.button(text=day, callback_data=callback_data)
 
-    callback_data = NextStepTimeWorkTimeCbData(next_step=True)
-    builder.button(text='Продолжить', callback_data=callback_data)
+    buttons = [
+        InlineKeyboardButton(
+            text='Return',
+            callback_data=ReturnStepToMonthWorkTimeCbData(active=True).pack()
+        ),
+        InlineKeyboardButton(
+            text='Продолжить',
+            callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year, active_return=False).pack()
+        )
+    ]
+
+    builder.row(*buttons)
 
     builder.adjust(1, 7)
 

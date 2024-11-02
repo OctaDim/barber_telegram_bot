@@ -14,7 +14,7 @@ from telegram.keyboard_inline.work_time_add_break_inl_kbd import add_break_or_no
 from telegram.keyboard_inline.work_time_add_days_inl_kbd import (
     work_time_days_inl_kbd,
     DaysWorkTimeCbData,
-    NextStepTimeWorkTimeCbData
+    NextStepTimeWorkTimeCbData, ReturnStepToMonthWorkTimeCbData
 )
 
 from telegram.keyboard_inline.work_time_add_end_time_inl_kbd import EndWorkTimeCbData, add_end_time_work_inl_kbd, \
@@ -46,6 +46,21 @@ from utilities.tick_the_butthon import tick_the_button
 from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
 
 work_time_cb_query = Router(name=__name__)
+
+
+@work_time_cb_query.callback_query(ReturnStepToMonthWorkTimeCbData.filter())
+async def return_to_month(
+        callback_query: CallbackQuery,
+        bot: Bot
+):
+    await bot.edit_message_text(
+        message_id=callback_query.message.message_id,
+        chat_id=callback_query.message.chat.id,
+        text=SELECT_A_MONTH,
+        reply_markup=work_time_month_inl_kbd(
+            month=callback_query.message.date.month,
+            year=callback_query.message.date.year)
+    )
 
 
 @work_time_cb_query.callback_query(YearWorkTimeCbData.filter())
@@ -136,8 +151,21 @@ async def save_work_days_work_time(
 @work_time_cb_query.callback_query(NextStepTimeWorkTimeCbData.filter())
 async def get_inl_kbd_add_time(
         callback_query: CallbackQuery,
+        callback_data: NextStepTimeWorkTimeCbData,
         bot: Bot,
         state: FSMContext):
+    cb_mount = callback_data.mount
+    cb_year = callback_data.year
+    cb_active_return = callback_data.active_return
+
+    if cb_active_return:
+        return await bot.edit_message_text(
+            chat_id=callback_query.message.chat.id,
+            message_id=callback_query.message.message_id,
+            text=ADD_INTERVAL,
+            reply_markup=add_interval_work_time_services_inl_kbd(mount=cb_mount, year=cb_year)
+        )
+
     keyboard = callback_query.message.reply_markup.inline_keyboard
 
     active_days = []
@@ -158,7 +186,7 @@ async def get_inl_kbd_add_time(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
         text=ADD_INTERVAL,
-        reply_markup=add_interval_work_time_services_inl_kbd()
+        reply_markup=add_interval_work_time_services_inl_kbd(mount=cb_mount, year=cb_year)
     )
 
 
@@ -186,6 +214,7 @@ async def interval_next_step(
         bot: Bot,
         state: FSMContext
 ):
+    cb_data = await state.get_data()
     keyboard = callback_query.message.reply_markup.inline_keyboard
 
     time_interval = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
@@ -205,7 +234,7 @@ async def interval_next_step(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id,
         text=SELECT_WORKING_DAY,
-        reply_markup=add_work_time_inl_kbd()
+        reply_markup=add_work_time_inl_kbd(mount=cb_data.get('month'), year=cb_data.get('year'))
     )
 
 
@@ -246,6 +275,7 @@ async def next_step_start_work_time(
         bot: Bot,
         state: FSMContext
 ):
+    cb_data = await state.get_data()
     keyboard = callback_query.message.reply_markup.inline_keyboard
 
     time_start = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
@@ -264,11 +294,11 @@ async def next_step_start_work_time(
 
     else:
         time_end = timedelta(hours=00, minutes=00)
-
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        reply_markup=add_work_time_inl_kbd(time_start=time_start, time_end=time_end),
+        reply_markup=add_work_time_inl_kbd(
+            time_start=time_start, time_end=time_end, mount=cb_data.get('month'), year=cb_data.get('year')),
         text=SELECT_WORKING_DAY,
     )
 
@@ -310,6 +340,7 @@ async def next_step_end_work_time(
         bot: Bot,
         state: FSMContext
 ):
+    cb_data = await state.get_data()
     keyboard = callback_query.message.reply_markup.inline_keyboard
 
     time_end = get_the_time_from_the_inl_keyboard(keyboard=keyboard)
@@ -332,7 +363,8 @@ async def next_step_end_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        reply_markup=add_work_time_inl_kbd(time_start=time_start, time_end=time_end),
+        reply_markup=add_work_time_inl_kbd(
+            time_start=time_start, time_end=time_end, mount=cb_data.get('month'), year=cb_data.get('year')),
         text=SELECT_WORKING_DAY,
     )
 
@@ -406,7 +438,7 @@ async def get_response_add_break(
             end_break=state_data.get('time_end_break')
         )
 
-        return state.clear()
+        return await state.clear()
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
@@ -604,6 +636,8 @@ async def next_step_add_break_work_time(
 ):
     state_data = await state.get_data()
 
+    await state.clear()
+
     await bot.delete_message(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id
@@ -625,5 +659,3 @@ async def next_step_add_break_work_time(
         start_break=state_data.get('time_start_break'),
         end_break=state_data.get('time_end_break')
     )
-
-    return state.clear()

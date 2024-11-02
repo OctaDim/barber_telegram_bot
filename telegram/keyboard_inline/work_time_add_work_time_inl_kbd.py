@@ -3,6 +3,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from datetime import timedelta
 
+from telegram.keyboard_inline.work_time_add_days_inl_kbd import NextStepTimeWorkTimeCbData
+from telegram.keyboard_inline.work_time_interval_add_inl_kbd import IntervalNextStepTimeWorkTimeCbData
 from telegram.params.work_time_cb_data_message import CONTINUED
 
 
@@ -18,7 +20,12 @@ class NextStepAddWorkTime(CallbackData, prefix='Next-Step-Add-Work-Time'):
     next_step: bool
 
 
-def add_work_time_inl_kbd(time_start=timedelta(hours=00, minutes=00), time_end=timedelta(hours=00, minutes=00)):
+def add_work_time_inl_kbd(
+        mount: str,
+        year: int,
+        time_start=timedelta(hours=00, minutes=00),
+        time_end=timedelta(hours=00, minutes=00),
+):
     builder = InlineKeyboardBuilder()
 
     time_start = f"{time_start.seconds // 3600:02}:{(time_start.seconds // 60) % 60:02}"
@@ -34,7 +41,12 @@ def add_work_time_inl_kbd(time_start=timedelta(hours=00, minutes=00), time_end=t
 
     builder.adjust(3)
 
-    callback_data = NextStepAddWorkTime(next_step=True)
-    builder.row(InlineKeyboardButton(text=CONTINUED, callback_data=callback_data.pack()))
+    buttons = [
+        InlineKeyboardButton(
+            text='Return', callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year,active_return=True).pack()),
+        InlineKeyboardButton(text=CONTINUED, callback_data=NextStepAddWorkTime(next_step=True).pack())
+    ]
+
+    builder.row(*buttons)
 
     return builder.as_markup()
