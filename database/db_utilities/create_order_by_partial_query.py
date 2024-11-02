@@ -13,7 +13,7 @@ def create_order_by_partial_query(
     order_query = prior_filter_query
 
     if isinstance(order_by_fields, str):
-        order_by_fields_validated = tuple(order_by_fields)
+        order_by_fields_validated = (order_by_fields, )
     else:
         order_by_fields_validated = order_by_fields
 
