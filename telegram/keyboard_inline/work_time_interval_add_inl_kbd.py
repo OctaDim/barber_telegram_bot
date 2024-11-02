@@ -2,6 +2,7 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
+from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData
 from telegram.params.work_time_cb_data_message import CONTINUED
 
 
@@ -13,7 +14,7 @@ class IntervalNextStepTimeWorkTimeCbData(CallbackData, prefix='service-end-time-
     next_step: bool
 
 
-def add_interval_work_time_services_inl_kbd():
+def add_interval_work_time_services_inl_kbd(mount: str, year: int):
     builder = InlineKeyboardBuilder()
 
     builder.row(InlineKeyboardButton(text="Часы", callback_data="hour"))
@@ -38,7 +39,17 @@ def add_interval_work_time_services_inl_kbd():
     for i in range(0, len(minutes_buttons), 4):
         builder.row(*minutes_buttons[i:i + 4])
 
-    callback_data = IntervalNextStepTimeWorkTimeCbData(next_step=True)
-    builder.row(InlineKeyboardButton(text=CONTINUED, callback_data=callback_data.pack()))
+    buttons = [
+        InlineKeyboardButton(
+            text='Return',
+            callback_data=MonthWorkTimeCbData(mount=mount, year=year).pack()
+        ),
+        InlineKeyboardButton(
+            text=CONTINUED,
+            callback_data=IntervalNextStepTimeWorkTimeCbData(next_step=True).pack()
+        )
+    ]
+
+    builder.row(*buttons)
 
     return builder.as_markup()
