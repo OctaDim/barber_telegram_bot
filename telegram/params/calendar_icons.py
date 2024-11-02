@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CALENDAR_ICONS():
+class CALENDAR_ICONS:
     UNSELECTED_DAY: str = ""  # DON'T DELETE!!! IT IS USED!!!
     SELECTED: str = "✅"
     PREVIOUS_MONTH: str = "<<<"
