@@ -13,7 +13,9 @@ from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_route
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
 from telegram.handlers_callback_pvt.continue_srcs_calendar_cb_hdr import continue_enroll_srcs_calendar_cb_router
+from telegram.handlers_callback_pvt.enroll_by_category_cb_hdr import enroll_srcs_category_cb_router
 from telegram.handlers_callback_pvt.next_prev_month_calend_cb_hdr import next_prev_month_services_cb_router
+from telegram.handlers_callback_pvt.next_prev_page_category_cb_hdr import next_prev_enroll_category_cb_router
 from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
 from telegram.params.commands import COMMANDS_PARAMS
 
@@ -32,8 +34,8 @@ from telegram.handlers_private.main_menu_btn_pvt_hdr import return_main_menu_pvt
 from telegram.handlers_private.return_btn_pvt_hdr import return_button_router
 from telegram.handlers_private.unhandled_update_pvt_hdr import unhandled_update_router
 from telegram.handlers_private.continue_enroll_services_btn_pvt import continue_enroll_srcs_pvt_router
-from telegram.handlers_callback_pvt.month_day_enroll_srcs_calendar_cb_hdr import \
-    month_day_enroll_srcs_calendar_cb_router
+from telegram.handlers_callback_pvt.month_day_enroll_srcs_calendar_cb_hdr import (
+    month_day_enroll_srcs_calendar_cb_router)
 from telegram.handlers_callback_pvt.main_menu_common_cb_hdr import main_menu_common_cb_router
 from telegram.handlers_callback_pvt.no_action_common_cb_hdr import no_action_common_cb_router
 from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
@@ -86,6 +88,8 @@ dp.include_router(contacts_btn_router)
 dp.include_router(slots_advising_note_cb_router)
 dp.include_router(slot_selected_cb_router)
 dp.include_router(continue_slot_saving_cb_router)
+dp.include_router(enroll_srcs_category_cb_router)
+dp.include_router(next_prev_enroll_category_cb_router)
 # All unhandled update router:
 dp.include_router(unhandled_update_router)
 
