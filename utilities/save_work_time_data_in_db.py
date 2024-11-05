@@ -10,8 +10,10 @@ def save_work_time_data_in_db(
         start_break: timedelta,
         end_break: timedelta,
         days: list,
+        master_id: int,
         month,
-        year
+        year,
+        master_obj=None
 ):
     time_intervals = []
 
@@ -30,7 +32,8 @@ def save_work_time_data_in_db(
 
             create_break_time(
                 start_break=start_break_datetime,
-                end_break=end_break_datetime
+                end_break=end_break_datetime,
+                master_obj=master_obj
             )
 
         current_time = start_datetime
@@ -77,5 +80,6 @@ def save_work_time_data_in_db(
         create_work_time(
             time_start=time_interval[0],
             time_end=time_interval[1],
-            slot_duration=slot_duration
+            slot_duration=slot_duration,
+            master_id=master_id
         )

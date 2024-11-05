@@ -7,6 +7,8 @@ from aiogram import Router, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
+from database.db_queries.get_master_obj_by_telegram_id import get_master_id_by_telegram_id
+from database.db_queries.user_obj_by_telegram_id import get_user_obj_by_telegram_id
 from database.db_queries.work_time_queries import create_work_time
 from telegram.keyboard_inline.work_time_add_break_inl_kbd import add_break_or_not_inl_kbd, \
     AddBreakResponseWorkTimeCbData, add_break_work_time_inl_kbd, AddStartBreakWorkTime, AddEndBreakWorkTime, \
@@ -427,6 +429,9 @@ async def get_response_add_break(
             reply_markup=get_admin_main_menu_kbd()
         )
 
+        master_id = get_master_id_by_telegram_id(telegram_id=callback_query.from_user.id)
+        print(master_id)
+        print(type(master_id))
         save_work_time_data_in_db(
             time_start=state_data.get('time_start'),
             time_end=state_data.get('time_end'),
@@ -435,10 +440,13 @@ async def get_response_add_break(
             month=state_data.get('month'),
             year=state_data.get('year'),
             start_break=state_data.get('time_start_break'),
-            end_break=state_data.get('time_end_break')
+            end_break=state_data.get('time_end_break'),
+            master_id=master_id
         )
 
-        return await state.clear()
+        await state.clear()
+
+        return
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
@@ -649,6 +657,8 @@ async def next_step_add_break_work_time(
         reply_markup=get_admin_main_menu_kbd()
     )
 
+    master_id, master_obj = get_master_id_by_telegram_id(telegram_id=callback_query.from_user.id, master_object=True)
+
     save_work_time_data_in_db(
         time_start=state_data.get('time_start'),
         time_end=state_data.get('time_end'),
@@ -657,5 +667,7 @@ async def next_step_add_break_work_time(
         month=state_data.get('month'),
         year=state_data.get('year'),
         start_break=state_data.get('time_start_break'),
-        end_break=state_data.get('time_end_break')
+        end_break=state_data.get('time_end_break'),
+        master_id=master_id,
+        master_obj=[master_obj]
     )
