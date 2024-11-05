@@ -8,6 +8,7 @@ from sqlalchemy import extract, func
 
 from database.db_models.break_time_model import BreakTime
 from database.db_models.work_time_model import WorkTime
+from database.db_queries.get_master_obj_by_telegram_id import get_master_id_by_telegram_id
 
 manager = DBConnection(db_url=db_engine_url)
 
@@ -16,12 +17,14 @@ def create_work_time(
         time_start: datetime,
         time_end: datetime,
         slot_duration: timedelta,
+        master_id: int
 ):
     with manager as session:
         work_time = WorkTime(
             time_start=time_start,
             time_end=time_end,
-            slot_duration=slot_duration
+            slot_duration=slot_duration,
+            master_id=master_id
         )
 
         session.add(work_time)
@@ -31,11 +34,13 @@ def create_work_time(
 def create_break_time(
         start_break: datetime,
         end_break: datetime,
+        master_obj
 ):
     with manager as session:
         break_time = BreakTime(
             start_break=start_break,
-            end_break=end_break
+            end_break=end_break,
+            break_time_masters=master_obj
         )
 
         session.add(break_time)
