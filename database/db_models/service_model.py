@@ -5,9 +5,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
-from database.db_models.association_service_master import ServiceMasterAssociation
-from database.db_models.category_model import Category
-from database.db_models.master_model import Master
 
 
 class Service(Base):
@@ -19,11 +16,7 @@ class Service(Base):
         ForeignKey("category.id"),
         nullable=True)
 
-    master_id: Mapped[int] = mapped_column(
-        ForeignKey("master.id"),
-        nullable=True)
-
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    name: Mapped[str]
     price: Mapped[float]
     time_duration: Mapped[timedelta]
     description: Mapped[Optional[str]]
@@ -36,29 +29,20 @@ class Service(Base):
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(),
                                               nullable=True)
 
+    service_work_times: Mapped[list['WorkTime']] = relationship(
+        argument='WorkTime',
+        secondary='service_worktime_association',
+        order_by='WorkTime.time_start',
+        back_populates="work_time_services")
 
-# Service - Category - Service
-# orm relations one-to-many
-Service.service_categories = relationship(
-    argument=Category,
-    order_by=Category.name,
-    back_populates="category_services")
+    service_categories: Mapped['Category'] = relationship(
+        argument='Category',
+        uselist=False,
+        order_by='Category.name',
+        back_populates="category_services")
 
-Category.category_services = relationship(
-    argument=Service,
-    order_by=Service.name,
-    back_populates="service_categories")
-
-# Service - Master - Service
-# orm relations many-to-many
-Service.service_masters = relationship(
-    argument=Master,
-    secondary=ServiceMasterAssociation.__tablename__,
-    order_by=Master.full_name,
-    back_populates="master_services")
-
-Master.master_services = relationship(
-    argument=Service,
-    secondary=ServiceMasterAssociation.__tablename__,
-    order_by=Service.name,
-    back_populates="service_masters")
+    service_masters: Mapped[list['Master']] = relationship(
+        argument='Master',
+        secondary='service_master_association',
+        order_by='Master.full_name',
+        back_populates="master_services")

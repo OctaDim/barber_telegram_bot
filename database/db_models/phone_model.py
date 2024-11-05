@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy_utils.types.phone_number import PhoneNumberType
 
 from database.db_connection import Base
@@ -24,3 +23,9 @@ class Phone(Base):
     editor_id: Mapped[Optional[int]]
     created: Mapped[datetime] = mapped_column(default=datetime.now())
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(), nullable=True)
+
+    phone_masters: Mapped[list['Master']] = relationship(
+        argument='Master',
+        secondary='master_phone_association',
+        order_by='Master.full_name',
+        back_populates="master_phones")

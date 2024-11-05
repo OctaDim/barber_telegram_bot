@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
 
@@ -11,7 +11,7 @@ class Category(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[Optional[str]]
 
     active: Mapped[bool] = mapped_column(default=True)
@@ -21,3 +21,13 @@ class Category(Base):
     created: Mapped[datetime] = mapped_column(default=datetime.now())
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(),
                                               nullable=True)
+
+    category_services: Mapped['Service'] = relationship(
+        argument='Service',
+        order_by='Service.name',
+        back_populates="service_categories")
+
+    category_masters: Mapped['Master'] = relationship(
+        argument='Master',
+        order_by='Master.full_name',
+        back_populates="master_categories")

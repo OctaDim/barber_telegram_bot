@@ -1,9 +1,9 @@
-
 from datetime import datetime
 from typing import Optional
 
-from database.db_connection import Base
 from sqlalchemy.orm import Mapped, mapped_column
+
+from database.db_connection import Base
 
 
 class Address(Base):

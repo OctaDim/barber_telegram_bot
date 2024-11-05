@@ -29,4 +29,4 @@ from database.db_models.association_master_phone import MasterPhoneAssociation
 
 
 db_connector = DBConnection(db_url=db_engine_url)
-db_connector.create_tables(Base)
+db_connector.drop_models(Base)
