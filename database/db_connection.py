@@ -35,3 +35,6 @@ class DBConnection:
                 session.add(UserRole(name=role_name))
 
             session.commit()
+
+    def drop_models(self, base: DeclarativeMeta):
+        base.metadata.drop_all(self.engine)

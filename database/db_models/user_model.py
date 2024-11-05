@@ -1,15 +1,12 @@
-
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey, BigInteger
+from sqlalchemy import BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
 from database.db_models.association_user_role import UserRoleAssociation
 from database.db_models.association_user_status import UserStatusAssociation
-from database.db_models.user_role_model import UserRole
-from database.db_models.user_status_model import UserStatus
 
 
 class User(Base):
@@ -17,20 +14,13 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    status_id: Mapped[int] = mapped_column(
-        ForeignKey("user_status.id"),
-        nullable=True)
-
-    role_id: Mapped[int] = mapped_column(
-        ForeignKey("user_role.id"),
-        nullable=False)
-
     telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
-    username: Mapped[str] = mapped_column(nullable=False, unique=True)
+    username: Mapped[str] = mapped_column(unique=True)
 
     full_name: Mapped[Optional[str]]
     first_name: Mapped[str]
     last_name: Mapped[Optional[str]]
+
     phone_number: Mapped[Optional[str]]
     birth_date: Mapped[Optional[datetime]]
     description: Mapped[Optional[str]]
@@ -44,6 +34,31 @@ class User(Base):
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(),
                                               nullable=True)
 
+    user_statuses: Mapped[list['UserStatus']] = relationship(
+        argument='UserStatus',
+        secondary='user_status_association',
+        order_by='UserStatus.name',
+        back_populates='status_users'
+    )
+
+    user_roles: Mapped[list['UserRole']] = relationship(
+        argument='UserRole',
+        secondary='user_role_association',
+        order_by='UserRole.name',
+        back_populates='role_users'
+    )
+
+    client_work_times: Mapped[list['WorkTime']] = relationship(
+        argument='WorkTime',
+        secondary='work_time_user_association',
+        order_by='WorkTime.time_start',
+        back_populates="work_time_clients")
+
+    user_masters: Mapped['Master'] = relationship(
+        argument='Master',
+        order_by='Master.full_name',
+        back_populates="master_user")
+
     @property
     def user_contact(self) -> Optional[str]:
         if self.full_name and self.phone_number:
@@ -51,34 +66,5 @@ class User(Base):
         if self.full_name:
             return f"{self.full_name}, {self.username}"
         if self.phone_number:
-            return "{self.phone_number}, {self.username}"
+            return f"{self.phone_number}, {self.username}"
         return str(self.username)
-
-
-# User - Status - User
-# orm relations many-to-many
-User.user_statuses = relationship(
-    argument=UserStatus,
-    secondary=UserStatusAssociation.__tablename__,
-    order_by=UserStatus.name,
-    back_populates="status_users")
-
-UserStatus.status_users = relationship(
-    argument=User,
-    secondary=UserStatusAssociation.__tablename__,
-    order_by=User.full_name,
-    back_populates="user_statuses")
-
-# User - Role - User
-# orm relations many-to-many
-User.user_roles = relationship(
-    argument=UserRole,
-    secondary=UserRoleAssociation.__tablename__,
-    order_by=UserRole.name,
-    back_populates="role_users")
-
-UserRole.role_users = relationship(
-    argument=User,
-    secondary=UserRoleAssociation.__tablename__,
-    order_by=User.full_name,
-    back_populates="user_roles")

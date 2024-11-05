@@ -2,19 +2,19 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from database.db_connection import Base
 
 
-class UserRoleAssociation(Base):
-    __tablename__ = "user_role_association"
+class WorkTimeUserAssociation(Base):
+    __tablename__ = "work_time_user_association"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"),
-                                         primary_key=True)
+    # ### many repeated service_id - work_time_id pairs can be saved ###
+    id: Mapped[int] = mapped_column(primary_key=True)
 
-    role_id: Mapped[int] = mapped_column(ForeignKey("user_role.id"),
-                                         primary_key=True)
+    work_time_id: Mapped[int] = mapped_column(ForeignKey("work_time.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
 
     creator_id: Mapped[Optional[int]]
     editor_id: Mapped[Optional[int]]

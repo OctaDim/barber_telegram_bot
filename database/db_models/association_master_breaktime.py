@@ -2,19 +2,19 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from database.db_connection import Base
 
 
-class UserRoleAssociation(Base):
-    __tablename__ = "user_role_association"
+class MasterBreakTimeAssociation(Base):
+    __tablename__ = "master_break_time_association"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"),
-                                         primary_key=True)
+    master_id: Mapped[int] = mapped_column(ForeignKey("master.id"),
+                                           primary_key=True)
 
-    role_id: Mapped[int] = mapped_column(ForeignKey("user_role.id"),
-                                         primary_key=True)
+    break_time_id: Mapped[int] = mapped_column(ForeignKey("break_time.id"),
+                                               primary_key=True)
 
     creator_id: Mapped[Optional[int]]
     editor_id: Mapped[Optional[int]]
