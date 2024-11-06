@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal
 
 from aiogram.filters.callback_data import (
     CallbackData)
@@ -10,6 +10,7 @@ from database.db_models.category_model import Category
 from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button)
+from telegram.keyboard_inline.enroll_methods_inl_kbd import MethodCategoryToMasterCBData, MethodCategoryToServiceCBData
 from telegram.params.buttons_enroll_categories import (
     ENROLL_CATEGORIES_BUTTONS)
 from telegram.params.categories_icons import (
@@ -32,18 +33,21 @@ class CurrentCategoryCBData(CallbackData, prefix="current_category"):
     category_id: int
 
 
-class CategoryContinueCBData(CallbackData, prefix="category_continue"):
+class CategoryToServiceContinueCBData(CallbackData, prefix="category_to_service_cont"):
     pass
 
 
-def get_enroll_categories_inl_kbd(current_page_records: List[Category],
-                                  total_pages_number: int,
-                                  selected_category_id: int = None,
-                                  current_page_number: int = 1
-                                  ) -> InlineKeyboardMarkup:
-    # TEST DATA
-    # selected_category_id = 21
+class CategoryToMasterContinueCBData(CallbackData, prefix="category_to_master_cont"):
+    pass
 
+
+def get_enroll_categories_inl_kbd(
+        current_page_records: List[Category],
+        total_pages_number: int,
+        selected_category_id: int = None,
+        current_page_number: int = 1,
+        selected_method_prefix: str = None,
+) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
     if total_pages_number > 1:
@@ -68,15 +72,21 @@ def get_enroll_categories_inl_kbd(current_page_records: List[Category],
             selected_icon = CATEGORIES_ICONS.UNSELECTED
 
         builder_inl_kbd.button(
-            text=f"{selected_icon} {category_record.name}",
+            text=f"{selected_icon} "
+                 f"{category_record.name}",
             callback_data=CurrentCategoryCBData(
                 category_id=category_record.id).pack())
 
     if selected_category_id:
         continue_adjust = [1]
+        if selected_method_prefix == MethodCategoryToServiceCBData.__prefix__:
+            continue_callback_data = CategoryToServiceContinueCBData
+        else:
+            continue_callback_data = CategoryToMasterContinueCBData
+
         builder_inl_kbd.button(
             text=ENROLL_CATEGORIES_BUTTONS.CONTINUE,
-            callback_data=CategoryContinueCBData())
+            callback_data=continue_callback_data())
     else:
         continue_adjust = []
 
