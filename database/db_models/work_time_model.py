@@ -4,6 +4,9 @@ from typing import Optional, List
 from sqlalchemy import ForeignKey, ARRAY, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from telegram.config.configs import LANGUAGE_CONFIGS
+from sqlalchemy_utils.types.phone_number import PhoneNumberType
+
 from database.db_connection import Base
 
 
@@ -18,11 +21,19 @@ class WorkTime(Base):
     time_end: Mapped[datetime]
     slot_duration: Mapped[timedelta]
 
+    admin_name_client: Mapped[str] = mapped_column(nullable=True)
+    admin_phone_client: Mapped[str] = mapped_column(
+        PhoneNumberType(region=LANGUAGE_CONFIGS.PHONE_NUMBER_REGION),
+        unique=True, nullable=True)
+
     selected_services: Mapped[List[int]] = mapped_column(ARRAY(Integer),
                                                          nullable=True)
 
     reserved: Mapped[bool] = mapped_column(default=False)
     admin_only: Mapped[bool] = mapped_column(default=False)
+
+    is_group: Mapped[bool] = mapped_column(default=False)
+    max_clients_limit: Mapped[int] = mapped_column(default=1)
 
     active: Mapped[bool] = mapped_column(default=True)
 
