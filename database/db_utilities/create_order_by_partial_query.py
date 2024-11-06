@@ -8,12 +8,14 @@ from database.db_connection import Base
 def create_order_by_partial_query(
         model_class: Union[Type[Base], Type[Any]],
         prior_filter_query: Query,
-        order_by_fields: Optional[Union[str, Tuple[str, ...]]] = ("id",)):
+        order_by_fields: Optional[Union[str, Tuple[str, ...], None]] = ("id",)):
+    if not order_by_fields:
+        return prior_filter_query
 
     order_query = prior_filter_query
 
     if isinstance(order_by_fields, str):
-        order_by_fields_validated = (order_by_fields, )
+        order_by_fields_validated = (order_by_fields,)
     else:
         order_by_fields_validated = order_by_fields
 
