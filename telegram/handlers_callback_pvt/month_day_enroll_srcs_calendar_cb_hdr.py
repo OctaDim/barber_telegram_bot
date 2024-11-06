@@ -55,9 +55,15 @@ async def month_day_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
+    selected_master_id = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_master_id")
+    if not selected_master_id:
+        selected_master_id = "all"
+
     all_slots_records = get_slots_from_now_for_month(
         year=selected_year, month=selected_month,
-        master_id="all",  # For the future, to define master_id selected by user/client
+        master_id=selected_master_id,
         reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(

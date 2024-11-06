@@ -4,23 +4,31 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from telegram.errors_api_telegram.telegram_exception_errors import TG_EXCEPT_ERRORS
-from telegram.filters.chat_types_filter import ChatTypesFilter
+from telegram.errors_api_telegram.telegram_exception_errors import (
+    TG_EXCEPT_ERRORS)
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
 from telegram.keyboard_inline.enroll_services_inl_kbd import (
     EnrollServiceCallbackData,
     OneMoreServiceCallbackData,
     get_enroll_service_inl_kbd)
-from telegram.params.messages import NONE_SERVICES_SELECTED
-from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
+from telegram.params.messages import (
+    NONE_SERVICES_SELECTED)
+from telegram.params.select_services_icons import (
+    SELECT_SERVICES_ICONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_dict_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key)
-from telegram.telegram_utils.handlers_stack_utils import get_handler_answer_flag_dict
-from telegram.telegram_utils.messages_helpers import get_selected_services_summary
-from telegram.telegram_utils.messages_utils import inline_keyboard_is_actual
-from utilities.list_utils import remove_same_list_elms_by_value
+from telegram.telegram_utils.handlers_stack_utils import (
+    get_handler_answer_flag_dict)
+from telegram.telegram_utils.messages_helpers import (
+    get_selected_services_summary)
+from telegram.telegram_utils.messages_utils import (
+    inline_keyboard_is_actual)
+from utilities.list_utils import (
+    remove_same_list_elms_by_value)
 
 enroll_services_cb_router = Router(name=__name__)
 enroll_services_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -36,6 +44,8 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+
+    callback_prefix = callback_data.__prefix__
 
     all_services_info = await get_valid_dict_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -79,7 +89,7 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
             one_more_service_btn=True)
 
     else:  # If service is selected at least one time or several times
-        if callback_data.__prefix__ == "enroll_cancel_services":  # Cancel this service entirely
+        if callback_prefix == EnrollServiceCallbackData.__prefix__:  # Cancel this service entirely
             same_id_count = selected_services_ids.count(cur_service_id)
             selected_services_ids = remove_same_list_elms_by_value(
                 old_list=selected_services_ids,
@@ -95,7 +105,7 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
                 service_id=cur_service_id,
                 button_selected=False)
 
-        elif callback_data.__prefix__ == "one_more_same_service":  # Enrol the same service again
+        elif callback_prefix == OneMoreServiceCallbackData.__prefix__:  # Enrol the same service again
             selected_services_ids.append(cur_service_id)
             total_cost_selected += cur_service_price
             total_cost_selected = round(total_cost_selected, 2)

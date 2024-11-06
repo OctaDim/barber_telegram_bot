@@ -41,6 +41,8 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.answer()
 
+    callback_prefix = callback_data.__prefix__
+
     calendar_month = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="cur_month_enroll_srcs_calendar")
@@ -49,20 +51,16 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="cur_year_enroll_srcs_calendar")
 
-    if callback_data.__prefix__ == "next_month_enroll_srcs":
+    if callback_prefix == NextMonthCBData.__prefix__:
         calendar_month += 1
-
         if calendar_month > 12:
             calendar_month = 1
             calendar_year += 1
-
-    elif callback_data.__prefix__ == "prev_month_enroll_srcs":
+    elif callback_prefix == PreviousMonthCBData.__prefix__:
         calendar_month -= 1
-
         if calendar_month < 1:
             calendar_month = 12
             calendar_year -= 1
-
     else:
         calendar_month = datetime.now().month
         calendar_year = datetime.now().year
@@ -71,9 +69,15 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
+    selected_master_id = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_master_id")
+    if not selected_master_id:
+        selected_master_id = "all"
+
     all_slots_records = get_slots_from_now_for_month(
         year=calendar_year, month=calendar_month,
-        master_id="all",  # For the future, to define master_id selected by user/client
+        master_id=selected_master_id,
         reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(

@@ -7,25 +7,29 @@ from aiogram.types import CallbackQuery
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
-from database.db_models.work_time_model import WorkTime
+from database.db_models.work_time_model import (
+    WorkTime)
 from database.db_queries.user_obj_by_telegram_id import (
-    get_user_obj_by_telegram_id)
+    get_user_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
     get_worktime_slot_by_id_in_session)
-from database.db_utilities.add_service_worktime_assoc_explicit import (
-    add_service_worktime_association)
+from database.db_queries_hepers.add_service_worktime_assoc_explicit import (
+    directly_add_service_worktime_association)
 from database.db_utilities.merge_object_transaction_update import (
     merge_obj_to_session_group_update)
-from database.db_utilities.slot_taken_msg_rollback_main_menu import (
-    slot_taken_msg_rollback_main_menu)
 from telegram.config.configs import (
     LANGUAGE_CONFIGS,
     DB_SLOTS_CONFIGS)
-from telegram.filters.chat_types_filter import ChatTypesFilter
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
 from telegram.handlers_private.main_menu_btn_pvt_hdr import (
     return_main_menu_btn_handler)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
+from telegram.params.messages import (
+    SLOT_ALREADY_TAKEN,
+    MAX_PERSON_GROUP_LIMIT_REACHED,
+    CLIENT_ALREADY_ENROLLED)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -42,7 +46,8 @@ from telegram.telegram_utils.messages_utils import (
 from utilities.calendar_utils import (
     get_date_with_month_name,
     get_time_flex_from_datetime)
-from utilities.numeric_utils import number_or_str_to_integer
+from utilities.numeric_utils import (
+    number_or_str_to_integer)
 
 continue_slot_saving_cb_router = Router(name=__name__)
 continue_slot_saving_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -58,11 +63,6 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
     message = callback_query.message
-
-    current_user_telegram_id = callback_query.from_user.dict().get("id")
-    current_user_obj = get_user_obj_by_telegram_id(
-        telegram_id=current_user_telegram_id)
-    current_user_id = current_user_obj.id
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -85,14 +85,18 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
     last_slot_time_loss = selected_interval.get("slot time loss")
 
     # Transaction start (with group adding and updating)
-    with DBConnection(db_url=db_engine_url) as session:
+    with DBConnection(db_url=db_engine_url) as session_ongoing:
+        current_user_telegram_id = callback_query.from_user.id
+        current_user_obj = get_user_by_telegram_id(
+            telegram_id=current_user_telegram_id)
+        current_user_id = current_user_obj.id
+
         for slot_id in selected_slots_ids:
             slot_obj = get_worktime_slot_by_id_in_session(
                 worktime_slot_id=slot_id,
-                ongoing_session=session)
+                ongoing_session=session_ongoing)
 
-            new_update_data = {"client_user_id": current_user_id,
-                               "selected_services": selected_services_ids,
+            new_update_data = {"selected_services": selected_services_ids,
                                "reserved": True,
                                "editor_id": current_user_id}
 
@@ -101,29 +105,70 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 positive=True)
             time_loss_min_limit = timedelta(minutes=time_loss_min_limit)
 
-            # Checking if any slot of selected ones is reserved or not active
-            if not slot_obj or slot_obj.reserved or not slot_obj.active:
-                await slot_taken_msg_rollback_main_menu(
-                    message=message,
-                    ongoing_session=session,
-                    state=state)
+            # ##########################################################
+            # ####### Checking group parameters # For the future #######
+            # ##########################################################
+            if not len(slot_obj.work_time_clients):
+                enrolled_clients_number = 0
+            else:
+                enrolled_clients_number = len(slot_obj.work_time_clients)
+
+            if not slot_obj.max_clients_limit:
+                max_person_worktime_limit = 1
+            else:
+                max_person_worktime_limit = slot_obj.max_clients_limit
+
+            # Checking if client is already enrolled before
+            if (slot_obj.is_group
+                    and current_user_obj in slot_obj.work_time_clients):
+                await message.answer(text=CLIENT_ALREADY_ENROLLED)
+                session_ongoing.rollback()
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+
+            # Checking if clients number is equal or more max client limit
+            elif (slot_obj.is_group
+                  and enrolled_clients_number >= max_person_worktime_limit):
+                await message.answer(text=MAX_PERSON_GROUP_LIMIT_REACHED)
+                session_ongoing.rollback()
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+            # ##########################################################
+            # ##########################################################
+
+            # Checking if slot non group and is reserved
+            elif not slot_obj.is_group and slot_obj.reserved:
+                await message.answer(text=SLOT_ALREADY_TAKEN)
+                session_ongoing.rollback()
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
+                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+
+            # Checking if not slot obj or not active
+            elif not slot_obj or not slot_obj.active:
+                await message.answer(text=SLOT_ALREADY_TAKEN)
+                session_ongoing.rollback()
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if any slot of selected ones is defined as admin only
             elif (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
                   and slot_obj.admin_only):
-                await slot_taken_msg_rollback_main_menu(
-                    message=message,
-                    ongoing_session=session,
-                    state=state)
+                await message.answer(text=SLOT_ALREADY_TAKEN)
+                session_ongoing.rollback()
+                # Call the same functionality handler of the reply keyboard button
+                await return_main_menu_btn_handler(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Ordinary updating all slots except last one with optional time loss
-            elif slot_id in selected_slots_ids_except_last_id:
+            if slot_id in selected_slots_ids_except_last_id:
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=session)
+                    ongoing_session=session_ongoing)
                 print(f"\tTEST INFO: Ordinary updating all slots "
                       "(except last slot with optional time loss)\n")
 
@@ -132,7 +177,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=session)
+                    ongoing_session=session_ongoing)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective)\n")
 
@@ -142,7 +187,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=session)
+                    ongoing_session=session_ongoing)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -153,7 +198,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 merge_obj_to_session_group_update(
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
-                    ongoing_session=session)
+                    ongoing_session=session_ongoing)
                 print(f"\tTEST INFO: Ordinary updating last slot "
                       f"if not time loss (slot is very effective slot)\n")
 
@@ -163,9 +208,8 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                   and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
                 client_time_end = selected_interval.get("client time end")
 
-                # getting values before slot object will be updated
+                # getting values before existing slot object will be updated
                 new_update_data = {
-                    "client_user_id": current_user_id,
                     "time_start": slot_obj.time_start,
                     "time_end": client_time_end,
                     "slot_duration": client_time_end - slot_obj.time_start,
@@ -173,9 +217,13 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     "reserved": True,
                     "editor_id": current_user_id}
 
+                merge_obj_to_session_group_update(
+                    object_to_merge=slot_obj,
+                    new_update_data=new_update_data,
+                    ongoing_session=session_ongoing)
+
                 new_slot_obj_from_loss_time = WorkTime(
                     master_id=slot_obj.master_id,
-                    client_user_id=None,
                     time_start=client_time_end,
                     time_end=slot_obj.time_end,
                     slot_duration=slot_obj.time_end - client_time_end,
@@ -183,25 +231,27 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                     admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
                     creator_id=current_user_id)
 
-                merge_obj_to_session_group_update(
-                    object_to_merge=slot_obj,
-                    new_update_data=new_update_data,
-                    ongoing_session=session)
-
-                session.add(new_slot_obj_from_loss_time)
+                session_ongoing.add(new_slot_obj_from_loss_time)
                 print(f"\tTEST INFO: Last slot split into reserved part"
                       f" and effective free part because time loss\n")
 
-            add_service_worktime_association(
+            # Adding records directly to save non-unique pairs worktime - service
+            directly_add_service_worktime_association(
                 selected_services_ids=selected_services_ids,
                 worktime_slot_id=slot_id,
                 current_user_id=current_user_id,
-                ongoing_session=session)
+                ongoing_session=session_ongoing)
+
+            slot_obj.work_time_clients.append(current_user_obj)
 
         # Transaction end (with group adding and updating)
-        session.commit()
+        session_ongoing.commit()
+        print(f"\tTEST INFO: Ongoing session was commit "
+              f"(with group adding and updating records)\n")
 
+        # ##############################################################
         # Info block showing selected services and time interval summary
+        # ##############################################################
         selected_date = state_data.get("selected_date_enroll_srcs_calendar")
 
         selected_services_cost = await get_valid_float_by_fsm_state_key(

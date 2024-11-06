@@ -35,4 +35,5 @@ async def return_common_callback_hdr(callback_query: CallbackQuery,
                                 state=state,
                                 current_handler_data=current_handler_data)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(skip_add_handler_stack=True,
+                                        upd_actual_msg_min_id=True)

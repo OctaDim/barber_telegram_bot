@@ -57,5 +57,4 @@ async def slot_selected_cb_hdr(callback_query: CallbackQuery,
     await state.update_data(
         selected_interval_first_slot_id=callback_data.first_slot_id)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True,
-                                        upd_actual_msg_min_id=True)
+    return get_handler_answer_flag_dict(skip_add_handler_stack=True)

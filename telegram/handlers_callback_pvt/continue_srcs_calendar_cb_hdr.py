@@ -25,7 +25,7 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
-    get_valid_datetime_by_fsm_state_key)
+    get_valid_datetime_by_fsm_state_key, get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
@@ -77,9 +77,15 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         selected_date,
         language=LANGUAGE_CONFIGS.LANGUAGE)
 
+    selected_master_id = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_master_id")
+    if not selected_master_id:
+        selected_master_id = "all"
+
     all_slots_records = get_slots_from_now_for_date(
         required_date=selected_date,
-        master_id="all",  # For the future, to define master_id selected by user/client
+        master_id=selected_master_id,
         reserved=False, active=True, admin_only=False)
 
     enrollment_intervals = get_available_enrollment_intervals(

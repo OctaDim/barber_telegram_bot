@@ -32,4 +32,5 @@ async def main_menu_common_callback_hdr(callback_query: CallbackQuery,
     # Call the same functionality handler of the reply keyboard button
     await return_main_menu_btn_handler(message=message, state=state)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(skip_add_handler_stack=True,
+                                        upd_actual_msg_min_id=True)
