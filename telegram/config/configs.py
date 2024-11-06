@@ -36,6 +36,7 @@ class DB_SLOTS_CONFIGS:
 @dataclass
 class SLOTS_CONFIGS:
     SHOW_SLOTS_ADVISES: bool = True
+    SHOW_SLOTS_ADVISES_NOTE: bool = True
     MOST_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 15  # In minutes. 0 to switch off diapason
     VERY_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 30  # In minutes. 0 to switch off diapason
     ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 45  # In minutes. 0 to switch off diapason
@@ -46,9 +47,9 @@ class SLOTS_CONFIGS:
 
 @dataclass
 class ENROLL_METHODS_CONFIGS:
-    SHOW_ENROLL_BY_CATEGORY: bool = True
-    SHOW_ENROLL_BY_MASTER: bool = True
-    SHOW_ENROLL_BY_CATEGORY_AND_MASTER: bool = True
+    SHOW_ENROLL_CATEGORY_TO_SERVICE: bool = True
+    SHOW_ENROLL_MASTER_TO_SERVICE: bool = True
+    SHOW_ENROLL_CATEGORY_TO_MASTER: bool = True
 
 
 @dataclass
