@@ -120,7 +120,7 @@ def get_slot_advising_icon(time_loss: timedelta) -> str:
 
 def get_slots_advising_brief_note() -> str:
     text = (f"{SLOT_ICONS.ADVISED_SLOT} - {MSG.VERY_ADVISED_SLOTS}   \n"
-            f"{SLOT_ICONS.UNADVISED_SLOT} - {MSG.LESS_ADVISED_SLOTS}")
+            f"{SLOT_ICONS.VERY_UNADVISED_SLOT} - {MSG.LESS_ADVISED_SLOTS}")
     return text
 
 
