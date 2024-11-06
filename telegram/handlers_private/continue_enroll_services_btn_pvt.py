@@ -17,7 +17,7 @@ from telegram.params.messages import (
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
-    get_valid_timedelta_by_fsm_state_key)
+    get_valid_timedelta_by_fsm_state_key, get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
     get_handler_answer_flag_dict)
@@ -74,9 +74,15 @@ async def continue_enroll_services_btn_handler(message: Message,
         cur_month_enroll_srcs_calendar=month_now,
         cur_year_enroll_srcs_calendar=year_now)
 
+    selected_master_id = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_master_id")
+    if not selected_master_id:
+        selected_master_id = "all"
+
     all_slots_records = get_slots_from_now_for_month(
         year=year_now, month=month_now,
-        master_id="all",  # For the future, to define master_id selected by user/client
+        master_id=selected_master_id,
         reserved=False, active=True, admin_only=False)
 
     enrollment_days = get_available_enrollment_days(
