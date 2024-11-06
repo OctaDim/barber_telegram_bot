@@ -45,7 +45,8 @@ def get_enrollment_intervals_inl_kbd(
     builder_inl_kbd.button(text=date_now_text,
                            callback_data=ReturnInlineBtnCBData())
 
-    if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES:
+    if (SLOTS_CONFIGS.SHOW_SLOTS_ADVISES and
+            SLOTS_CONFIGS.SHOW_SLOTS_ADVISES_NOTE):
         advising_note_text = get_slots_advising_brief_note()
         builder_inl_kbd.button(text=advising_note_text,
                                callback_data=SlotsAdvisingNoteCBData())
@@ -95,9 +96,13 @@ def get_enrollment_intervals_inl_kbd(
 
     date_info_adjust = [1]
     if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES:
-        slots_advising_note_adjust = [1]
+        if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES_NOTE:
+            slots_advising_note_adjust = [1]
+        else:
+            slots_advising_note_adjust = []
         slot_row_columns_number = 2
         return_main_meny_bts_adjust = [2] if selected_slot_id else [1]
+
     else:
         slots_advising_note_adjust = []
         slot_row_columns_number = 1

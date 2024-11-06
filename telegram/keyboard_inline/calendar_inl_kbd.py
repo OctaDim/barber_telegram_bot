@@ -110,19 +110,22 @@ def get_enroll_srcs_calendar_inl_kbd(calendar_year: int,
                                                   second=0, microsecond=0)
 
             if selected_date and loop_datetime == selected_date:
-                button_text = CALENDAR_ICONS.SELECTED + str(loop_day)
+                button_text = (f"{CALENDAR_ICONS.SELECTED}"
+                               f"{loop_day}")
                 callback_data = MonthDayCBData(month_day=loop_day)
                 builder_inl_kbd.button(text=button_text,
                                        callback_data=callback_data.pack())
 
             elif loop_datetime > datetime_now:
-                button_text = CALENDAR_ICONS.UNSELECTED_DAY + str(loop_day)
+                button_text = (f"{CALENDAR_ICONS.UNSELECTED_DAY}"
+                               f"{loop_day}")
                 callback_data = MonthDayCBData(month_day=loop_day)
                 builder_inl_kbd.button(text=button_text,
                                        callback_data=callback_data.pack())
 
             elif loop_datetime == datetime_now:
-                button_text = CALENDAR_ICONS.TODAY_DATE + str(loop_day)
+                button_text = (f"{CALENDAR_ICONS.TODAY_DATE}"
+                               f"{loop_day}")
                 callback_data = MonthDayCBData(month_day=loop_day)
                 builder_inl_kbd.button(text=button_text,
                                        callback_data=callback_data.pack())
