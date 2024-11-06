@@ -8,13 +8,19 @@ from database.db_utilities.create_order_by_partial_query import (
 
 
 def get_all_categories_ordered(
+        category_id: Union[bool, "all"] = "all",
         active: Union[bool, "all"] = "all",
-        order_by_fields: Optional[Union[str, Tuple[str, ...]]] = ("name",)
+        order_by_fields: Optional[Union[str, Tuple[str, ...], None]] = (
+                "name",)
 ) -> List[Category]:
     with DBConnection(db_url=db_engine_url) as session:
         base_query = session.query(Category)
 
         filter_query = base_query
+        if category_id != "all":
+            filter_query = filter_query.filter(
+                Category.id == category_id)
+
         if active != "all":
             filter_query = filter_query.filter(
                 Category.active.is_(active))

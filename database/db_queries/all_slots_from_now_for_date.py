@@ -5,6 +5,7 @@ from sqlalchemy import extract, func, cast, Integer, case
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
+from database.db_models.user_model import User
 from database.db_models.work_time_model import WorkTime
 from database.db_utilities.create_order_by_partial_query import (
     create_order_by_partial_query)
@@ -17,12 +18,14 @@ from utilities.decorators_global import execution_time_decorator
                           exec_time_logging=LOGGING.EXECUTION_TIME)
 def get_slots_from_now_for_date(
         required_date: date,
+        worktime_id: Union[int, "all"] = "all",
         master_id: Union[int, "all"] = "all",
-        client_user_id: Union[int, "all"] = "all",
+        worktime_client_obj: Union[int, "all"] = "all",
         reserved: Union[bool, "all"] = "all",
         active: Union[bool, "all"] = "all",
         admin_only: Union[bool, "all"] = "all",
-        order_by_fields: Optional[Union[str, Tuple[str, ...]]] = ("time_start",)
+        order_by_fields: Optional[Union[str, Tuple[str, ...], None]] = (
+                "time_start",)
 ) -> list[WorkTime]:
     with (DBConnection(db_url=db_engine_url) as session):
         base_query = session.query(
@@ -46,13 +49,17 @@ def get_slots_from_now_for_date(
             WorkTime.time_start >= datetime.now(),
             func.date(WorkTime.time_start) == required_date)
 
+        if worktime_id != "all":
+            filter_query = filter_query.filter(
+                WorkTime.id == worktime_id)
+
         if master_id != "all":
             filter_query = filter_query.filter(
                 WorkTime.master_id == master_id)
 
-        if client_user_id != "all":
+        if worktime_client_obj != "all":
             filter_query = filter_query.filter(
-                WorkTime.client_user_id == client_user_id)
+                WorkTime.work_time_clients.any(User.id == worktime_client_obj))
 
         if reserved != "all":
             filter_query = filter_query.filter(

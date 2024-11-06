@@ -8,25 +8,31 @@ from database.db_utilities.create_order_by_partial_query import (
 
 
 def get_all_services_ordered(
+        service_id: Union[int, "all"] = "all",
         category_id: Union[int, "all"] = "all",
-        master_id: Union[int, "all"] = "all",
+        # master_id: Union[int, "all"] = "all",
         active: Union[bool, "all"] = "all",
-        order_by_fields: Optional[Union[str, Tuple[str, ...]]] = ("name",)
+        order_by_fields: Optional[Union[str, Tuple[str, ...], None]] = (
+                "name",)
 ) -> List[Service]:
     with DBConnection(db_url=db_engine_url) as session:
         base_query = session.query(Service)
 
         filter_query = base_query
+        if service_id != "all":
+            filter_query = filter_query.filter(
+                Service.id == service_id)
+
         if category_id != "all":
             filter_query = filter_query.filter(
                 Service.category_id == category_id)
 
-        if master_id != "all":
-            filter_query = filter_query.filter(
-                Service.master_id == master_id)
+        # if master_id != "all":
+        #     filter_query = filter_query.filter(
+        #         Service.master_id == master_id)
 
         if active != "all":
-            filter_query = base_query.filter(
+            filter_query = filter_query.filter(
                 Service.active.is_(active))
 
         order_query = create_order_by_partial_query(
