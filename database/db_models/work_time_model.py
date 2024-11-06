@@ -24,6 +24,9 @@ class WorkTime(Base):
     reserved: Mapped[bool] = mapped_column(default=False)
     admin_only: Mapped[bool] = mapped_column(default=False)
 
+    is_group: Mapped[bool] = mapped_column(default=False)
+    max_clients_limit: Mapped[int] = mapped_column(default=1)
+
     active: Mapped[bool] = mapped_column(default=True)
 
     creator_id: Mapped[Optional[int]]
