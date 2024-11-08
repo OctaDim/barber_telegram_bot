@@ -10,7 +10,6 @@ from database.db_utilities.create_order_by_partial_query import (
 def get_all_services_ordered(
         service_id: Union[int, "all"] = "all",
         category_id: Union[int, "all"] = "all",
-        # master_id: Union[int, "all"] = "all",
         active: Union[bool, "all"] = "all",
         order_by_fields: Optional[Union[str, Tuple[str, ...], None]] = (
                 "name",)
@@ -26,10 +25,6 @@ def get_all_services_ordered(
         if category_id != "all":
             filter_query = filter_query.filter(
                 Service.category_id == category_id)
-
-        # if master_id != "all":
-        #     filter_query = filter_query.filter(
-        #         Service.master_id == master_id)
 
         if active != "all":
             filter_query = filter_query.filter(
