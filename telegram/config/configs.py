@@ -12,7 +12,13 @@ class LANGUAGE_CONFIGS:
 class PAGINATION_CONFIGS:
     CATEGORIES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     MASTERS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
-    SERVICES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
+    TIME_SLOTS_PER_PAGE: Union[int, 0] = 3  # 0 - show all categories without pages
+    # SERVICES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
+
+
+@dataclass
+class SERVICES_CONFIGS:
+    MASTERS_NAMES_WHEN_BY_CATEGORY: bool = True
 
 
 @dataclass
@@ -35,8 +41,8 @@ class DB_SLOTS_CONFIGS:
 
 @dataclass
 class SLOTS_CONFIGS:
-    SHOW_SLOTS_ADVISES: bool = True
-    SHOW_SLOTS_ADVISES_NOTE: bool = True
+    SHOW_SLOTS_ADVISES_ICONS: bool = True
+    SHOW_SLOTS_ADVISING_ICON_HINT: bool = True
     MOST_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 15  # In minutes. 0 to switch off diapason
     VERY_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 30  # In minutes. 0 to switch off diapason
     ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 45  # In minutes. 0 to switch off diapason
@@ -47,9 +53,9 @@ class SLOTS_CONFIGS:
 
 @dataclass
 class ENROLL_METHODS_CONFIGS:
-    SHOW_ENROLL_CATEGORY_TO_SERVICE: bool = True
-    SHOW_ENROLL_MASTER_TO_SERVICE: bool = True
-    SHOW_ENROLL_CATEGORY_TO_MASTER: bool = True
+    ENROLL_SERVICES_BY_CATEGORY: bool = True
+    ENROLL_SERVICES_BY_CATEGORY_AND_MASTER: bool = True
+    ENROLL_SERVICES_BY_MASTER: bool = True
 
 
 @dataclass
