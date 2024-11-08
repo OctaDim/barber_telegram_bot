@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class MSG:
     NAME: str = "Name"
+    AVAILABLE_MASTERS: str = "Available masters"
     PRICE: str = "Price"
     DURATION: str = "Time duration"
     DESCRIPTION: str = "Description"
@@ -27,5 +28,8 @@ class MSG:
     SELECTED_INTERVAL_SLOT: str = "Selected time slot"
 
     SLOTS_RECOMMENDATIONS: str = "Recommendations"
-    VERY_ADVISED_SLOTS: str = "Very advised"
-    LESS_ADVISED_SLOTS: str = "Less advised"
+    MAX_ADVISED_SLOTS: str = "Max recommended"
+    HIGHLY_ADVISED_SLOTS: str = "Highly recommended"
+    ADVISED_SLOT: str = "Recommended"
+    STANDARD_SLOT: str = "Standard"
+    BASIC_SLOTS: str = "Basic"

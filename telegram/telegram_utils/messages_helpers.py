@@ -1,26 +1,47 @@
 from datetime import timedelta
 
-from database.db_models.service_model import Service
-from telegram.config.configs import SLOTS_CONFIGS
-from telegram.params.buttons_common import SPECIAL_CHARACTERS
-from telegram.params.calendar_icons import CALENDAR_ICONS
-from telegram.params.intervals_slots_icons import SLOT_ICONS
-from telegram.params.messages import BETTER_SLOTS_TO_CHOOSE, CHOOSE_OTHER_SLOTS, SLOTS_RECOMMENDATIONS
-from telegram.params.messages_inserts import MSG
-from telegram.params.messages_multiline import SELECTED_SERVICES_CONGRATS
-from telegram.params.select_services_icons import SELECT_SERVICES_ICONS
+from database.db_models.service_model import (
+    Service)
+from telegram.config.configs import (
+    SLOTS_CONFIGS)
+from telegram.params.buttons_common import (
+    SPECIAL_CHARACTERS)
+from telegram.params.calendar_icons import (
+    CALENDAR_ICONS)
+from telegram.params.intervals_slots_icons import (
+    SLOT_ICONS)
+from telegram.params.messages import (
+    BETTER_SLOTS_TO_CHOOSE,
+    SLOTS_RECOMMENDATIONS)
+from telegram.params.messages_inserts import (
+    MSG)
+from telegram.params.messages_multiline import (
+    SELECTED_SERVICES_CONGRATS)
+from telegram.params.services_icons import (
+    SERVICES_ICONS)
 
 
-def get_service_brief_info(service_record: Service,
-                           fill_symbols_number: int = None) -> str:
+def get_service_brief_info(
+        service_record: Service,
+) -> str:
     service_brief_text = (
-        f"{SELECT_SERVICES_ICONS.SERVICE_POINT} <b>{service_record.name}</b>\n"
-        # For the future
-        # f"{SPECIAL_CHARACTERS.FILL_IN_BLANK_SYMBOL * fill_symbols_number}\n"
+        f"<b>{service_record.name}</b>\n"
+        f"{" " * 126}"  # Very important for getting same width inline keyboards
+        f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
+        f"{MSG.DURATION}:  {service_record.time_duration}\n")
+    return service_brief_text
+
+
+def get_service_brief_info_with_master(
+        service_record: Service,
+        master_info: str = ""
+) -> str:
+    service_brief_text = (
+        f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
         f"{MSG.DURATION}:  {service_record.time_duration}\n"
-    )
+        f"{MSG.AVAILABLE_MASTERS}: {master_info}\n")
     return service_brief_text
 
 
@@ -34,7 +55,7 @@ def get_service_brief_info_from_dict(service_info: dict) -> str:
 
 def get_service_detailed_info(service: Service) -> str:
     service_detailed_text = (
-        f"<b>{SELECT_SERVICES_ICONS.SERVICE_POINT} {service.name}</b>\n"
+        f"<b>{SERVICES_ICONS.SERVICE_POINT} {service.name}</b>\n"
         f"{MSG.SERVICE_PRICE}:  {service.price} {MSG.CURRENCY_BRIEF}\n"
         f"{MSG.SERVICE_DURATION}:  {service.time_duration}\n"
         f"{MSG.SERVICE_DESCRIPTION}:  {service.description}")
@@ -59,7 +80,6 @@ def get_contacts_text(socials: list,
     text = ""
     if socials:
         text += f"<b>{MSG.SOCIALS}:</b>\n"
-
         for social in socials:
             text += f"<a href='{social.url}'>{social.name}</a>\n"
         text += "\n"
@@ -86,17 +106,17 @@ def get_contacts_text(socials: list,
 def get_slot_advising_icon(time_loss: timedelta) -> str:
     advised_icon = SPECIAL_CHARACTERS.NO_ACTION_EMPTY_u200B
 
-    if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES:
+    if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES_ICONS:
 
         if (SLOTS_CONFIGS.MOST_ADVISED_TIME_LOSS_LIMIT
                 and time_loss <= timedelta(
                     minutes=SLOTS_CONFIGS.MOST_ADVISED_TIME_LOSS_LIMIT)):
-            advised_icon = SLOT_ICONS.MOST_ADVISED_SLOT
+            advised_icon = SLOT_ICONS.MAX_ADVISED_SLOT
 
         elif (SLOTS_CONFIGS.VERY_ADVISED_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
                     minutes=SLOTS_CONFIGS.VERY_ADVISED_TIME_LOSS_LIMIT)):
-            advised_icon = SLOT_ICONS.VERY_ADVISED_SLOT
+            advised_icon = SLOT_ICONS.HIGHLY_ADVISED_SLOT
 
         elif (SLOTS_CONFIGS.ADVISED_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
@@ -106,12 +126,12 @@ def get_slot_advising_icon(time_loss: timedelta) -> str:
         elif (SLOTS_CONFIGS.UNADVISED_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
                     minutes=SLOTS_CONFIGS.UNADVISED_TIME_LOSS_LIMIT)):
-            advised_icon = SLOT_ICONS.UNADVISED_SLOT
+            advised_icon = SLOT_ICONS.STANDARD_SLOT
 
         elif (SLOTS_CONFIGS.VERY_UNADVISED_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
                     minutes=SLOTS_CONFIGS.VERY_UNADVISED_TIME_LOSS_LIMIT)):
-            advised_icon = SLOT_ICONS.VERY_UNADVISED_SLOT
+            advised_icon = SLOT_ICONS.BASIC_SLOT
         else:
             advised_icon = SPECIAL_CHARACTERS.NO_ACTION_EMPTY_u200B
 
@@ -119,19 +139,19 @@ def get_slot_advising_icon(time_loss: timedelta) -> str:
 
 
 def get_slots_advising_brief_note() -> str:
-    text = (f"{SLOT_ICONS.ADVISED_SLOT} - {MSG.VERY_ADVISED_SLOTS}   \n"
-            f"{SLOT_ICONS.VERY_UNADVISED_SLOT} - {MSG.LESS_ADVISED_SLOTS}")
+    text = (f"{BETTER_SLOTS_TO_CHOOSE}:  "
+            f"{SLOT_ICONS.BASIC_SLOT} - {SLOT_ICONS.MAX_ADVISED_SLOT}")
     return text
 
 
 def get_slots_advising_explanation():
-    text = (f"{SLOTS_RECOMMENDATIONS}:\n\n"
-            f"{SLOT_ICONS.MOST_ADVISED_SLOT} - "
-            f"{SLOT_ICONS.VERY_ADVISED_SLOT} - "
-            f"{SLOT_ICONS.ADVISED_SLOT}  -  "
-            f"{BETTER_SLOTS_TO_CHOOSE}\n\n"
-            f"{SLOT_ICONS.VERY_UNADVISED_SLOT} - "
-            f"{SLOT_ICONS.UNADVISED_SLOT}  -  {CHOOSE_OTHER_SLOTS}")
+    text = (f"{BETTER_SLOTS_TO_CHOOSE}\n\n"
+            f"{SLOTS_RECOMMENDATIONS}:\n"
+            f"{SLOT_ICONS.MAX_ADVISED_SLOT} - {MSG.MAX_ADVISED_SLOTS}\n"
+            f"{SLOT_ICONS.HIGHLY_ADVISED_SLOT} - {MSG.HIGHLY_ADVISED_SLOTS}\n"
+            f"{SLOT_ICONS.ADVISED_SLOT} - {MSG.ADVISED_SLOT}\n"
+            f"{SLOT_ICONS.STANDARD_SLOT} - {MSG.STANDARD_SLOT}\n"
+            f"{SLOT_ICONS.BASIC_SLOT} - {MSG.BASIC_SLOTS}\n\n")
     return text
 
 

@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 
 @dataclass
-class SELECT_SERVICES_ICONS:
+class SERVICES_ICONS:
     NO_ICON: str = ""  # ATTENTION!!! DO NOT DELETE EMPTY ICONS. IT IS USED
-    UNSELECTED: str = "🟩"
+    UNSELECTED: str = ""  # DO NOT DELETE EMPTY ICONS. IT IS USED
     SELECTED: str = "✅"
     SERVICE_POINT: str = "💈"
     # TEST: str = "✂️"
