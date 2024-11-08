@@ -11,36 +11,44 @@ from database.db_queries_hepers.remove_intervals_by_time_loss import (
     remove_intervals_over_time_loss_limit)
 from telegram.config.configs import (
     LANGUAGE_CONFIGS,
-    DB_SLOTS_CONFIGS)
-from telegram.filters.chat_types_filter import ChatTypesFilter
-from telegram.keyboard_inline.calendar_inl_kbd import MonthContinueCBData
+    DB_SLOTS_CONFIGS, PAGINATION_CONFIGS)
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
+from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
+    MonthContinueCBData)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     get_enrollment_intervals_inl_kbd)
-from telegram.params.calendar_icons import CALENDAR_ICONS
+from telegram.params.calendar_icons import (
+    CALENDAR_ICONS)
 from telegram.params.messages import (
-    SELECT_ENROLLMENT_SLOTS,
+    SELECT_ENROLLMENT_SLOT,
     NO_FREE_ENROLLMENT_SLOTS)
 from telegram.params.messages_inserts import MSG
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
-    get_valid_datetime_by_fsm_state_key, get_valid_int_by_fsm_state_key)
+    get_valid_datetime_by_fsm_state_key,
+    get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
     get_selected_services_summary)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
-from utilities.calendar_utils import get_date_with_month_name
-from utilities.numeric_utils import number_or_str_to_integer
+from utilities.calendar_utils import (
+    get_date_with_month_name)
+from utilities.numeric_utils import (
+    number_or_str_to_integer)
+from utilities.pagination_utility import (
+    create_paginated_elems)
 
-continue_enroll_srcs_calendar_cb_router = Router(name=__name__)
-continue_enroll_srcs_calendar_cb_router.message.filter(ChatTypesFilter(["private"]))
+continue_calendar_enroll_srcs_cb_router = Router(name=__name__)
+continue_calendar_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@continue_enroll_srcs_calendar_cb_router.callback_query(MonthContinueCBData.filter())
-async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
+@continue_calendar_enroll_srcs_cb_router.callback_query(MonthContinueCBData.filter())
+async def continue_calendar_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                                                callback_data: CallbackData,
                                                state: FSMContext):
     state_data = await state.get_data()
@@ -49,8 +57,6 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
     await callback_query.answer()
-
-    message = callback_query.message
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -93,7 +99,7 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
         selected_services_duration=total_duration_selected)
 
     if not enrollment_intervals:
-        await message.answer(text=NO_FREE_ENROLLMENT_SLOTS)
+        await callback_query.answer(text=NO_FREE_ENROLLMENT_SLOTS)
         return get_handler_answer_flag_dict(upd_actual_msg_min_id=True,
                                             skip_add_handler_stack=True)
 
@@ -106,18 +112,34 @@ async def continue_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
             enrollment_intervals=enrollment_intervals,
             time_loss_max_limit=time_loss_max_limit)
 
-    await message.answer(
+    intervals_dicts_list = [value for value in enrollment_intervals.values()]
+    paginated_intervals = create_paginated_elems(
+        all_elements=intervals_dicts_list,
+        elements_per_page=PAGINATION_CONFIGS.TIME_SLOTS_PER_PAGE)
+
+    cur_page_number = await get_valid_int_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="current_page_number_of_intervals")
+    cur_page_number = 1 if not cur_page_number else cur_page_number
+
+    current_page_intervals = paginated_intervals.get(cur_page_number)
+    total_pages = len(paginated_intervals)
+
+    await callback_query.message.answer(
         text=f"{CALENDAR_ICONS.CALENDAR} {MSG.SELECTED_DATE}:\n"
              f"{date_text}\n\n"
              f"{summary_text}")
 
-    await message.answer(
-        text=SELECT_ENROLLMENT_SLOTS,
+    await callback_query.message.answer(
+        text=SELECT_ENROLLMENT_SLOT,
         reply_markup=get_enrollment_intervals_inl_kbd(
-            selected_date=selected_date,
-            enrollment_intervals=enrollment_intervals))
+            current_page_intervals=current_page_intervals,
+            total_pages_number=total_pages,
+            selected_date=selected_date))
 
     await state.update_data(
+        current_page_number_of_intervals=cur_page_number,
+        paginated_intervals_dicts_list=paginated_intervals,
         enrollment_intervals_state=enrollment_intervals)
 
     return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
