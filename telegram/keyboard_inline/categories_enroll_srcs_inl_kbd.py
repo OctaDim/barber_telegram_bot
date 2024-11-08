@@ -1,16 +1,17 @@
-from typing import List, Literal
+from typing import List
 
-from aiogram.filters.callback_data import (
-    CallbackData)
+from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import (
     InlineKeyboardBuilder,
     InlineKeyboardMarkup)
 
-from database.db_models.category_model import Category
+from database.db_models.category_model import (
+    Category)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button)
-from telegram.keyboard_inline.enroll_methods_inl_kbd import MethodCategoryToMasterCBData, MethodCategoryToServiceCBData
+from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
+    MethodCategoryToServiceContinueCBD)
 from telegram.params.buttons_enroll_categories import (
     ENROLL_CATEGORIES_BUTTONS)
 from telegram.params.categories_icons import (
@@ -33,15 +34,15 @@ class CurrentCategoryCBData(CallbackData, prefix="current_category"):
     category_id: int
 
 
-class CategoryToServiceContinueCBData(CallbackData, prefix="category_to_service_cont"):
+class CategoryToServiceContinueCBData(CallbackData, prefix="category_to_service_continue"):
     pass
 
 
-class CategoryToMasterContinueCBData(CallbackData, prefix="category_to_master_cont"):
+class CategoryToMasterContinueCBData(CallbackData, prefix="category_to_master_continue"):
     pass
 
 
-def get_enroll_categories_inl_kbd(
+def get_categories_enroll_srcs_inl_kbd(
         current_page_records: List[Category],
         total_pages_number: int,
         selected_category_id: int = None,
@@ -79,7 +80,7 @@ def get_enroll_categories_inl_kbd(
 
     if selected_category_id:
         continue_adjust = [1]
-        if selected_method_prefix == MethodCategoryToServiceCBData.__prefix__:
+        if selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__:
             continue_callback_data = CategoryToServiceContinueCBData
         else:
             continue_callback_data = CategoryToMasterContinueCBData

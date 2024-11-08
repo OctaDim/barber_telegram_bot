@@ -11,10 +11,10 @@ from database.db_queries_hepers.enrollment_days_for_month import (
     get_available_enrollment_days)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.calendar_inl_kbd import (
+from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
     NextMonthCBData,
     PreviousMonthCBData,
-    get_enroll_srcs_calendar_inl_kbd)
+    get_calendar_enroll_srcs_inl_kbd)
 from telegram.params.messages import (
     CHOOSE_SERVICES_DAY)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -86,7 +86,7 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.message.edit_text(
         text=CHOOSE_SERVICES_DAY,
-        reply_markup=get_enroll_srcs_calendar_inl_kbd(
+        reply_markup=get_calendar_enroll_srcs_inl_kbd(
             calendar_year=calendar_year,
             calendar_month=calendar_month,
             enrollment_days=enrollment_days))

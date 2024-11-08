@@ -22,8 +22,8 @@ cancel_all_services_pvt_router.message.filter(ChatTypesFilter(["private"]))
 
 @cancel_all_services_pvt_router.message(
     F.text == ENROLL_SERVICE_BUTTONS.CANCEL_ALL_CERVICES)
-async def cancel_all_services_btn_handler(message: Message,
-                                          state: FSMContext):
+async def cancel_all_services_btn_reply_hdr(message: Message,
+                                            state: FSMContext):
     state_data = await state.get_data()
     selected_services_ids = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,

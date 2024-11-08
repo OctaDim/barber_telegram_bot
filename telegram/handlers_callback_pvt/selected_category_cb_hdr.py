@@ -8,9 +8,9 @@ from telegram.errors_api_telegram.telegram_exception_errors import (
     TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.enroll_categories_inl_kbd import (
+from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     CurrentCategoryCBData,
-    get_enroll_categories_inl_kbd)
+    get_categories_enroll_srcs_inl_kbd)
 from telegram.params.messages import (
     SELECT_CATEGORY)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -22,20 +22,18 @@ from telegram.telegram_utils.handlers_stack_utils import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 
-category_selected_cb_router = Router(name=__name__)
-category_selected_cb_router.message.filter(ChatTypesFilter(["private"]))
+category_selected_enroll_srcs_cb_router = Router(name=__name__)
+category_selected_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@category_selected_cb_router.callback_query(CurrentCategoryCBData.filter())
-async def category_selected_cb_hdr(callback_query: CallbackQuery,
-                                   callback_data: CallbackData,
-                                   state: FSMContext):
+@category_selected_enroll_srcs_cb_router.callback_query(CurrentCategoryCBData.filter())
+async def category_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                               callback_data: CallbackData,
+                                               state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
-
-    # message = callback_query.message
 
     selected_method_prefix = await get_valid_str_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -67,7 +65,7 @@ async def category_selected_cb_hdr(callback_query: CallbackQuery,
     try:
         await callback_query.message.edit_text(
             text=SELECT_CATEGORY,
-            reply_markup=get_enroll_categories_inl_kbd(
+            reply_markup=get_categories_enroll_srcs_inl_kbd(
                 current_page_records=current_page_records,
                 total_pages_number=total_pages,
                 selected_category_id=selected_category_id,

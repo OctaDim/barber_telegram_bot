@@ -22,8 +22,8 @@ from telegram.config.configs import (
     DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.handlers_private.main_menu_btn_pvt_hdr import (
-    return_main_menu_btn_handler)
+from telegram.handlers_private.main_menu_btn_reply_hdr_pvt import (
+    main_menu_btn_reply_hdr_pvt)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
 from telegram.params.messages import (
@@ -49,14 +49,14 @@ from utilities.calendar_utils import (
 from utilities.numeric_utils import (
     number_or_str_to_integer)
 
-continue_slot_saving_cb_router = Router(name=__name__)
-continue_slot_saving_cb_router.message.filter(ChatTypesFilter(["private"]))
+continue_slot_saving_enroll_srcs_cb_router = Router(name=__name__)
+continue_slot_saving_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@continue_slot_saving_cb_router.callback_query(ContinueSlotSavingCBData.filter())
-async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
-                                      callback_data: CallbackData,
-                                      state: FSMContext):
+@continue_slot_saving_enroll_srcs_cb_router.callback_query(ContinueSlotSavingCBData.filter())
+async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                                  callback_data: CallbackData,
+                                                  state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
@@ -121,46 +121,46 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             # Checking if client is already enrolled before
             if (slot_obj.is_group
                     and current_user_obj in slot_obj.work_time_clients):
-                await message.answer(text=CLIENT_ALREADY_ENROLLED)
+                await callback_query.answer(text=CLIENT_ALREADY_ENROLLED)
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
+                await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if clients number is equal or more max client limit
             elif (slot_obj.is_group
                   and enrolled_clients_number >= max_person_worktime_limit):
-                await message.answer(text=MAX_PERSON_GROUP_LIMIT_REACHED)
+                await callback_query.answer(text=MAX_PERSON_GROUP_LIMIT_REACHED)
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
+                await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
             # ##########################################################
             # ##########################################################
 
             # Checking if slot non group and is reserved
             elif not slot_obj.is_group and slot_obj.reserved:
-                await message.answer(text=SLOT_ALREADY_TAKEN)
+                await callback_query.answer(text=SLOT_ALREADY_TAKEN)
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
+                await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if not slot obj or not active
             elif not slot_obj or not slot_obj.active:
-                await message.answer(text=SLOT_ALREADY_TAKEN)
+                await callback_query.answer(text=SLOT_ALREADY_TAKEN)
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
+                await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if any slot of selected ones is defined as admin only
             elif (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
                   and slot_obj.admin_only):
-                await message.answer(text=SLOT_ALREADY_TAKEN)
+                await callback_query.answer(text=SLOT_ALREADY_TAKEN)
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
-                await return_main_menu_btn_handler(message=message, state=state)
+                await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Ordinary updating all slots except last one with optional time loss
@@ -206,7 +206,9 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             elif (slot_id == last_selected_slot_id and last_slot_time_loss
                   and last_slot_time_loss >= time_loss_min_limit
                   and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
+
                 client_time_end = selected_interval.get("client time end")
+                slot_obj_time_end_before_update = slot_obj.time_end
 
                 # getting values before existing slot object will be updated
                 new_update_data = {
@@ -225,7 +227,7 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
                 new_slot_obj_from_loss_time = WorkTime(
                     master_id=slot_obj.master_id,
                     time_start=client_time_end,
-                    time_end=slot_obj.time_end,
+                    time_end=slot_obj_time_end_before_update,
                     slot_duration=slot_obj.time_end - client_time_end,
                     reserved=False,
                     admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
@@ -287,10 +289,10 @@ async def continue_slot_saving_cb_hdr(callback_query: CallbackQuery,
             slot_time_start=slot_time_start_text,
             slot_time_end=client_time_end_text)
 
-        await message.answer(text=complete_summary_text)
+        await callback_query.message.answer(text=complete_summary_text)
         await state.clear()
 
         # Call the same functionality handler of the reply keyboard button
-        await return_main_menu_btn_handler(message=message, state=state)
+        await main_menu_btn_reply_hdr_pvt(message=message, state=state)
 
         return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)

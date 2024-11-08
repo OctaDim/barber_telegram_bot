@@ -2,8 +2,6 @@ from datetime import timedelta
 
 from sqlalchemy import Row
 
-from database.db_queries.all_slots_from_now_for_month import (
-    get_slots_from_now_for_month)
 from utilities.list_utils import remove_list_duplicates
 
 
@@ -40,7 +38,6 @@ def get_available_enrollment_days(slots_records: list[Row],
 
     enrollment_days = remove_list_duplicates(enrollment_days)
     return enrollment_days
-
 
 # ##################### TEST CODE ######################################
 # ######################################################################

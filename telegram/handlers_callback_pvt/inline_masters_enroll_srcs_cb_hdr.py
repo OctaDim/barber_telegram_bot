@@ -1,5 +1,4 @@
 from aiogram import Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -8,19 +7,15 @@ from database.db_queries.all_masters_ordered_query import (
     get_all_masters_ordered)
 from telegram.config.configs import (
     PAGINATION_CONFIGS)
-from telegram.errors_api_telegram.telegram_exception_errors import (
-    TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.enroll_categories_inl_kbd import (
+from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     CategoryToMasterContinueCBData)
-from telegram.keyboard_inline.enroll_masters_inl_kbd import (
-    get_enroll_masters_inl_kbd)
-from telegram.keyboard_inline.enroll_methods_inl_kbd import (
-    get_enroll_methods_inl_kbd,
-    MethodMasterToServiceCBData)
+from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
+    get_masters_enroll_srcs_inl_kbd)
+from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
+    MethodMasterToServiceContinueCBD)
 from telegram.params.messages import (
-    HOW_SELECT_SERVICES,
     NO_AVAILABLE_MASTERS,
     SELECT_MASTER)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -32,15 +27,15 @@ from telegram.telegram_utils.messages_utils import (
 from utilities.pagination_utility import (
     create_paginated_elems)
 
-enroll_method_by_master_cb_router = Router(name=__name__)
-enroll_method_by_master_cb_router.message.filter(ChatTypesFilter(["private"]))
+inline_masters_enroll_srcs_cb_router = Router(name=__name__)
+inline_masters_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@enroll_method_by_master_cb_router.callback_query(MethodMasterToServiceCBData.filter())
-@enroll_method_by_master_cb_router.callback_query(CategoryToMasterContinueCBData.filter())
-async def enroll_method_by_master_cb_hdr(callback_query: CallbackQuery,
-                                         callback_data: CallbackData,
-                                         state: FSMContext):
+@inline_masters_enroll_srcs_cb_router.callback_query(MethodMasterToServiceContinueCBD.filter())
+@inline_masters_enroll_srcs_cb_router.callback_query(CategoryToMasterContinueCBData.filter())
+async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                            callback_data: CallbackData,
+                                            state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
@@ -48,25 +43,7 @@ async def enroll_method_by_master_cb_hdr(callback_query: CallbackQuery,
 
     callback_prefix = callback_data.__prefix__
 
-    if callback_prefix == MethodMasterToServiceCBData.__prefix__:
-        selected_method_prefix = callback_data.__prefix__
-        try:
-            await callback_query.message.edit_text(
-                text=HOW_SELECT_SERVICES,
-                reply_markup=get_enroll_methods_inl_kbd(
-                    selected_method_prefix=selected_method_prefix))
-        except TelegramBadRequest as error:
-            if error.message == TG_EXCEPT_ERRORS.MSG_NOT_MODIFIED:
-                print("\tLOG INFO: 'Message not modified' tg exception was intercepted\n")
-                pass
-        await state.update_data(selected_method_prefix=selected_method_prefix)
-
-    message = callback_query.message
-
     selected_master_id = None
-    # selected_master_id = await get_valid_int_by_fsm_state_key(
-    #     fsm_state_or_dict_from=state_data,
-    #     fsm_state_literal_key="selected_master_id")
 
     current_page_number = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -75,11 +52,10 @@ async def enroll_method_by_master_cb_hdr(callback_query: CallbackQuery,
         current_page_number = 1
 
     masters_records = None
-    if callback_prefix == MethodMasterToServiceCBData.__prefix__:
+    if callback_prefix == MethodMasterToServiceContinueCBD.__prefix__:
         masters_records = get_all_masters_ordered(
             active=True,
-            order_by_fields=(
-                "full_name", "category_id"))
+            order_by_fields=("full_name", "category_id"))
 
     elif callback_prefix == CategoryToMasterContinueCBData.__prefix__:
         selected_category_id = await get_valid_int_by_fsm_state_key(
@@ -105,7 +81,7 @@ async def enroll_method_by_master_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.message.answer(
         text=SELECT_MASTER,
-        reply_markup=get_enroll_masters_inl_kbd(
+        reply_markup=get_masters_enroll_srcs_inl_kbd(
             current_page_records=current_page_records,
             total_pages_number=total_pages,
             selected_master_id=selected_master_id,

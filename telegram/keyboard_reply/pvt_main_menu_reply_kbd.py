@@ -5,7 +5,7 @@ from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 from telegram.params.messages import SELECT_ACTION
 
 
-def get_pvt_main_menu_kbd():
+def get_pvt_main_menu_reply_kbd():
     builder = ReplyKeyboardBuilder()
 
     builder.button(text=MAIN_MENU_BUTTONS_PARAMS.ENROLL_SERVICES)

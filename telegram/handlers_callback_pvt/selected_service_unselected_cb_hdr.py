@@ -14,8 +14,8 @@ from telegram.keyboard_inline.enroll_services_inl_kbd import (
     get_enroll_service_inl_kbd)
 from telegram.params.messages import (
     NONE_SERVICES_SELECTED)
-from telegram.params.select_services_icons import (
-    SELECT_SERVICES_ICONS)
+from telegram.params.services_icons import (
+    SERVICES_ICONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_dict_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
@@ -30,16 +30,15 @@ from telegram.telegram_utils.messages_utils import (
 from utilities.list_utils import (
     remove_same_list_elms_by_value)
 
-enroll_services_cb_router = Router(name=__name__)
-enroll_services_cb_router.message.filter(ChatTypesFilter(["private"]))
+service_selected_unselected_enroll_srcs_cb_router = Router(name=__name__)
+service_selected_unselected_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@enroll_services_cb_router.callback_query(EnrollServiceCallbackData.filter())
-@enroll_services_cb_router.callback_query(OneMoreServiceCallbackData.filter())
-async def select_service_callback_hdr(callback_query: CallbackQuery,
-                                      callback_data: CallbackData,
-                                      state: FSMContext):
-    # Checking if inline keyboard is actual and not obsolete by any reason
+@service_selected_unselected_enroll_srcs_cb_router.callback_query(EnrollServiceCallbackData.filter())
+@service_selected_unselected_enroll_srcs_cb_router.callback_query(OneMoreServiceCallbackData.filter())
+async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                                         callback_data: CallbackData,
+                                                         state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
@@ -81,8 +80,8 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
         total_cost_selected = round(total_cost_selected, 2)
         total_duration_selected += cur_service_duration
 
-        button_state_icon = SELECT_SERVICES_ICONS.SELECTED
-        new_service_text = f"{button_state_icon} {cur_service_text}"
+        button_txt_icon = SERVICES_ICONS.SELECTED
+        new_service_text = f"{button_txt_icon} {cur_service_text}"
         inline_keyboard = get_enroll_service_inl_kbd(
             service_id=cur_service_id,
             button_selected=True,
@@ -99,8 +98,8 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
             total_cost_selected = round(total_cost_selected, 2)
             total_duration_selected -= cur_service_duration * same_id_count
 
-            button_state_icon = SELECT_SERVICES_ICONS.NO_ICON
-            new_service_text = f"{button_state_icon} {cur_service_text}"
+            button_txt_icon = SERVICES_ICONS.SERVICE_POINT
+            new_service_text = f"{button_txt_icon} {cur_service_text}"
             inline_keyboard = get_enroll_service_inl_kbd(
                 service_id=cur_service_id,
                 button_selected=False)
@@ -112,9 +111,9 @@ async def select_service_callback_hdr(callback_query: CallbackQuery,
             total_duration_selected += cur_service_duration
 
             same_id_count = selected_services_ids.count(cur_service_id)
-            button_state_icon = f"{SELECT_SERVICES_ICONS.SELECTED} " * same_id_count
+            button_txt_icon = f"{SERVICES_ICONS.SELECTED} " * same_id_count
 
-            new_service_text = f"{button_state_icon} {cur_service_text}"
+            new_service_text = f"{button_txt_icon} {cur_service_text}"
             inline_keyboard = get_enroll_service_inl_kbd(
                 service_id=cur_service_id,
                 button_selected=True,

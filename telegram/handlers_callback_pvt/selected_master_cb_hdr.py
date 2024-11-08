@@ -8,9 +8,9 @@ from telegram.errors_api_telegram.telegram_exception_errors import (
     TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.enroll_masters_inl_kbd import (
+from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
     CurrentMasterCBData,
-    get_enroll_masters_inl_kbd)
+    get_masters_enroll_srcs_inl_kbd)
 from telegram.params.messages import (
     SELECT_MASTER)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -21,20 +21,18 @@ from telegram.telegram_utils.handlers_stack_utils import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 
-master_selected_cb_router = Router(name=__name__)
-master_selected_cb_router.message.filter(ChatTypesFilter(["private"]))
+master_selected_enroll_srcs_cb_router = Router(name=__name__)
+master_selected_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@master_selected_cb_router.callback_query(CurrentMasterCBData.filter())
-async def master_selected_cb_hdr(callback_query: CallbackQuery,
-                                 callback_data: CallbackData,
-                                 state: FSMContext):
+@master_selected_enroll_srcs_cb_router.callback_query(CurrentMasterCBData.filter())
+async def master_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                             callback_data: CallbackData,
+                                             state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
-
-    # message = callback_query.message
 
     selected_master_id = callback_data.master_id
 
@@ -62,7 +60,7 @@ async def master_selected_cb_hdr(callback_query: CallbackQuery,
     try:
         await callback_query.message.edit_text(
             text=SELECT_MASTER,
-            reply_markup=get_enroll_masters_inl_kbd(
+            reply_markup=get_masters_enroll_srcs_inl_kbd(
                 current_page_records=current_page_records,
                 total_pages_number=total_pages,
                 selected_master_id=selected_master_id,

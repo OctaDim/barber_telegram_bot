@@ -1,17 +1,22 @@
 from datetime import datetime
 
-from aiogram.filters.callback_data import CallbackData
-from aiogram.utils.keyboard import (InlineKeyboardBuilder,
-                                    InlineKeyboardMarkup)
+from aiogram.filters.callback_data import (
+    CallbackData)
+from aiogram.utils.keyboard import (
+    InlineKeyboardBuilder,
+    InlineKeyboardMarkup)
 
-from telegram.config.configs import LANGUAGE_CONFIGS, CALENDAR
+from telegram.config.configs import (
+    LANGUAGE_CONFIGS, CALENDAR)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     NoActionEmptyCBData,
     create_main_menu_inline_button,
     create_empty_no_action_inl_btn)
-from telegram.params.buttons_enroll_service import ENROLL_SERVICE_BUTTONS
-from telegram.params.calendar_icons import CALENDAR_ICONS
+from telegram.params.buttons_enroll_service import (
+    ENROLL_SERVICE_BUTTONS)
+from telegram.params.calendar_icons import (
+    CALENDAR_ICONS)
 from utilities.calendar_utils import (
     get_numeric_month_calendar_list,
     get_month_name_by_number,
@@ -42,10 +47,12 @@ class MonthContinueCBData(CallbackData, prefix="calendar_continue_enroll_srcs"):
     pass
 
 
-def get_enroll_srcs_calendar_inl_kbd(calendar_year: int,
-                                     calendar_month: int,
-                                     enrollment_days: list = None,
-                                     selected_date: datetime = None) -> InlineKeyboardMarkup:
+def get_calendar_enroll_srcs_inl_kbd(
+        calendar_year: int,
+        calendar_month: int,
+        enrollment_days: list = None,
+        selected_date: datetime = None
+) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
     builder_inl_kbd.button(
@@ -90,6 +97,7 @@ def get_enroll_srcs_calendar_inl_kbd(calendar_year: int,
     month_calendar_list = get_numeric_month_calendar_list(calendar_year,
                                                           calendar_month)
 
+    # Removing from calendar not available empty weeks before actual date
     # if (calendar_month == datetime.now().month
     #         and calendar_year == datetime.now().year):
     #     month_calendar_truncated = month_calendar_list.copy()

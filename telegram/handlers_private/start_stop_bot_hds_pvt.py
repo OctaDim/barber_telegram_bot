@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from aiogram import Router, F, Bot
+from aiogram import Router, Bot
 
 from telegram.config.settings import BOT_CREDENTIALS
 from telegram.filters.chat_types_filter import ChatTypesFilter
-
 
 on_start_stop_router = Router(name=__name__)
 on_start_stop_router.message.filter(ChatTypesFilter(["private"]))

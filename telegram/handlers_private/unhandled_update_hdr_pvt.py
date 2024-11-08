@@ -7,7 +7,8 @@ from aiogram.types import Message
 from telegram.config.configs import PAUSE_CONFIGS
 from telegram.filters.chat_types_filter import ChatTypesFilter
 from telegram.params.messages import UNKNOWN_COMMAND_ENTERED
-from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_list_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
     get_handler_answer_flag_dict)
@@ -18,7 +19,7 @@ unhandled_update_router.message.filter(ChatTypesFilter(["private"]))
 
 
 @unhandled_update_router.message()
-async def unhandled_update_handler(message: Message, state: FSMContext):
+async def unhandled_update_handler_pvt(message: Message, state: FSMContext):
     await message.reply(text=UNKNOWN_COMMAND_ENTERED)
 
     delay_seconds = number_or_str_to_float(PAUSE_CONFIGS.SHORT_MSG_DELAY)

@@ -12,11 +12,13 @@ from database.db_queries_hepers.enrollment_days_for_month import (
     get_available_enrollment_days)
 from telegram.errors_api_telegram.telegram_exception_errors import (
     TG_EXCEPT_ERRORS)
-from telegram.filters.chat_types_filter import ChatTypesFilter
-from telegram.keyboard_inline.calendar_inl_kbd import (
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
+from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
     MonthDayCBData,
-    get_enroll_srcs_calendar_inl_kbd)
-from telegram.params.messages import CHOOSE_SERVICES_DAY
+    get_calendar_enroll_srcs_inl_kbd)
+from telegram.params.messages import (
+    CHOOSE_SERVICES_DAY)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key)
@@ -25,14 +27,14 @@ from telegram.telegram_utils.handlers_stack_utils import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 
-month_day_enroll_srcs_calendar_cb_router = Router(name=__name__)
-month_day_enroll_srcs_calendar_cb_router.message.filter(ChatTypesFilter(["private"]))
+month_day_selected_calendar_enroll_srcs_cb_router = Router(name=__name__)
+month_day_selected_calendar_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@month_day_enroll_srcs_calendar_cb_router.callback_query(MonthDayCBData.filter())
-async def month_day_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
-                                                callback_data: CallbackData,
-                                                state: FSMContext):
+@month_day_selected_calendar_enroll_srcs_cb_router.callback_query(MonthDayCBData.filter())
+async def month_day_selected_calendar_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                                         callback_data: CallbackData,
+                                                         state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
@@ -73,7 +75,7 @@ async def month_day_enroll_srcs_calendar_cb_hdr(callback_query: CallbackQuery,
     try:
         await callback_query.message.edit_text(
             text=CHOOSE_SERVICES_DAY,
-            reply_markup=get_enroll_srcs_calendar_inl_kbd(
+            reply_markup=get_calendar_enroll_srcs_inl_kbd(
                 calendar_year=selected_year,
                 calendar_month=selected_month,
                 selected_date=selected_date,

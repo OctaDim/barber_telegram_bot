@@ -16,7 +16,6 @@ class OneMoreServiceCallbackData(CallbackData, prefix="one_more_same_service"):
 def get_enroll_service_inl_kbd(service_id: int,
                                button_selected: bool = False,
                                one_more_service_btn: bool = False) -> InlineKeyboardMarkup:
-
     builder_inl_kbd = InlineKeyboardBuilder()
 
     if button_selected:

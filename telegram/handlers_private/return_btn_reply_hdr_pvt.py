@@ -2,30 +2,32 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from telegram.filters.chat_types_filter import ChatTypesFilter
-from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
-from telegram.params.messages import CAN_USE_LEFT_MENU
-from telegram.telegram_utils.enroll_services_utils import clear_all_enroll_services_fsm_states
-from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
+from telegram.filters.chat_types_filter import (
+    ChatTypesFilter)
+from telegram.params.buttons_common import (
+    COMMON_BUTTONS_PARAMS)
+from telegram.params.messages import (
+    CAN_USE_LEFT_MENU)
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_list_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     execute_last_stack_handler,
     get_handler_answer_flag_dict)
-from utilities.list_utils import empty_list_if_none
 
 return_button_router = Router(name=__name__)
 return_button_router.message.filter(ChatTypesFilter(["private"]))
 
 
 @return_button_router.message(F.text == COMMON_BUTTONS_PARAMS.RETURN)
-async def return_button_handler(message: Message,
-                                state: FSMContext,
-                                current_handler_data: dict):
+async def return_button_reply_hdr_pvt(message: Message,
+                                      state: FSMContext,
+                                      current_handler_data: dict):
     handlers_list = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state,
         fsm_state_literal_key="handlers_stack")
 
     if len(handlers_list) <= 2:
-        await clear_all_enroll_services_fsm_states(state)
+        await state.clear()
 
     if len(handlers_list) <= 1:
         await message.answer(text=CAN_USE_LEFT_MENU)
@@ -37,6 +39,7 @@ async def return_button_handler(message: Message,
         del handlers_list[-1]
         await execute_last_stack_handler(handlers_list)
 
+        # #### For the future
         # current_hdr_function = current_handler_data.get("handler")
         # current_hdr_event = current_handler_data.get("event")
         # current_hdr_data = current_handler_data.get("data")

@@ -1,8 +1,11 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from telegram.params.messages import CANNOT_USE_OBSOLETE_MSG
-from telegram.telegram_utils.fsm_states_utils import get_valid_int_by_fsm_state_key, get_valid_state_data_from_fsm_state
+from telegram.params.messages import (
+    CANNOT_USE_OBSOLETE_MSG)
+from telegram.telegram_utils.fsm_states_utils import (
+    get_valid_int_by_fsm_state_key,
+    get_valid_state_data_from_fsm_state)
 
 
 async def inline_keyboard_is_actual(state: FSMContext | dict,
