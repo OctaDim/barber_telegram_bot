@@ -3,9 +3,9 @@ from datetime import timedelta
 from sqlalchemy import Row
 
 
-def get_available_enrollment_intervals(
-        slots_records: list[Row],
-        selected_services_duration: timedelta) -> dict[dict] | dict:
+def get_enrollment_intervals_helper(slots_records: list[Row],
+                                    selected_services_duration: timedelta
+                                    ) -> dict[dict] | dict:
     if not slots_records:
         return {}
 
@@ -17,6 +17,8 @@ def get_available_enrollment_intervals(
         first_slot_time_start = slots_records[start_index].time_start
         first_slot_time_end = slots_records[start_index].time_end
         temp_interval_duration = slots_records[start_index].slot_duration
+        slot_master_id = slots_records[start_index].master_id
+        slot_master_fullname = slots_records[start_index].master_fullname
 
         if temp_interval_duration >= selected_services_duration:
             time_loss = temp_interval_duration - selected_services_duration
@@ -26,6 +28,8 @@ def get_available_enrollment_intervals(
             enrollment_intervals[first_slot_id] = {
                 "first slot id": slots_records[start_index].id,
                 "all slots ids": temp_interval_slots,
+                "slot master id": slot_master_id,
+                "slot master fullname": slot_master_fullname,
                 "slot time start": first_slot_time_start,
                 "slot time end": first_slot_time_end,
                 "client time end": client_time_end,
@@ -40,11 +44,17 @@ def get_available_enrollment_intervals(
             cur_slot_time_end = slots_records[cur_index].time_end
             cur_slot_duration = slots_records[cur_index].slot_duration
             prior_slot_time_end = slots_records[cur_index].prior_slot_time_end
+            # cur_master_id = slots_records[cur_index].master_id
+            # prior_master_id = slots_records[cur_index].prior_slot_master_id
 
             if cur_slot_time_start != prior_slot_time_end:
+                # if (cur_slot_time_start != prior_slot_time_end
+                #         or cur_master_id != prior_master_id):
                 break
 
             if cur_slot_time_start == prior_slot_time_end:
+                # if (cur_slot_time_start == prior_slot_time_end
+                #         and cur_master_id == prior_master_id):
                 temp_time_start = first_slot_time_start
                 temp_time_end = cur_slot_time_end
                 temp_interval_duration += cur_slot_duration
@@ -57,6 +67,8 @@ def get_available_enrollment_intervals(
                     enrollment_intervals[first_slot_id] = {
                         "first slot id": slots_records[start_index].id,
                         "all slots ids": temp_interval_slots,
+                        "slot master id": slot_master_id,
+                        "slot master fullname": slot_master_fullname,
                         "slot time start": temp_time_start,
                         "slot time end": temp_time_end,
                         "client time end": client_time_end,
@@ -73,8 +85,9 @@ def get_available_enrollment_intervals(
 # month = 10
 # day = 31
 # test_date = datetime(year=year, month=month, day=day)
-# slot_records = get_slots_from_now_for_date(required_date=test_date,
-#                                            master_id=None)
+#
+# slot_records = get_slots_from_now_for_date_query(required_date=test_date,
+#                                                 master_id=None)
 # for record in slot_records:
 #     print(f"{record.id}\t\t"
 #           f"{record.day_of_month}\t\t"
