@@ -8,30 +8,9 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 # ######################################################################
-# ###### Very necessary imports to initialize Postgres DB tables #######
+# ## Very necessary import to initialize DB models without cycle imports
 # ######################################################################
-# import database.db_initialization
-from database.db_models.address_model import Address
-from database.db_models.association_master_breaktime import MasterBreakTimeAssociation
-from database.db_models.association_worktime_user import WorkTimeUserAssociation
-from database.db_models.break_time_model import BreakTime
-from database.db_models.category_model import Category
-from database.db_models.master_model import Master
-from database.db_models.phone_model import Phone
-from database.db_models.service_model import Service
-from database.db_models.social_model import Social
-from database.db_models.user_model import User
-from database.db_models.user_role_model import UserRole
-from database.db_models.user_status_model import UserStatus
-from database.db_models.work_time_model import WorkTime
-from database.db_models.association_service_master import ServiceMasterAssociation
-from database.db_models.association_service_worktime import ServiceWorkTimeAssociation
-from database.db_models.association_user_role import UserRoleAssociation
-from database.db_models.association_user_status import UserStatusAssociation
-from database.db_models.association_master_phone import MasterPhoneAssociation
-
-
-# ######################################################################
+import database.db_imports_initialization
 # ######################################################################
 
 from telegram.config.settings import BOT_CREDENTIALS
@@ -40,7 +19,7 @@ from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_route
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
 from telegram.handlers_callback_pvt.selected_category_cb_hdr import category_selected_enroll_srcs_cb_router
-from telegram.handlers_callback_pvt.continue_calendar_enroll_srcs_cb_hdr import continue_calendar_enroll_srcs_cb_router
+from telegram.handlers_callback_pvt.inline_intervals_slots_enroll_srcs_cb_hdr import continue_calendar_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_services_filtered_cb_hdr import inline_services_filtered_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.selected_master_cb_hdr import master_selected_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_categories_enroll_srcs_cb_hdr import inline_categories_enroll_srcs_cb_router
