@@ -3,15 +3,21 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.all_slots_from_now_for_date import (
-    get_slots_from_now_for_date)
-from database.db_queries_hepers.enrollment_intervals_for_date import (
-    get_available_enrollment_intervals)
+from database.db_queries.all_slots_from_now_for_date_query import (
+    get_slots_from_now_for_date_query)
+from database.db_queries.masters_ids_common_for_services import (
+    get_masters_ids_common_for_services)
+from database.db_queries_hepers.enrollment_intervals_for_date_helper import (
+    get_enrollment_intervals_helper)
 from database.db_queries_hepers.remove_intervals_by_time_loss import (
     remove_intervals_over_time_loss_limit)
+from database.db_queries_hepers.same_time_start_slots_random_master_id import (
+    get_time_start_unique_random_intervals)
 from telegram.config.configs import (
     LANGUAGE_CONFIGS,
-    DB_SLOTS_CONFIGS, PAGINATION_CONFIGS)
+    DB_SLOTS_CONFIGS,
+    PAGINATION_CONFIGS,
+    SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
@@ -43,20 +49,25 @@ from utilities.numeric_utils import (
 from utilities.pagination_utility import (
     create_paginated_elems)
 
+# from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
+#     MethodCategoryToServiceContinueCBD)
+
 continue_calendar_enroll_srcs_cb_router = Router(name=__name__)
 continue_calendar_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
 @continue_calendar_enroll_srcs_cb_router.callback_query(MonthContinueCBData.filter())
-async def continue_calendar_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
-                                               callback_data: CallbackData,
-                                               state: FSMContext):
+async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
+                                                    callback_data: CallbackData,
+                                                    state: FSMContext):
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return get_handler_answer_flag_dict(skip_add_handler_stack=True)
 
-    await callback_query.answer()
+    # selected_method_prefix = await get_valid_str_by_fsm_state_key(
+    #     fsm_state_or_dict_from=state_data,
+    #     fsm_state_literal_key="selected_method_prefix")
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -86,24 +97,28 @@ async def continue_calendar_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     selected_master_id = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_master_id")
-    if not selected_master_id:
-        selected_master_id = "all"
 
-    all_slots_records = get_slots_from_now_for_date(
-        required_date=selected_date,
-        master_id=selected_master_id,
-        reserved=False, active=True, admin_only=False)
+    if selected_master_id:
+        all_slots_records = get_slots_from_now_for_date_query(
+            required_date=selected_date,
+            master_id=selected_master_id,
+            order_by_fields=("time_start",),
+            reserved=False, active=True, admin_only=False)
+    else:
+        intersecting_masters_ids = get_masters_ids_common_for_services(
+            services_ids_list=selected_services_ids)
 
-    enrollment_intervals = get_available_enrollment_intervals(
+        all_slots_records = get_slots_from_now_for_date_query(
+            required_date=selected_date,
+            masters_ids_list=intersecting_masters_ids,
+            order_by_fields=("master_id", "time_start"),
+            reserved=False, active=True, admin_only=False)
+
+    enrollment_intervals = get_enrollment_intervals_helper(
         slots_records=all_slots_records,
         selected_services_duration=total_duration_selected)
 
-    if not enrollment_intervals:
-        await callback_query.answer(text=NO_FREE_ENROLLMENT_SLOTS)
-        return get_handler_answer_flag_dict(upd_actual_msg_min_id=True,
-                                            skip_add_handler_stack=True)
-
-    if DB_SLOTS_CONFIGS.HIDE_SLOTS_MORE_TIME_LOSS_MAX_LIMIT:
+    if DB_SLOTS_CONFIGS.HIDE_SLOTS_OVER_TIME_LOSS_MAX_LIMIT:
         time_loss_max_limit = number_or_str_to_integer(
             DB_SLOTS_CONFIGS.TIME_LOSS_MAX_LIMIT_FOR_HIDE_SLOTS,
             positive=True)
@@ -112,7 +127,24 @@ async def continue_calendar_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
             enrollment_intervals=enrollment_intervals,
             time_loss_max_limit=time_loss_max_limit)
 
+    if not enrollment_intervals:
+        await callback_query.answer(text=NO_FREE_ENROLLMENT_SLOTS,
+                                    show_alert=True)
+        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+
     intervals_dicts_list = [value for value in enrollment_intervals.values()]
+    # if selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__:
+    if not selected_master_id:
+        intervals_dicts_list.sort(key=lambda interval_item: (
+            interval_item.get("slot time start"),
+            interval_item.get("slot master fullname"),  # Sorting kbd slots by masters fullname
+            interval_item.get("slot master id")  # Sorting inl slots by master id semi-randomly
+        ))
+
+    if SLOTS_CONFIGS.ONLY_TIME_START_UNIQUE_RANDOM_SLOTS:
+        intervals_dicts_list = get_time_start_unique_random_intervals(
+            time_start_non_unique_intervals=intervals_dicts_list)
+
     paginated_intervals = create_paginated_elems(
         all_elements=intervals_dicts_list,
         elements_per_page=PAGINATION_CONFIGS.TIME_SLOTS_PER_PAGE)

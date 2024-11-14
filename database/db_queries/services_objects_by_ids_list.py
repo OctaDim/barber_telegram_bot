@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database.db_models.service_model import Service
 
 
-def get_unique_services_objs_by_ids_list(services_ids_list: list,
+def get_unique_services_objs_by_ids_list(services_ids_list: List[int],
                                          ongoing_session: Session
                                          ) -> List[Type[Service]]:
     services_objs_list = ongoing_session.query(Service).filter(

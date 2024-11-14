@@ -5,7 +5,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.masters_names_by_service_id_query import (
+from database.db_queries.masters_fullnames_by_service_id_qry import (
     get_masters_full_names_by_service_id)
 from database.db_queries.services_filtered_by_method_queries import (
     get_services_filtered_by_category_master,
@@ -17,12 +17,10 @@ from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     CategoryToServiceContinueCBData)
-from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
-    MasterToServiceContinueCBData)
-from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
-    MethodCategoryToServiceContinueCBD)
 from telegram.keyboard_inline.enroll_services_inl_kbd import (
     get_enroll_service_inl_kbd)
+from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
+    MasterToServiceContinueCBData)
 from telegram.keyboard_reply.pvt_enroll_services_action_reply_kbd import (
     get_pvt_enroll_services_action_reply_kbd)
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
@@ -35,7 +33,7 @@ from telegram.params.services_icons import (
     SERVICES_ICONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
-    get_valid_int_by_fsm_state_key, get_valid_str_by_fsm_state_key)
+    get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
@@ -44,6 +42,9 @@ from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 from utilities.numeric_utils import (
     number_or_str_to_float)
+
+# from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
+#     MethodCategoryToServiceContinueCBD)
 
 inline_services_filtered_enroll_srcs_cb_router = Router(name=__name__)
 inline_services_filtered_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -92,14 +93,16 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_ids_state")
 
-    selected_method_prefix = await get_valid_str_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_method_prefix")
+    # selected_method_prefix = await get_valid_str_by_fsm_state_key(
+    #     fsm_state_or_dict_from=state_data,
+    #     fsm_state_literal_key="selected_method_prefix")
 
     all_services_info_dict = {}
     for service_record in all_services_records:
-        if (selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__
-                and SERVICES_CONFIGS.MASTERS_NAMES_WHEN_BY_CATEGORY):
+        # if (selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__
+        #         and SERVICES_CONFIGS.SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY):
+        if (not selected_master_id
+                and SERVICES_CONFIGS.SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY):
             masters_full_names = get_masters_full_names_by_service_id(
                 service_id=service_record.id)
             service_brief_text = get_service_brief_info_with_master(
@@ -120,7 +123,8 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
             one_more_service_btn = False
 
         await callback_query.message.answer(
-            text=f"{cur_service_icon} {service_brief_text}\n",
+            text=f"{cur_service_icon} "
+                 f"{service_brief_text}\n",
             reply_markup=get_enroll_service_inl_kbd(service_record.id,
                                                     button_selected,
                                                     one_more_service_btn))

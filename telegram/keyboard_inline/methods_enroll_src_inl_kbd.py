@@ -101,7 +101,6 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
     builder_inl_kbd.add(create_return_inline_button())
     builder_inl_kbd.add(create_main_menu_inline_button())
 
-    # adjust = [1, 1, 1] + [2]
     adjust = [1, 1, 1] + continue_adjust + [2]
 
     builder_inl_kbd.adjust(*adjust)

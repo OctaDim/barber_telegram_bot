@@ -14,9 +14,10 @@ def remove_intervals_over_time_loss_limit(
     :return: dict[dict] | dict - not necessarily, original dict is edited
     """
     orig_dict_deep_copy = copy.deepcopy(enrollment_intervals)
-    time_loss = timedelta(minutes=int(time_loss_max_limit))
+    time_loss_max_limit = timedelta(minutes=int(time_loss_max_limit))
 
     for key, value in orig_dict_deep_copy.items():
-        if orig_dict_deep_copy[key].get("slot time loss") >= time_loss:
+        slot_time_loss = orig_dict_deep_copy[key].get("slot time loss")
+        if slot_time_loss > time_loss_max_limit:
             enrollment_intervals.pop(key)
     return enrollment_intervals
