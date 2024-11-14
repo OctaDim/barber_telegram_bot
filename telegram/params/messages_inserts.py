@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class MSG:
     NAME: str = "Name"
-    AVAILABLE_MASTERS: str = "Available masters"
+    MASTERS: str = "Masters"
     PRICE: str = "Price"
     DURATION: str = "Time duration"
     DESCRIPTION: str = "Description"

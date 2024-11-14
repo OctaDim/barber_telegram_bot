@@ -28,7 +28,7 @@ def get_service_brief_info(
         f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.DURATION}:  {service_record.time_duration}\n")
+        f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n")
     return service_brief_text
 
 
@@ -40,8 +40,8 @@ def get_service_brief_info_with_master(
         f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.DURATION}:  {service_record.time_duration}\n"
-        f"{MSG.AVAILABLE_MASTERS}: {master_info}\n")
+        f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n"
+        f"{MSG.MASTERS}: {master_info}\n")
     return service_brief_text
 
 
@@ -49,7 +49,7 @@ def get_service_brief_info_from_dict(service_info: dict) -> str:
     service_brief_text = (
         f"{MSG.SERVICE_NAME}:  {service_info.get("text")}\n\n"
         f"{MSG.SERVICE_PRICE}:  {service_info.get("price")}  \n"
-        f"{MSG.DURATION}:  {service_info.get("duration")}\n")
+        f"{MSG.DURATION}:  {str(service_info.get("duration"))[:-3]}\n")
     return service_brief_text
 
 
@@ -57,7 +57,7 @@ def get_service_detailed_info(service: Service) -> str:
     service_detailed_text = (
         f"<b>{SERVICES_ICONS.SERVICE_POINT} {service.name}</b>\n"
         f"{MSG.SERVICE_PRICE}:  {service.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICE_DURATION}:  {service.time_duration}\n"
+        f"{MSG.SERVICE_DURATION}:  {str(service.time_duration)[:-3]}\n"
         f"{MSG.SERVICE_DESCRIPTION}:  {service.description}")
     return service_detailed_text
 
@@ -68,7 +68,7 @@ def get_selected_services_summary(services_count: int,
     service_summary_text = (
         f"{MSG.SERVICES_TOTAL_COUNT}:  {services_count}\n"
         f"{MSG.SERVICES_TOTAL_COST}:  {total_cost} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICES_TOTAL_DURATION}:  {total_duration}")
+        f"{MSG.SERVICES_TOTAL_DURATION}:  {str(total_duration)[:-3]}")
 
     return service_summary_text
 
@@ -169,3 +169,37 @@ def get_summary_services_with_slot(date_text: str,
         f"{slot_time_start}  -  {slot_time_end}  "
         f"{SLOT_ICONS.TIME_SLOT_END_ICON}")
     return complete_text
+
+
+def get_enroll_services_summary_by_steps(
+        service_record: Service = None,
+        selected_method_name: str = None,
+        selected_category_name: str = None,
+        selected_master_name: str = None,
+        date_text: str = None,
+        summary_text: str = None,
+        slot_time_start: str = None,
+        slot_time_end: str = None
+) -> str:
+    text = ""
+    if selected_method_name:
+        text += f"{MSG.SELECTED_METHOD}:  {selected_method_name}"
+        text += "\n"
+    if selected_category_name:
+        text += f"{MSG.SELECTED_CATEGORY}:  {selected_category_name}"
+        text += "\n"
+    if selected_master_name:
+        text += f"{MSG.SELECTED_MASTER}:  {selected_master_name}"
+        text += "\n"
+
+    # complete_text = (
+    #     f"{SELECTED_SERVICES_CONGRATS}\n\n"
+    #     f"{CALENDAR_ICONS.CALENDAR} <b>{MSG.SELECTED_DATE}:</b>\n"
+    #     f"{date_text}\n\n"
+    #     f"{summary_text}\n\n"
+    #     f"<b>{MSG.SELECTED_INTERVAL_SLOT}:</b>\n"
+    #     f"{SLOT_ICONS.TIME_SLOT_START_ICON}  "
+    #     f"{slot_time_start}  -  {slot_time_end}  "
+    #     f"{SLOT_ICONS.TIME_SLOT_END_ICON}")
+
+    return text
