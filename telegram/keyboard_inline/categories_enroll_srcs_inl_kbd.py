@@ -22,7 +22,7 @@ class PreviousCategoryPageCBData(CallbackData, prefix="previous_category_page"):
     pass
 
 
-class CategoryPageCBData(CallbackData, prefix="category_page"):
+class CategoryPageNumberCBData(CallbackData, prefix="category_page"):
     page_number: int
 
 
@@ -57,9 +57,9 @@ def get_categories_enroll_srcs_inl_kbd(
             callback_data=PreviousCategoryPageCBData())
 
         builder_inl_kbd.button(
-            text=f"{ENROLL_CATEGORIES_BUTTONS.PAGE} "
-                 f"{current_page_number}",
-            callback_data=CategoryPageCBData(
+            text=f"{ENROLL_CATEGORIES_BUTTONS.PAGE}  "
+                 f"{current_page_number} / {total_pages_number}",
+            callback_data=CategoryPageNumberCBData(
                 page_number=current_page_number).pack())
 
         builder_inl_kbd.button(

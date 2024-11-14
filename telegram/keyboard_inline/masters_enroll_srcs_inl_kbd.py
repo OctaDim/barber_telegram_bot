@@ -21,7 +21,7 @@ class PreviousMasterPageCBData(CallbackData, prefix="previous_master_page"):
     pass
 
 
-class MasterPageCBData(CallbackData, prefix="master_page"):
+class MasterPageNumberCBData(CallbackData, prefix="master_page"):
     page_number: int
 
 
@@ -50,9 +50,9 @@ def get_masters_enroll_srcs_inl_kbd(current_page_records: List[Master],
             callback_data=PreviousMasterPageCBData())
 
         builder_inl_kbd.button(
-            text=f"{ENROLL_MASTERS_BUTTONS.PAGE} "
-                 f"{current_page_number}",
-            callback_data=MasterPageCBData(
+            text=f"{ENROLL_MASTERS_BUTTONS.PAGE}  "
+                 f"{current_page_number} / {total_pages_number}",
+            callback_data=MasterPageNumberCBData(
                 page_number=current_page_number).pack())
 
         builder_inl_kbd.button(
