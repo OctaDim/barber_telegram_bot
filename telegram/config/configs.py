@@ -12,13 +12,13 @@ class LANGUAGE_CONFIGS:
 class PAGINATION_CONFIGS:
     CATEGORIES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     MASTERS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
-    TIME_SLOTS_PER_PAGE: Union[int, 0] = 3  # 0 - show all categories without pages
+    TIME_SLOTS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     # SERVICES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
 
 
 @dataclass
 class SERVICES_CONFIGS:
-    MASTERS_NAMES_WHEN_BY_CATEGORY: bool = True
+    SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY: bool = True
 
 
 @dataclass
@@ -29,7 +29,7 @@ class CALENDAR:
 
 @dataclass
 class DB_SLOTS_CONFIGS:
-    HIDE_SLOTS_MORE_TIME_LOSS_MAX_LIMIT: bool = False
+    HIDE_SLOTS_OVER_TIME_LOSS_MAX_LIMIT: bool = True
     # 0 - hide all slots with time loss, very big (99999) - show all slots with time loss
     TIME_LOSS_MAX_LIMIT_FOR_HIDE_SLOTS: Union[int, 0] = 90  # In minutes
 
@@ -41,6 +41,10 @@ class DB_SLOTS_CONFIGS:
 
 @dataclass
 class SLOTS_CONFIGS:
+    ONLY_TIME_START_UNIQUE_RANDOM_SLOTS: bool = False
+    SHOW_SLOT_MASTER_FULL_NAME: bool = True
+    SHOW_SAME_TIME_START_SLOT_NUMBER: bool = True
+    SHOW_SAME_TIME_START_FIRST_SLOT_NUMBER: bool = True
     SHOW_SLOTS_ADVISES_ICONS: bool = True
     SHOW_SLOTS_ADVISING_ICON_HINT: bool = True
     MOST_ADVISED_TIME_LOSS_LIMIT: Union[int, 0] = 15  # In minutes. 0 to switch off diapason
@@ -61,7 +65,7 @@ class ENROLL_METHODS_CONFIGS:
 @dataclass
 class PAUSE_CONFIGS:
     LIST_DELAY: float | int | str = 0  # 0.2
-    SHORT_MSG_DELAY: float | int | str = 2  # 2
+    SHORT_MSG_DELAY: float | int | str = 3  # 2
 
 
 @dataclass
