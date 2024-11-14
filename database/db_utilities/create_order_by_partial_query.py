@@ -24,6 +24,6 @@ def create_order_by_partial_query(
             if hasattr(model_class, order_field):
                 order_query = order_query.order_by(order_field)
             else:
-                print(f"\tTEST INFO: Order by '{order_field}' skipped because "
+                print(f"\tERROR INFO: Order by '{order_field}' skipped because "
                       f"attribute was not found in model class '{model_class}'\n")
     return order_query
