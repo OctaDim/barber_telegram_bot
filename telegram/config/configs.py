@@ -13,7 +13,6 @@ class PAGINATION_CONFIGS:
     CATEGORIES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     MASTERS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     TIME_SLOTS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
-    # SERVICES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
 
 
 @dataclass

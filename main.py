@@ -18,6 +18,8 @@ from telegram.handlers_admin.timetable_btn_admin import timetable_admin_btn_rout
 from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
+from telegram.handlers_callback_pvt.inline_our_services_detail_info_cb_hdr import (
+    inline_our_services_by_category_cb_router)
 from telegram.handlers_callback_pvt.selected_category_cb_hdr import category_selected_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_intervals_slots_enroll_srcs_cb_hdr import continue_calendar_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_services_filtered_cb_hdr import inline_services_filtered_enroll_srcs_cb_router
@@ -110,6 +112,7 @@ dp.include_router(next_prev_page_master_enroll_srcs_cb_router)
 dp.include_router(inline_services_filtered_enroll_srcs_cb_router)
 dp.include_router(next_prev_page_slot_enroll_srcs_cb_router)
 dp.include_router(method_selected_enroll_srcs_cb_router)
+dp.include_router(inline_our_services_by_category_cb_router)
 # All unhandled update router:
 dp.include_router(unhandled_update_router)
 

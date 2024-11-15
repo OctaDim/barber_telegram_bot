@@ -11,7 +11,8 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button)
 from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
-    MethodCategoryToServiceContinueCBD)
+    MethodCategoryToServiceContinueCBD,
+    MethodCategoryToMasterContinueCBData)
 from telegram.params.buttons_enroll_categories import (
     ENROLL_CATEGORIES_BUTTONS)
 from telegram.params.categories_icons import (
@@ -39,6 +40,11 @@ class CategoryToServiceContinueCBData(CallbackData, prefix="category_to_service_
 
 
 class CategoryToMasterContinueCBData(CallbackData, prefix="category_to_master_continue"):
+    pass
+
+
+class CategoryToOurServicesInfoContinueCBdata(CallbackData,
+                                              prefix="category_to_our_services_info_continue"):
     pass
 
 
@@ -82,8 +88,10 @@ def get_categories_enroll_srcs_inl_kbd(
         continue_adjust = [1]
         if selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__:
             continue_callback_data = CategoryToServiceContinueCBData
-        else:
+        elif selected_method_prefix == MethodCategoryToMasterContinueCBData.__prefix__:
             continue_callback_data = CategoryToMasterContinueCBData
+        else:  # elif selected_method_prefix == "our services reply btn private handler"
+            continue_callback_data = CategoryToOurServicesInfoContinueCBdata
 
         builder_inl_kbd.button(
             text=ENROLL_CATEGORIES_BUTTONS.CONTINUE,

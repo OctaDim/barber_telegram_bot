@@ -10,7 +10,7 @@ from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     PreviousCategoryPageCBData,
     NextCategoryPageCBData)
 from telegram.params.messages import (
-    SELECT_CATEGORY)
+    SELECT_CATEGORY_ENROLL_SERVICES)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -66,7 +66,7 @@ async def next_prev_page_category_enroll_srcs_cb_hdr(callback_query: CallbackQue
     total_pages = len(paginated_records)
 
     await callback_query.message.edit_text(
-        text=SELECT_CATEGORY,
+        text=SELECT_CATEGORY_ENROLL_SERVICES,
         reply_markup=get_categories_enroll_srcs_inl_kbd(
             current_page_records=current_page_records,
             total_pages_number=total_pages,

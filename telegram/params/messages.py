@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 SELECT_SERVICES = "Select service to enroll:"
 SELECT_SERVICES_BELLOW = "Choose the services you are interested in below: ⤵️"
 SELECT_OTHER_ACTIONS = "Or select other actions:"
@@ -13,6 +11,8 @@ ADD_PRICE_SERVICE = "Send the price of the new service:"
 CHOOSE_AN_ACTION = 'Choose an action'
 SUCCESSFULLY = 'Successfully'
 CAN_USE_LEFT_MENU = "ℹ️ You can select a command from the left menu:"
+
+SELECT_CATEGORY_SEE_OUR_SERVICES = "Select a category to see our services list: ⤵️"
 NONE_SERVICES_SELECTED = "ℹ️ None of the services have been selected"
 CANNOT_USE_OBSOLETE_MSG = "⚠️ This message is obsolete. Use the latest or call up a new one ⬇️⬇️⬇️"
 UNKNOWN_COMMAND_ENTERED = "⚠️ Unknown command. Try again!"
@@ -29,7 +29,7 @@ CHOOSE_OTHER_SLOTS = "Available slots to choose, but it's better to select other
 SLOT_ALREADY_TAKEN = "⚠️ Sorry, someone else caught the slot before you. Please, start from the beginning"
 HOW_SELECT_SERVICES = "Select method you want to enroll services by:"
 NO_AVAILABLE_CATEGORIES = "ℹ️ No available categories"
-SELECT_CATEGORY = "Select a service category to enroll: ⤵️"
+SELECT_CATEGORY_ENROLL_SERVICES = "Select a category to enroll one or more services at once: ⤵️"
 NO_AVAILABLE_MASTERS = "ℹ️ No available masters"
 SELECT_MASTER = "Choose a master to enroll for his services: ⤵️"
 MAX_PERSON_GROUP_LIMIT_REACHED = "⚠️ The maximum number of people in the group is reached. Try another one"

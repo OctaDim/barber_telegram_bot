@@ -16,7 +16,7 @@ from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodCategoryToServiceContinueCBD)
 from telegram.params.messages import (
     NO_AVAILABLE_CATEGORIES,
-    SELECT_CATEGORY)
+    SELECT_CATEGORY_ENROLL_SERVICES)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -67,7 +67,7 @@ async def inline_categories_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     total_pages = len(paginated_records)
 
     await callback_query.message.answer(
-        text=SELECT_CATEGORY,
+        text=SELECT_CATEGORY_ENROLL_SERVICES,
         reply_markup=get_categories_enroll_srcs_inl_kbd(
             current_page_records=current_page_records,
             total_pages_number=total_pages,
