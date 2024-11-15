@@ -5,6 +5,8 @@ from aiogram.types import CallbackQuery
 
 from database.db_queries.all_services_ordered_queries import (
     get_all_services_ordered)
+from database.db_queries_hepers.masters_fullnames_by_service_obj import (
+    get_masters_names_by_service_obj)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
@@ -43,17 +45,24 @@ async def inline_our_services_detail_info_srcs_cb_hdr(callback_query: CallbackQu
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_category_id")
 
-    all_services_records_by_category = get_all_services_ordered(
+    services_records_by_category = get_all_services_ordered(
         category_id=selected_category_id,
         active=True,
         order_by_fields=("price", "name",))
 
-    if not all_services_records_by_category:
+    if not services_records_by_category:
         await callback_query.answer(
             text=NO_SERVICES,
             reply_markup=True)
 
-    for service_record in all_services_records_by_category:
+    for service_record in services_records_by_category:
+        masters_info = get_masters_names_by_service_obj(
+            service_obj=service_record)
+
+        service_detailed_info = get_service_detailed_info(
+            service_obj=service_record,
+            masters_info=masters_info)
+
         await callback_query.message.answer(
-            text=f"{get_service_detailed_info(service_record)}",
+            text=f"{service_detailed_info}",
             reply_markup=get_pvt_main_menu_reply_kbd())

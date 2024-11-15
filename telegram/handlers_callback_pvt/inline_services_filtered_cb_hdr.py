@@ -5,12 +5,10 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.db_queries.masters_fullnames_by_service_id_qry import (
-    get_masters_full_names_by_service_id)
-from database.db_queries.services_filtered_by_method_queries import (
-    get_services_filtered_by_category_master,
-    get_services_filtered_by_master,
-    get_services_filtered_by_category)
+from database.db_queries.all_services_ordered_queries import (
+    get_all_services_ordered)
+from database.db_queries_hepers.masters_fullnames_by_service_obj import (
+    get_masters_names_by_service_obj)
 from telegram.config.configs import (
     PAUSE_CONFIGS, SERVICES_CONFIGS)
 from telegram.filters.chat_types_filter import (
@@ -37,7 +35,8 @@ from telegram.telegram_utils.fsm_states_utils import (
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
-    get_service_brief_info, get_service_brief_info_with_master)
+    get_service_brief_info,
+    get_service_brief_info_with_master)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 from utilities.numeric_utils import (
@@ -71,15 +70,21 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
 
     all_services_records = []
     if selected_category_id and selected_master_id:
-        all_services_records = get_services_filtered_by_category_master(
-            selected_category_id=selected_category_id,
-            selected_master_id=selected_master_id)
+        all_services_records = get_all_services_ordered(
+            category_id=selected_category_id,
+            master_id=selected_master_id,
+            active=True,
+            order_by_fields=("price", "name",))
     elif selected_master_id:
-        all_services_records = get_services_filtered_by_master(
-            selected_master_id=selected_master_id)
+        all_services_records = get_all_services_ordered(
+            master_id=selected_master_id,
+            active=True,
+            order_by_fields=("price", "name",))
     elif selected_category_id:
-        all_services_records = get_services_filtered_by_category(
-            selected_category_id=selected_category_id)
+        all_services_records = get_all_services_ordered(
+            category_id=selected_category_id,
+            active=True,
+            order_by_fields=("price", "name",))
 
     if not all_services_records:
         await callback_query.answer(
@@ -103,11 +108,11 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
         #         and SERVICES_CONFIGS.SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY):
         if (not selected_master_id
                 and SERVICES_CONFIGS.SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY):
-            masters_full_names = get_masters_full_names_by_service_id(
-                service_id=service_record.id)
+            masters_full_names = get_masters_names_by_service_obj(
+                service_obj=service_record)
             service_brief_text = get_service_brief_info_with_master(
                 service_record=service_record,
-                master_info=masters_full_names)
+                masters_info=masters_full_names)
         else:
             service_brief_text = get_service_brief_info(
                 service_record=service_record)
@@ -125,9 +130,10 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
         await callback_query.message.answer(
             text=f"{cur_service_icon} "
                  f"{service_brief_text}\n",
-            reply_markup=get_enroll_service_inl_kbd(service_record.id,
-                                                    button_selected,
-                                                    one_more_service_btn))
+            reply_markup=get_enroll_service_inl_kbd(
+                service_record.id,
+                button_selected,
+                one_more_service_btn))
 
         delay_seconds = number_or_str_to_float(PAUSE_CONFIGS.LIST_DELAY)
         sleep(delay_seconds)

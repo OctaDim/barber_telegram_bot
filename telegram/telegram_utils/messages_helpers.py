@@ -34,14 +34,14 @@ def get_service_brief_info(
 
 def get_service_brief_info_with_master(
         service_record: Service,
-        master_info: str = ""
+        masters_info: str = ""
 ) -> str:
     service_brief_text = (
         f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
         f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n"
-        f"{MSG.MASTERS}: {master_info}\n")
+        f"{MSG.MASTERS}: {masters_info}\n")
     return service_brief_text
 
 
@@ -53,13 +53,17 @@ def get_service_brief_info_from_dict(service_info: dict) -> str:
     return service_brief_text
 
 
-def get_service_detailed_info(service: Service) -> str:
+def get_service_detailed_info(
+        service_obj: Service,
+        masters_info: str = ""
+) -> str:
     service_detailed_text = (
-        f"<b>{SERVICES_ICONS.SERVICE_POINT} {service.name}</b>\n"
+        f"<b>{SERVICES_ICONS.SERVICE_POINT} {service_obj.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
-        f"{MSG.SERVICE_PRICE}:  {service.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICE_DURATION}:  {str(service.time_duration)[:-3]}\n"
-        f"{MSG.SERVICE_DESCRIPTION}:  {service.description}")
+        f"{MSG.SERVICE_PRICE}:  {service_obj.price} {MSG.CURRENCY_BRIEF}\n"
+        f"{MSG.SERVICE_DURATION}:  {str(service_obj.time_duration)[:-3]}\n"
+        f"{MSG.MASTERS}: {masters_info}\n"
+        f"{MSG.SERVICE_DESCRIPTION}:  {service_obj.description}")
     return service_detailed_text
 
 

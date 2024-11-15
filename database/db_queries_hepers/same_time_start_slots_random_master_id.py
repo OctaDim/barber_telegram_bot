@@ -18,9 +18,3 @@ def get_time_start_unique_random_intervals(
         time_start_unique_intervals.append(same_time_start_random_interval)
 
     return time_start_unique_intervals
-
-
-    # print()
-    # for key, value in same_time_start_intervals_dict.items():
-    #     print("AAAAAAAAAAAAAAA", key, "AAAAA", value)
-    # print()
