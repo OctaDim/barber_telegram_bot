@@ -3,11 +3,17 @@ from dataclasses import dataclass
 
 @dataclass
 class MSG:
+    DATE: str = "Date"
     NAME: str = "Name"
-    MASTERS: str = "Masters"
     PRICE: str = "Price"
-    DURATION: str = "Time duration"
+    DURATION: str = "Duration"
+    COST: str = "Cost"
     DESCRIPTION: str = "Description"
+    COUNT: str = "Count"
+
+    MASTERS: str = "Masters"
+    SERVICES: str = "Services"
+
 
     SERVICES_TOTAL_COST: str = "💰 Total cost"
     SERVICES_TOTAL_DURATION: str = "🕑 Total time duration"

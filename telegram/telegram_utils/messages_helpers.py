@@ -176,35 +176,19 @@ def get_summary_services_with_slot(date_text: str,
     return complete_text
 
 
-def get_enroll_services_summary_by_steps(
-        service_record: Service = None,
-        selected_method_name: str = None,
-        selected_category_name: str = None,
-        selected_master_name: str = None,
-        date_text: str = None,
-        summary_text: str = None,
-        slot_time_start: str = None,
-        slot_time_end: str = None
-) -> str:
-    text = ""
-    if selected_method_name:
-        text += f"{MSG.SELECTED_METHOD}:  {selected_method_name}"
-        text += "\n"
-    if selected_category_name:
-        text += f"{MSG.SELECTED_CATEGORY}:  {selected_category_name}"
-        text += "\n"
-    if selected_master_name:
-        text += f"{MSG.SELECTED_MASTER}:  {selected_master_name}"
-        text += "\n"
-
-    # complete_text = (
-    #     f"{SELECTED_SERVICES_CONGRATS}\n\n"
-    #     f"{CALENDAR_ICONS.CALENDAR} <b>{MSG.SELECTED_DATE}:</b>\n"
-    #     f"{date_text}\n\n"
-    #     f"{summary_text}\n\n"
-    #     f"<b>{MSG.SELECTED_INTERVAL_SLOT}:</b>\n"
-    #     f"{SLOT_ICONS.TIME_SLOT_START_ICON}  "
-    #     f"{slot_time_start}  -  {slot_time_end}  "
-    #     f"{SLOT_ICONS.TIME_SLOT_END_ICON}")
-
+def get_reservation_detailed_info(reservation_weekday: str,
+                                  reservation_date: str,
+                                  reservation_time_start: str,
+                                  reservation_time_end: str,
+                                  selected_services_duration: str,
+                                  selected_services_cost: float,
+                                  reserved_services_names: str,
+                                  reserved_masters_names: str
+                                  ) -> str:
+    text = (f"{reservation_date} | {reservation_weekday}\n"
+            f"{reservation_time_start} - {reservation_time_end}\n\n"
+            f"{MSG.DURATION}: {selected_services_duration}\n"
+            f"{MSG.COST}: {selected_services_cost} {MSG.CURRENCY_BRIEF}\n\n"
+            f"{MSG.MASTERS}: {reserved_masters_names}\n\n"
+            f"{MSG.SERVICES}: {reserved_services_names}")
     return text
