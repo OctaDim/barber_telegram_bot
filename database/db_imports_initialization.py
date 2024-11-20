@@ -19,7 +19,7 @@ from database.db_models.association_service_worktime import ServiceWorkTimeAssoc
 from database.db_models.association_user_role import UserRoleAssociation
 from database.db_models.association_user_status import UserStatusAssociation
 from database.db_models.association_master_phone import MasterPhoneAssociation
-
+from database.db_models.reservation_model import Reservation
 
 # ######################################################################
 # ######################################################################

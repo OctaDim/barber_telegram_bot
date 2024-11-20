@@ -7,10 +7,16 @@ from aiogram.types import CallbackQuery
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
+from database.db_models.reservation_model import (
+    Reservation)
 from database.db_models.work_time_model import (
     WorkTime)
+from database.db_queries.masters_objs_by_ids_list import (
+    get_unique_masters_objs_by_ids_list)
+from database.db_queries.services_objects_by_ids_list import (
+    get_unique_services_objs_by_ids_list)
 from database.db_queries.user_obj_by_telegram_id import (
-    get_user_by_telegram_id)
+    get_user_obj_by_telegram_id)
 from database.db_queries.worktime_slot_by_id_query import (
     get_worktime_slot_by_id_in_session)
 from database.db_queries_hepers.add_service_worktime_assoc_explicit import (
@@ -64,9 +70,20 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     message = callback_query.message
 
+    # Getting without validation and setting now if None, because certain date
+    selected_date = state_data.get("selected_date_enroll_srcs_calendar")
+
     selected_services_ids = await get_valid_list_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_ids_state")
+
+    selected_services_cost = await get_valid_float_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_cost_state")
+
+    selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
+        fsm_state_or_dict_from=state_data,
+        fsm_state_literal_key="selected_services_duration_state")
 
     selected_interval_first_slot_id = await get_valid_int_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -79,6 +96,10 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     selected_interval = enrollment_intervals.get(
         selected_interval_first_slot_id)
     selected_slots_ids = selected_interval.get("all slots ids")
+    slot_time_start = selected_interval.get("slot time start")
+    client_time_end = selected_interval.get("client time end")
+    master_time_end = selected_interval.get("slot time end")
+    master_id = selected_interval.get("slot master id")
 
     selected_slots_ids_except_last_id = selected_slots_ids[:-1]
     last_selected_slot_id = selected_slots_ids[-1]
@@ -87,10 +108,13 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     # Transaction start (with group adding and updating)
     with DBConnection(db_url=db_engine_url) as session_ongoing:
         current_user_telegram_id = callback_query.from_user.id
-        current_user_obj = get_user_by_telegram_id(
+        current_user_obj = get_user_obj_by_telegram_id(
             telegram_id=current_user_telegram_id)
         current_user_id = current_user_obj.id
 
+        # ##############################################################
+        # WorkTime operations start (group adding and updating slots) ##
+        # ##############################################################
         for slot_id in selected_slots_ids:
             slot_obj = get_worktime_slot_by_id_in_session(
                 worktime_slot_id=slot_id,
@@ -105,9 +129,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 positive=True)
             time_loss_min_limit = timedelta(minutes=time_loss_min_limit)
 
-            # ##########################################################
-            # ####### Checking group parameters # For the future #######
-            # ##########################################################
+            # For the future. Checking group parameters
             if not len(slot_obj.work_time_clients):
                 enrolled_clients_number = 0
             else:
@@ -118,7 +140,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
             else:
                 max_person_worktime_limit = slot_obj.max_clients_limit
 
-            # Checking if client is already enrolled before
+            # For the future. Checking if client is already enrolled before
             if (slot_obj.is_group
                     and current_user_obj in slot_obj.work_time_clients):
                 await callback_query.answer(text=CLIENT_ALREADY_ENROLLED)
@@ -127,7 +149,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
-            # Checking if clients number is equal or more max client limit
+            # For the future. Checking if clients number >= max client limit
             elif (slot_obj.is_group
                   and enrolled_clients_number >= max_person_worktime_limit):
                 await callback_query.answer(text=MAX_PERSON_GROUP_LIMIT_REACHED)
@@ -135,10 +157,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
                 return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
-            # ##########################################################
-            # ##########################################################
 
-            # Checking if slot non group and is reserved
+            # Checking if slot non group and is already reserved
             elif not slot_obj.is_group and slot_obj.reserved:
                 await callback_query.answer(text=SLOT_ALREADY_TAKEN)
                 session_ongoing.rollback()
@@ -208,7 +228,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                   and DB_SLOTS_CONFIGS.MAKE_SPLIT_NEW_SLOTS_IF_TIME_LOSS):
 
                 client_time_end = selected_interval.get("client time end")
-                slot_obj_time_end_before_update = slot_obj.time_end
+                master_time_end = client_time_end
+                slot_time_end_before_update = slot_obj.time_end
 
                 # getting values before existing slot object will be updated
                 new_update_data = {
@@ -227,8 +248,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 new_slot_obj_from_loss_time = WorkTime(
                     master_id=slot_obj.master_id,
                     time_start=client_time_end,
-                    time_end=slot_obj_time_end_before_update,
-                    slot_duration=slot_obj.time_end - client_time_end,
+                    time_end=slot_time_end_before_update,
+                    slot_duration=slot_time_end_before_update - client_time_end,
                     reserved=False,
                     admin_only=DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY,
                     creator_id=current_user_id)
@@ -245,25 +266,82 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 ongoing_session=session_ongoing)
 
             slot_obj.work_time_clients.append(current_user_obj)
+        # ##############################################################
+        # WorkTime operations end (with group adding and updating slots)
+        # ##############################################################
+
+        # ##############################################################
+        # ### Reservation operations start (adding all statistical info)
+        # ##############################################################
+        services_objs = get_unique_services_objs_by_ids_list(
+            services_ids_list=selected_services_ids,
+            ongoing_session=session_ongoing)
+
+        arch_name_per_service = {}
+        arch_price_per_service = {}
+        arch_duration_per_service = {}
+
+        for service_obj in services_objs:
+            service_id = service_obj.id
+            arch_name_per_service[service_id] = service_obj.name
+            arch_price_per_service[service_id] = service_obj.price
+            arch_duration_per_service[
+                service_id] = service_obj.time_duration.total_seconds()
+
+        masters_ids = [master_id]  # For the future, when masters many
+        masters_objs = get_unique_masters_objs_by_ids_list(
+            masters_ids_list=masters_ids,
+            ongoing_session=session_ongoing)
+
+        arch_name_per_master = {}
+        for master_obj in masters_objs:
+            arch_name_per_master[master_obj.id] = master_obj.full_name
+
+        master_interval_duration = master_time_end - slot_time_start
+        client_interval_duration = client_time_end - slot_time_start
+        interval_time_loss = master_interval_duration - client_interval_duration
+
+        new_user_reservation = Reservation(
+            reservation_date=selected_date,
+            client_user_id=current_user_id,
+
+            reserved_interval_first_slot_id=selected_interval_first_slot_id,
+            reserved_slots_ids=selected_slots_ids,
+
+            reserved_interval_time_start=slot_time_start,
+            master_interval_time_end=master_time_end,
+            client_interval_time_end=client_time_end,
+
+            master_interval_duration=master_interval_duration,
+            client_interval_duration=client_interval_duration,
+            interval_time_loss=interval_time_loss,
+
+            reserved_services_ids=selected_services_ids,
+            reserved_services_total_cost=selected_services_cost,
+            reserved_services_total_duration=selected_services_duration,
+
+            archive_name_per_service=arch_name_per_service,
+            archive_price_per_service=arch_price_per_service,
+            archive_duration_per_service=arch_duration_per_service,
+
+            reserved_masters_ids=masters_ids,
+            archive_name_per_master=arch_name_per_master,
+
+            creator_id=current_user_id)
+
+        session_ongoing.add(new_user_reservation)
+        # ##############################################################
+        # ##### Reservation operations end (adding all statistical info)
+        # ##############################################################
 
         # Transaction end (with group adding and updating)
         session_ongoing.commit()
-        print(f"\tTEST INFO: Ongoing session was commit "
-              f"(with group adding and updating records)\n")
+        print(f"\tTEST INFO: WorkTime and Reservation ongoing session "
+              f"was commit (with group adding and updating records)\n")
 
         # ##############################################################
         # Info block showing selected services and time interval summary
         # ##############################################################
-        selected_date = state_data.get("selected_date_enroll_srcs_calendar")
-
-        selected_services_cost = await get_valid_float_by_fsm_state_key(
-            fsm_state_or_dict_from=state_data,
-            fsm_state_literal_key="selected_services_cost_state")
-
-        selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
-            fsm_state_or_dict_from=state_data,
-            fsm_state_literal_key="selected_services_duration_state")
-
         date_text = get_date_with_month_name(
             selected_date,
             language=LANGUAGE_CONFIGS.LANGUAGE)
@@ -273,12 +351,10 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
             total_cost=selected_services_cost,
             total_duration=selected_services_duration)
 
-        slot_time_start = selected_interval.get("slot time start")
         slot_time_start_text = get_time_flex_from_datetime(
             date_value=slot_time_start,
             language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        client_time_end = selected_interval.get("client time end")
         client_time_end_text = get_time_flex_from_datetime(
             date_value=client_time_end,
             language=LANGUAGE_CONFIGS.LANGUAGE)
