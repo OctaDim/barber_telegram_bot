@@ -63,7 +63,8 @@ def get_weekday_flex_abbr_by_index(weekday_index: int,
 
 def get_weekday_flex_abbr_by_date(date_value: date | datetime,
                                   language: Literal["EN", "RU"] = "EN",
-                                  symbols_max: Literal[1, 2, 3, 100] = 3) -> str:
+                                  symbols_max: Literal[1, 2, 3, 100] = 3,
+                                  upper_case: bool = False) -> str:
     origin_locale = locale.getlocale(locale.LC_TIME)
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
@@ -73,6 +74,8 @@ def get_weekday_flex_abbr_by_date(date_value: date | datetime,
     weekday_abbr = weekdays_abbr_list[weekday_number]
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
+
+    weekday_abbr = weekday_abbr.upper() if upper_case else weekday_abbr
     return weekday_abbr
 
 
