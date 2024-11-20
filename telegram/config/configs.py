@@ -4,7 +4,7 @@ from typing import Literal, Union
 
 @dataclass
 class LANGUAGE_CONFIGS:
-    LANGUAGE: Literal["EN", "RU"] = "EN"
+    LANGUAGE: Literal["EN", "RU"] = "RU"
     PHONE_NUMBER_REGION: Literal["BY", "RU", "US", "international"] = "BY"
 
 
@@ -13,6 +13,7 @@ class PAGINATION_CONFIGS:
     CATEGORIES_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     MASTERS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
     TIME_SLOTS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
+    RESERVATIONS_PER_PAGE: Union[int, 0] = 10  # 0 - show all categories without pages
 
 
 @dataclass
@@ -59,6 +60,13 @@ class ENROLL_METHODS_CONFIGS:
     ENROLL_SERVICES_BY_CATEGORY: bool = True
     ENROLL_SERVICES_BY_CATEGORY_AND_MASTER: bool = True
     ENROLL_SERVICES_BY_MASTER: bool = True
+
+
+@dataclass
+class RESERVATIONS_CONFIGS:
+    SHOW_COMPLETED_RESERVATIONS: bool = True
+    SHOW_RESERVATIONS_CLIENT_CANCELLED: bool = True
+    SHOW_RESERVATIONS_ADMIN_CANCELLED: bool = True
 
 
 @dataclass
