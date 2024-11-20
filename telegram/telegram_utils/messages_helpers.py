@@ -186,9 +186,12 @@ def get_reservation_detailed_info(reservation_weekday: str,
                                   reserved_masters_names: str
                                   ) -> str:
     text = (f"{reservation_date} | {reservation_weekday}\n"
-            f"{reservation_time_start} - {reservation_time_end}\n\n"
+            f"{MSG.TIME}: {reservation_time_start} - {reservation_time_end}\n\n"
             f"{MSG.DURATION}: {selected_services_duration}\n"
             f"{MSG.COST}: {selected_services_cost} {MSG.CURRENCY_BRIEF}\n\n"
-            f"{MSG.MASTERS}: {reserved_masters_names}\n\n"
+            f"{MSG.MASTERS}: {reserved_masters_names}\n"
             f"{MSG.SERVICES}: {reserved_services_names}")
+
+    # TG callback query alert message limit max 200 symbols
+    text = text[0:197] + "..." if len(text) > 200 else text
     return text

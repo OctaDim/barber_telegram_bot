@@ -37,3 +37,6 @@ MAX_PERSON_GROUP_LIMIT_REACHED = "⚠️ The maximum number of people in the gro
 CLIENT_ALREADY_ENROLLED = "You have been already enrolled for that time slot"
 NO_CLIENT_RESERVATIONS = "No reservations for you"
 ALL_RESERVATIONS_HERE = "Here you will find all your reservations"
+RESERVATION_ADMIN_CANCELLED = "ℹ️ Admin cancelled reservation cannot be modified. Enroll through services again"
+RESERVATION_CLIENT_CANCELLED = "ℹ️ Client cancelled reservation cannot be modified. Enroll  through services again"
+RESERVATION_ALREADY_COMPLETED = "ℹ️ Already completed reservation cannot be modified"

@@ -34,7 +34,7 @@ class NextReservationPageCBData(CallbackData, prefix="next reservation page"):
     pass
 
 
-class ReservationClickedCBData(CallbackData, prefix="reservation detail info"):
+class ReservationClickedDateTimeCBData(CallbackData, prefix="reservation date time clicked"):
     reservation_id: int
 
 
@@ -42,11 +42,15 @@ class CancelReservationCBData(CallbackData, prefix="cancel reservation"):
     reservation_id: int
 
 
-class ReservationAlreadyCompletedCBData(CallbackData, prefix="reservation already completed"):
+class ReservationCompletedCBData(CallbackData, prefix="reservation already completed"):
     pass
 
 
-class ReservationAlreadyCancelledCBData(CallbackData, prefix="reservation already cancelled"):
+class ReservationCancelledByAdminCBData(CallbackData, prefix="reservation cancelled by admin"):
+    pass
+
+
+class ReservationCancelledByClientCBData(CallbackData, prefix="reservation cancelled by client"):
     pass
 
 
@@ -96,7 +100,7 @@ def get_reservation_client_user_inl_kbd(
             date_value=client_time_end,
             language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        cur_reservation_cb_data = ReservationClickedCBData(
+        cur_reservation_cb_data = ReservationClickedDateTimeCBData(
             reservation_id=reservation_id).pack()
 
         builder_inl_kbd.button(
@@ -108,14 +112,14 @@ def get_reservation_client_user_inl_kbd(
             callback_data=cur_reservation_cb_data)
 
         if reservation.cancelled_by_client:
-            action_btn_cb_data = ReservationAlreadyCancelledCBData()
+            action_btn_cb_data = ReservationCancelledByClientCBData()
             action_btn_caption = RESERVATIONS_BUTTONS.CANCELLED_BY_USER
         elif reservation.cancelled_by_admin:
-            action_btn_cb_data = ReservationAlreadyCancelledCBData()
+            action_btn_cb_data = ReservationCancelledByAdminCBData()
             action_btn_caption = RESERVATIONS_BUTTONS.CANCELLED_BY_ADMIN
         else:
             if reservation_time_start <= datetime.now():
-                action_btn_cb_data = ReservationAlreadyCompletedCBData()
+                action_btn_cb_data = ReservationCompletedCBData()
                 action_btn_caption = RESERVATIONS_BUTTONS.COMPLETED_RESERVATION
             else:
                 action_btn_cb_data = CancelReservationCBData(
