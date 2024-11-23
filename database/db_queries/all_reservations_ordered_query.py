@@ -16,10 +16,11 @@ from utilities.decorators_global import execution_time_decorator
                           note="All reservations by user_id",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
 def get_all_reservations_ordered(
+        show_completed_reservations: bool = True,
         client_user_id: Union[int, "all"] = "all",
         cancelled_by_client: Union[bool, "all"] = "all",
         cancelled_by_admin: Union[bool, "all"] = "all",
-        show_completed_reservations: bool = True,
+        active: Union[bool, "all"] = "all",
         order_by_fields: Union[
             str, Tuple[str, ...], UnaryExpression, Tuple[UnaryExpression, ...],
             None] = (Reservation.reserved_interval_time_start.desc(),)
@@ -43,6 +44,10 @@ def get_all_reservations_ordered(
         if cancelled_by_admin != "all":
             filter_query = filter_query.filter(
                 Reservation.cancelled_by_admin.is_(cancelled_by_admin))
+
+        if active != "all":
+            filter_query = filter_query.filter(
+                Reservation.active.is_(active))
 
         order_query = create_order_by_partial_query(
             model_class=Reservation,
