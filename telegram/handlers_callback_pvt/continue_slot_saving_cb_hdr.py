@@ -17,8 +17,8 @@ from database.db_queries.services_objects_by_ids_list import (
     get_unique_services_objs_by_ids_list)
 from database.db_queries.user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
-from database.db_queries.worktime_slot_by_id_query import (
-    get_worktime_slot_by_id_in_session)
+from database.db_queries.worktime_obj_by_id_query import (
+    get_worktime_obj_by_id_session)
 from database.db_queries_hepers.add_service_worktime_assoc_explicit import (
     directly_add_service_worktime_association)
 from database.db_utilities.merge_object_transaction_update import (
@@ -116,7 +116,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         # WorkTime operations start (group adding and updating slots) ##
         # ##############################################################
         for slot_id in selected_slots_ids:
-            slot_obj = get_worktime_slot_by_id_in_session(
+            slot_obj = get_worktime_obj_by_id_session(
                 worktime_slot_id=slot_id,
                 ongoing_session=session_ongoing)
 

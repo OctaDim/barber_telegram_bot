@@ -28,7 +28,9 @@ services_btn_router.message.filter(ChatTypesFilter(["private"]))
 
 @services_btn_router.message(F.text == MAIN_MENU_BUTTONS_PARAMS.OUR_SERVICES)
 async def our_services_btn_reply_hdr_pvt(message: Message,
-                                         state: FSMContext, state_data=None):
+                                         state: FSMContext):
+    state_data = await state.get_data()
+
     selected_method_prefix = "our services reply btn private handler"
 
     selected_category_id = None

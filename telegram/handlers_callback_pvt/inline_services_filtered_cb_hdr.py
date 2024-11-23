@@ -68,7 +68,6 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_master_id")
 
-    all_services_records = []
     if selected_category_id and selected_master_id:
         all_services_records = get_all_services_ordered(
             category_id=selected_category_id,
@@ -85,6 +84,8 @@ async def inline_services_filtered_enroll_srcs_cb_hdr(callback_query: CallbackQu
             category_id=selected_category_id,
             active=True,
             order_by_fields=("price", "name",))
+    else:
+        all_services_records = []
 
     if not all_services_records:
         await callback_query.answer(
