@@ -5,6 +5,8 @@ from aiogram.types import CallbackQuery
 
 from database.db_queries.all_masters_ordered_query import (
     get_all_masters_ordered)
+from database.db_queries.all_services_ordered_queries import (
+    get_all_services_ordered)
 from telegram.config.configs import (
     PAGINATION_CONFIGS)
 from telegram.filters.chat_types_filter import (
@@ -51,21 +53,32 @@ async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     if not current_page_number:
         current_page_number = 1
 
-    masters_records = None
     if callback_prefix == MethodMasterToServiceContinueCBD.__prefix__:
         masters_records = get_all_masters_ordered(
             active=True,
             order_by_fields=("full_name", "category_id"))
-
     elif callback_prefix == CategoryToMasterContinueCBData.__prefix__:
         selected_category_id = await get_valid_int_by_fsm_state_key(
             fsm_state_or_dict_from=state_data,
             fsm_state_literal_key="selected_category_id")
 
-        masters_records = get_all_masters_ordered(
-            active=True,
+        # Getting masters by category via services included in category. Option 1
+        all_services_by_category = get_all_services_ordered(
             category_id=selected_category_id,
-            order_by_fields=("full_name",))
+            active=True)
+        masters_records_set = set()
+        for service_obj in all_services_by_category:
+            masters_records_set.update(service_obj.service_masters)
+        masters_records = list(masters_records_set)
+        masters_records.sort(key=lambda master: master.full_name)
+
+        # Getting masters by category directly. Option 2
+        # masters_records = get_all_masters_ordered(
+        #     active=True,
+        #     category_id=selected_category_id,
+        #     order_by_fields=("full_name",))
+    else:
+        masters_records = []
 
     if not masters_records:
         await callback_query.answer(text=NO_AVAILABLE_MASTERS,

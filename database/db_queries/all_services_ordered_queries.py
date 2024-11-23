@@ -9,10 +9,8 @@ from database.db_models.master_model import Master
 from database.db_models.service_model import Service
 from database.db_utilities.create_order_by_partial_query import (
     create_order_by_partial_query)
-from telegram.config.logging import (
-    LOGGING)
-from utilities.decorators_global import (
-    execution_time_decorator)
+from telegram.config.logging import (LOGGING)
+from utilities.decorators_global import (execution_time_decorator)
 
 
 @execution_time_decorator(in_seconds=True,
@@ -29,7 +27,9 @@ def get_all_services_ordered(
 ) -> List[Service]:
     with DBConnection(db_url=db_engine_url) as session:
         base_query = session.query(Service).options(
-            joinedload(Service.service_masters))
+            # joined_load(Master.master_categories) for masters by category via services
+            joinedload(Service.service_masters).joinedload(Master.master_categories)
+        )
 
         filter_query = base_query
         if service_id != "all":
