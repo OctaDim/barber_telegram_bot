@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ENROLL_METHODS_BUTTONS:
-    ENROLL_CATEGORY_TO_MASTER: str = "Category and Master"
-    ENROLL_MASTER_TO_SERVICE: str = "Master"
-    ENROLL_CATEGORY_TO_SERVICE: str = "Category"
+    ENROLL_CATEGORY_TO_MASTER: str = "by category and master"
+    ENROLL_MASTER_TO_SERVICE: str = "by master"
+    ENROLL_CATEGORY_TO_SERVICE: str = "by category"
     CONTINUE: str = "▶️ Continue"

@@ -14,7 +14,7 @@ from telegram.keyboard_inline.enroll_services_inl_kbd import (
     get_enroll_service_inl_kbd)
 from telegram.params.messages import (
     NONE_SERVICES_SELECTED)
-from telegram.params.services_icons import (
+from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_dict_by_fsm_state_key,

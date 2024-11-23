@@ -14,7 +14,7 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_reservations_client_user import (
     RESERVATIONS_BUTTONS)
-from telegram.params.reservations_icons import (
+from telegram.params.icons_reservations import (
     RESERVATIONS_ICONS)
 from utilities.calendar_utils import (
     get_date_flex_from_datetime,

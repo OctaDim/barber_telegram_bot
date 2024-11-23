@@ -6,9 +6,9 @@ from telegram.config.configs import (
     SLOTS_CONFIGS)
 from telegram.params.buttons_common import (
     SPECIAL_CHARACTERS)
-from telegram.params.calendar_icons import (
+from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
-from telegram.params.intervals_slots_icons import (
+from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
 from telegram.params.messages import (
     BETTER_SLOTS_TO_CHOOSE,
@@ -17,7 +17,7 @@ from telegram.params.messages_inserts import (
     MSG)
 from telegram.params.messages_multiline import (
     SELECTED_SERVICES_CONGRATS)
-from telegram.params.services_icons import (
+from telegram.params.icons_services import (
     SERVICES_ICONS)
 
 

@@ -15,7 +15,7 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_empty_no_action_inl_btn)
 from telegram.params.buttons_enroll_service import (
     ENROLL_SERVICE_BUTTONS)
-from telegram.params.calendar_icons import (
+from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
 from utilities.calendar_utils import (
     get_numeric_month_calendar_list,

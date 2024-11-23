@@ -12,7 +12,7 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_enroll_methods import (
     ENROLL_METHODS_BUTTONS)
-from telegram.params.methods_icons import (
+from telegram.params.icons_methods import (
     METHODS_ICONS)
 
 

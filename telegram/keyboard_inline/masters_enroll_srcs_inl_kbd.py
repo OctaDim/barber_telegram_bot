@@ -13,7 +13,7 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_enroll_masters import (
     ENROLL_MASTERS_BUTTONS)
-from telegram.params.masters_icons import (
+from telegram.params.icons_masters import (
     MASTERS_ICONS)
 
 

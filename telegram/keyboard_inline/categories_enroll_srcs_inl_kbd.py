@@ -15,7 +15,7 @@ from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodCategoryToMasterContinueCBData)
 from telegram.params.buttons_enroll_categories import (
     ENROLL_CATEGORIES_BUTTONS)
-from telegram.params.categories_icons import (
+from telegram.params.icons_categories import (
     CATEGORIES_ICONS)
 
 

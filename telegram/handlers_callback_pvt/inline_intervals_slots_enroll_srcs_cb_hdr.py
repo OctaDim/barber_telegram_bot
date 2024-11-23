@@ -24,7 +24,7 @@ from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
     MonthContinueCBData)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     get_enrollment_intervals_inl_kbd)
-from telegram.params.calendar_icons import (
+from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
 from telegram.params.messages import (
     SELECT_ENROLLMENT_SLOT,

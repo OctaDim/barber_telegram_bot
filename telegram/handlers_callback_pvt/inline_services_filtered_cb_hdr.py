@@ -27,7 +27,7 @@ from telegram.params.messages import (
     NO_SERVICES,
     SELECT_SERVICES_BELLOW,
     SELECT_OTHER_ACTIONS)
-from telegram.params.services_icons import (
+from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,

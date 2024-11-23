@@ -17,7 +17,7 @@ from telegram.keyboard_inline.common_buttons_inline import (
     ReturnInlineBtnCBData)
 from telegram.params.buttons_intervals_slots import (
     SLOTS_BUTTONS)
-from telegram.params.intervals_slots_icons import (
+from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
 from telegram.telegram_utils.messages_helpers import (
     get_slot_advising_icon)
