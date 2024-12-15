@@ -28,7 +28,8 @@ def get_all_services_ordered(
     with DBConnection(db_url=db_engine_url) as session:
         base_query = session.query(Service).options(
             # joined_load(Master.master_categories) for masters by category via services
-            joinedload(Service.service_masters).joinedload(Master.master_categories)
+            joinedload(Service.service_masters).joinedload(Master.master_categories),
+            # joinedload(Service.service_categories)  # for categories via services
         )
 
         filter_query = base_query

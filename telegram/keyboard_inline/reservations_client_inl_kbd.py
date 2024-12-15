@@ -12,7 +12,7 @@ from telegram.config.configs import (
 from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button)
-from telegram.params.buttons_reservations_client_user import (
+from telegram.params.buttons_reservations_client import (
     RESERVATIONS_BUTTONS)
 from telegram.params.icons_reservations import (
     RESERVATIONS_ICONS)
@@ -38,7 +38,7 @@ class ReservationClickedDateTimeCBData(CallbackData, prefix="reservation date ti
     reservation_id: int
 
 
-class CancelReservationCBData(CallbackData, prefix="cancel reservation"):
+class CancelReservationCBData(CallbackData, prefix="cancel reservation callback"):
     reservation_id: int
 
 
@@ -54,11 +54,11 @@ class ReservationCancelledByClientCBData(CallbackData, prefix="reservation cance
     pass
 
 
-# RESERVATIONS_BUTTONS
 def get_reservation_client_user_inl_kbd(
         current_page_reservations: List[Reservation],
         total_pages_number: int,
-        current_page_number: int = 1) -> InlineKeyboardMarkup:
+        current_page_number: int = 1
+) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
     if total_pages_number > 1:
@@ -76,11 +76,12 @@ def get_reservation_client_user_inl_kbd(
             text=RESERVATIONS_ICONS.NEXT_PAGE,
             callback_data=NextReservationPageCBData())
 
-    for reservation in current_page_reservations:
-        reservation_id = reservation.id
-        reservation_slots_ids = reservation.reserved_slots_ids
+    for reservation_obj in current_page_reservations:
+        reservation_id = reservation_obj.id
+        # for future, to reverse reservation cancel
+        reservation_slots_ids = reservation_obj.reserved_slots_ids
 
-        reservation_date = reservation.reservation_date
+        reservation_date = reservation_obj.reservation_date
         reservation_date_text = get_date_flex_from_datetime(
             date_value=reservation_date,
             language=LANGUAGE_CONFIGS.LANGUAGE)
@@ -90,12 +91,12 @@ def get_reservation_client_user_inl_kbd(
             language=LANGUAGE_CONFIGS.LANGUAGE,
             symbols_max=2)
 
-        reservation_time_start = reservation.reserved_interval_time_start
+        reservation_time_start = reservation_obj.reserved_interval_time_start
         time_start_text = get_time_flex_from_datetime(
             date_value=reservation_time_start,
             language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        client_time_end = reservation.client_interval_time_end
+        client_time_end = reservation_obj.client_interval_time_end
         time_end_text = get_time_flex_from_datetime(
             date_value=client_time_end,
             language=LANGUAGE_CONFIGS.LANGUAGE)
@@ -111,10 +112,10 @@ def get_reservation_client_user_inl_kbd(
             text=f"{time_start_text}  -  {time_end_text}",
             callback_data=cur_reservation_cb_data)
 
-        if reservation.cancelled_by_client:
+        if reservation_obj.cancelled_by_client:
             action_btn_cb_data = ReservationCancelledByClientCBData()
             action_btn_caption = RESERVATIONS_BUTTONS.CANCELLED_BY_USER
-        elif reservation.cancelled_by_admin:
+        elif reservation_obj.cancelled_by_admin:
             action_btn_cb_data = ReservationCancelledByAdminCBData()
             action_btn_caption = RESERVATIONS_BUTTONS.CANCELLED_BY_ADMIN
         else:
@@ -134,7 +135,8 @@ def get_reservation_client_user_inl_kbd(
     builder_inl_kbd.add(create_main_menu_inline_button())
 
     pagination_adjust = [3] if total_pages_number > 1 else []
-    return_main_menu_bts_adjust = [2]
+    # return_main_menu_bts_adjust = [1]  # Without Return button
+    return_main_menu_bts_adjust = [2]  # With Return button
 
     dynamic_adjust = (pagination_adjust
                       + [3] * len(current_page_reservations)
@@ -144,46 +146,3 @@ def get_reservation_client_user_inl_kbd(
 
     inline_kbd_markup = builder_inl_kbd.as_markup()
     return inline_kbd_markup
-
-    #     if selected_slot_id == first_slot_id:
-    #         selected_left_icon = SLOT_ICONS.SELECTED_SLOT_START_ICON
-    #         selected_right_icon = SLOT_ICONS.SELECTED_SLOT_END_ICON
-    #     else:
-    #         selected_left_icon = SLOT_ICONS.UNSELECTED_SLOT
-    #         selected_right_icon = SLOT_ICONS.UNSELECTED_SLOT
-    #
-    #     slot_time_start_text = get_time_flex_from_datetime(
-    #         date_value=slot_time_start,
-    #         language=LANGUAGE_CONFIGS.LANGUAGE)
-    #
-    # date_info_adjust = [1]
-    # pagination_adjust = [3] if total_pages_number > 1 else []
-    # slot_row_columns_number = (1 + SLOTS_CONFIGS.SHOW_SLOTS_ADVISES_ICONS
-    #                            + SLOTS_CONFIGS.SHOW_SLOT_MASTER_FULL_NAME)
-    #
-    # if selected_slot_id:
-    #     continue_btn_adjust = [1]
-    #     builder_inl_kbd.button(
-    #         text=SLOTS_BUTTONS.CONTINUE,
-    #         callback_data=ContinueSlotSavingCBData())
-    # else:
-    #     continue_btn_adjust = []
-    #
-    # return_main_menu_bts_adjust = [2]
-    # if slot_row_columns_number == 2 and not selected_slot_id:
-    #     return_main_menu_bts_adjust = [1]
-    #
-    # builder_inl_kbd.add(create_return_inline_button())
-    # builder_inl_kbd.add(create_main_menu_inline_button())
-    #
-    # dynamic_adjust = (
-    #         date_info_adjust
-    #         + pagination_adjust
-    #         + [int(slot_row_columns_number)] * len(current_page_intervals)
-    #         + continue_btn_adjust
-    #         + return_main_menu_bts_adjust)
-    #
-    # builder_inl_kbd.adjust(*dynamic_adjust)
-    #
-    # inline_kbd_markup = builder_inl_kbd.as_markup()
-    # return inline_kbd_markup

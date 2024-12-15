@@ -15,7 +15,8 @@ from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button,
     ReturnInlineBtnCBData)
-from telegram.params.buttons_intervals_slots import (
+from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
+from telegram.params.buttons_enroll_intervals_slots import (
     SLOTS_BUTTONS)
 from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
@@ -50,6 +51,10 @@ class ContinueSlotSavingCBData(CallbackData, prefix="continue_slot_saving"):
     pass
 
 
+class ReturnIntervalsSlotsToCalendarCBData(CallbackData, prefix="return_interval_slots_to_calendar"):
+    pass
+
+
 def get_enrollment_intervals_inl_kbd(
         current_page_intervals: List[dict],
         total_pages_number: int,
@@ -61,9 +66,12 @@ def get_enrollment_intervals_inl_kbd(
 
     date_now = get_date_with_month_name(date_value=selected_date,
                                         language=LANGUAGE_CONFIGS.LANGUAGE)
+
     date_now_text = f"{SLOT_ICONS.DATE_CALENDAR}  {date_now.upper()}"
+    callback_data = ReturnInlineBtnCBData(
+            delete_inline_msg_on_return=False).pack()
     builder_inl_kbd.button(text=date_now_text,
-                           callback_data=ReturnInlineBtnCBData())
+                           callback_data=callback_data)
 
     if total_pages_number > 1:
         builder_inl_kbd.button(
@@ -183,12 +191,17 @@ def get_enrollment_intervals_inl_kbd(
     else:
         continue_btn_adjust = []
 
+    builder_inl_kbd.button(
+        text=COMMON_BUTTONS_PARAMS.RETURN,
+        callback_data=ReturnIntervalsSlotsToCalendarCBData(
+
+        ).pack())
+    # builder_inl_kbd.add(create_return_inline_button())
+    builder_inl_kbd.add(create_main_menu_inline_button())
+
     return_main_menu_bts_adjust = [2]
     if slot_row_columns_number == 2 and not selected_slot_id:
         return_main_menu_bts_adjust = [1]
-
-    builder_inl_kbd.add(create_return_inline_button())
-    builder_inl_kbd.add(create_main_menu_inline_button())
 
     dynamic_adjust = (
             date_info_adjust

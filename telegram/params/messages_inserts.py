@@ -15,7 +15,6 @@ class MSG:
     MASTERS: str = "Masters"
     SERVICES: str = "Services"
 
-
     SERVICES_TOTAL_COST: str = "💰 Total cost"
     SERVICES_TOTAL_DURATION: str = "🕑 Total time duration"
     SERVICES_TOTAL_COUNT: str = "✂️ Selected services count"
@@ -26,6 +25,8 @@ class MSG:
     SERVICE_PRICE: str = "Price"
     SERVICE_DURATION: str = "Duration"
     SERVICE_DESCRIPTION: str = "Description"
+
+    CATEGORY_NAME: str = "Category"
 
     SOCIALS: str = "🌐 Social"
     PHONES: str = "📞 Phones"

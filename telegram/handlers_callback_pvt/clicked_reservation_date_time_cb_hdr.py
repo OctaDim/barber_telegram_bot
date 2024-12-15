@@ -1,3 +1,5 @@
+import inspect
+
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
@@ -9,7 +11,7 @@ from telegram.config.configs import (
     LANGUAGE_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.reservations_client_user_inl_kbd import (
+from telegram.keyboard_inline.reservations_client_inl_kbd import (
     ReservationClickedDateTimeCBData)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
@@ -34,7 +36,7 @@ async def clicked_reservation_date_time_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     clicked_reservation_id = callback_data.reservation_id
     reservation_obj = get_reservation_obj_by_id(clicked_reservation_id)
@@ -93,4 +95,7 @@ async def clicked_reservation_date_time_cb_hdr(callback_query: CallbackQuery,
     await callback_query.answer(text=reservation_detail_info,
                                 show_alert=True)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

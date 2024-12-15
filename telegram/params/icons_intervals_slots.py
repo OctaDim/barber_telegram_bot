@@ -18,3 +18,5 @@ class SLOT_ICONS():
     UNSELECTED_SLOT = ""
     SELECTED_SLOT_START_ICON: str = "✅"
     SELECTED_SLOT_END_ICON: str = "✅"
+    # SELECTED_SLOT_START_ICON: str = "➡️"
+    # SELECTED_SLOT_END_ICON: str = "⬅️"

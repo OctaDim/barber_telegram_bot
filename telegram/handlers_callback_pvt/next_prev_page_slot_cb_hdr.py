@@ -1,3 +1,5 @@
+import inspect
+
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
@@ -31,7 +33,7 @@ async def next_prev_page_slot_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     callback_prefix = callback_data.__prefix__
 
@@ -48,21 +50,35 @@ async def next_prev_page_slot_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="paginated_intervals_dicts_list")
 
+    total_pages = len(paginated_intervals)
+
     if callback_prefix == PreviousSlotPageCBData.__prefix__:
-        if not paginated_intervals.get(cur_page_number - 1):
-            cur_page_number = len(paginated_intervals)
+        if (cur_page_number - 1) < 1:
+            cur_page_number = total_pages
         else:
             cur_page_number -= 1
     elif callback_prefix == NextSlotPageCBData.__prefix__:
-        if not paginated_intervals.get(cur_page_number + 1):
+        if (cur_page_number + 1) > total_pages:
             cur_page_number = 1
         else:
             cur_page_number += 1
     else:
         cur_page_number = 1
 
+    # if callback_prefix == PreviousSlotPageCBData.__prefix__:
+    #     if not paginated_intervals.get(cur_page_number - 1):
+    #         cur_page_number = len(paginated_intervals)
+    #     else:
+    #         cur_page_number -= 1
+    # elif callback_prefix == NextSlotPageCBData.__prefix__:
+    #     if not paginated_intervals.get(cur_page_number + 1):
+    #         cur_page_number = 1
+    #     else:
+    #         cur_page_number += 1
+    # else:
+    #     cur_page_number = 1
+
     current_page_intervals = paginated_intervals.get(cur_page_number)
-    total_pages = len(paginated_intervals)
 
     await callback_query.message.edit_text(
         text=SELECT_ENROLLMENT_SLOT,
@@ -76,4 +92,7 @@ async def next_prev_page_slot_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         selected_master_id=None,
         current_page_number_of_intervals=cur_page_number)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

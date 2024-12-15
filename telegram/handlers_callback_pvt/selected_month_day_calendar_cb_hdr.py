@@ -1,3 +1,4 @@
+import inspect
 from datetime import datetime
 
 from aiogram import Router
@@ -14,8 +15,6 @@ from database.db_queries_hepers.enrollment_days_for_month_helper import (
     get_enrollment_days_helper)
 from telegram.config.configs import (
     DB_SLOTS_CONFIGS)
-from telegram.errors_api_telegram.telegram_exception_errors import (
-    TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
@@ -45,7 +44,9 @@ async def month_day_selected_calendar_enroll_srcs_cb_hdr(callback_query: Callbac
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     selected_day = callback_data.month_day
 
@@ -60,7 +61,7 @@ async def month_day_selected_calendar_enroll_srcs_cb_hdr(callback_query: Callbac
     selected_date = datetime(selected_year, selected_month, selected_day)
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
+        fsm_state_or_state_dict=state_data,
         fsm_state_literal_key="selected_services_ids_state")
 
     selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
@@ -108,11 +109,12 @@ async def month_day_selected_calendar_enroll_srcs_cb_hdr(callback_query: Callbac
                 calendar_month=selected_month,
                 selected_date=selected_date,
                 enrollment_days=enrollment_days))
-    except TelegramBadRequest as error:
-        if error.message == TG_EXCEPT_ERRORS.MSG_NOT_MODIFIED:
-            print("\tLOG INFO: 'Message not modified' tg exception was intercepted\n")
-            pass
+    except (TelegramBadRequest, Exception) as exception_info:
+        print(f"\tMessage not modified, tg exception intercepted: {exception_info}\n")
 
     await state.update_data(selected_date_enroll_srcs_calendar=selected_date)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

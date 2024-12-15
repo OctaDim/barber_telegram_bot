@@ -108,7 +108,9 @@ def get_month_names_dict(abbreviation: bool = False,
 
 def get_month_name_by_number(month_number: int,
                              abbreviation: bool = False,
-                             language: Literal["EN", "RU"] = "EN") -> str:
+                             language: Literal["EN", "RU"] = "EN",
+                             upper_case: bool = False) -> str:
+
     origin_locale = locale.getlocale(locale.LC_TIME)
     if language == "RU":
         locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
@@ -117,6 +119,8 @@ def get_month_name_by_number(month_number: int,
         month_name = calendar.month_abbr[month_number]
     else:
         month_name = calendar.month_name[month_number]
+
+    month_name = month_name.upper() if upper_case else month_name
 
     locale.setlocale(locale.LC_TIME, locale=origin_locale)
     return month_name
@@ -259,6 +263,7 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
                                      language: Literal["EN", "RU"] = "EN",
                                      abbrev_symbols: Literal["1", "3", "F"] = "1",
                                      show_seconds: bool = False,
+                                     hide_zero_values: bool = False,
                                      separator: str = ":",
                                      space_before_note: bool = False,
                                      upper_case: bool = False) -> str:
@@ -294,20 +299,34 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
     total_seconds = timedelta_value.total_seconds()
     hrs_value = int(total_seconds // 3600)
     min_value = int((total_seconds % 3600) // 60)
-    seconds_str = int(total_seconds % 60)
+    seconds_value = int(total_seconds % 60)
 
     space = " " if space_before_note else ""
-    hours_str = f"{hrs_value}{space}{hrs_note}{separator}"
-    before_seconds_separator = separator if show_seconds else ""
-    minutes_str = f"{min_value}{space}{min_note}{before_seconds_separator}"
-    seconds_str = f"{seconds_str}{space}{sec_note}" if show_seconds else ""
+
+    if not hrs_value and hide_zero_values:
+        hours_str = ""
+    else:
+        hours_str = f"{hrs_value}{space}{hrs_note}{separator}"
+
+    if not min_value and hide_zero_values:
+        minutes_str = ""
+    else:
+        before_seconds_separator = separator if show_seconds else ""
+        minutes_str = f"{min_value}{space}{min_note}{before_seconds_separator}"
+
+    if show_seconds:
+        if not seconds_value and hide_zero_values:
+            seconds_str = ""
+        else:
+            seconds_str = f"{seconds_value}{space}{sec_note}"
+    else:
+        seconds_str = ""
 
     timedelta_str = f"{hours_str}{minutes_str}{seconds_str}"
     timedelta_str = timedelta_str.upper() if upper_case else timedelta_str
     return timedelta_str
 
 # ############################### TEST CODE ############################
-# ######################################################################
 # test_date = datetime(year=2024, month=10, day=12,
 #                      hour=2, minute=7,
 #                      second=5, microsecond=23545)
@@ -315,3 +334,4 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
 # test_timedelta = timedelta(weeks=2, days=1,
 #                            hours=3, minutes=7, seconds=2,
 #                            microseconds=15, milliseconds=1000)
+# ######################################################################

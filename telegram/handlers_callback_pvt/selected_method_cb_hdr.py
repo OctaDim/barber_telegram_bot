@@ -1,11 +1,11 @@
+import inspect
+
 from aiogram import Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from telegram.errors_api_telegram.telegram_exception_errors import (
-    TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
@@ -33,7 +33,9 @@ async def method_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     selected_method_prefix = callback_data.__prefix__
 
@@ -50,12 +52,13 @@ async def method_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
             text=HOW_SELECT_SERVICES,
             reply_markup=get_methods_enroll_srcs_inl_kbd(
                 selected_method_prefix=selected_method_prefix))
-    except TelegramBadRequest as error:
-        if error.message == TG_EXCEPT_ERRORS.MSG_NOT_MODIFIED:
-            print("\tLOG INFO: 'Message not modified' tg exception was intercepted\n")
-            pass
+    except (TelegramBadRequest, Exception) as exception_info:
+        print(f"\tMessage not modified, tg exception intercepted: {exception_info}\n")
 
     await state.update_data(
         selected_method_prefix=selected_method_prefix)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

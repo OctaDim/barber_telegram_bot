@@ -1,3 +1,5 @@
+import inspect
+
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -23,7 +25,7 @@ async def clicked_slot_advising_icons_hint_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     slots_advising_text = get_slots_advising_explanation()
 
@@ -37,4 +39,7 @@ async def clicked_slot_advising_icons_hint_cb_hdr(callback_query: CallbackQuery,
         await callback_query.answer(text=tg_len_validated_text,
                                     show_alert=True)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

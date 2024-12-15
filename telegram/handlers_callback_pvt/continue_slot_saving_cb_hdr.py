@@ -1,6 +1,9 @@
+import copy
+import inspect
 from datetime import timedelta
 
-from aiogram import Router
+from aiogram import Router, Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -28,14 +31,17 @@ from telegram.config.configs import (
     DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
+from telegram.handler_helpers.forward_intervals_slots_to_saving_inl_inl import \
+    delete_intervals_slots_msgs_before_saving_slots
 from telegram.handlers_private.main_menu_btn_reply_hdr_pvt import (
     main_menu_btn_reply_hdr_pvt)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
+from telegram.keyboard_reply.pvt_main_menu_reply_kbd import get_pvt_main_menu_reply_kbd
 from telegram.params.messages import (
     SLOT_ALREADY_TAKEN,
     MAX_PERSON_GROUP_LIMIT_REACHED,
-    CLIENT_ALREADY_ENROLLED)
+    CLIENT_ALREADY_ENROLLED, DATE_NOT_SET, SELECT_MAIN_MENU_BUTTON)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -48,7 +54,7 @@ from telegram.telegram_utils.messages_helpers import (
     get_selected_services_summary,
     get_summary_services_with_slot)
 from telegram.telegram_utils.messages_utils import (
-    inline_keyboard_is_actual)
+    inline_keyboard_is_actual, re_open_reply_keyboard_message)
 from utilities.calendar_utils import (
     get_date_with_month_name,
     get_time_flex_from_datetime)
@@ -62,19 +68,27 @@ continue_slot_saving_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["priv
 @continue_slot_saving_enroll_srcs_cb_router.callback_query(ContinueSlotSavingCBData.filter())
 async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                                                   callback_data: CallbackData,
-                                                  state: FSMContext):
+                                                  state: FSMContext,
+                                                  bot: Bot):
     state_data = await state.get_data()
+    cur_handler_messages_ids = []
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     message = callback_query.message
 
     # Getting without validation and setting now if None, because certain date
     selected_date = state_data.get("selected_date_enroll_srcs_calendar")
+    if not selected_date:
+        await callback_query.answer(text=DATE_NOT_SET,
+                                    show_alert=True)
+        return
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
+        fsm_state_or_state_dict=state_data,
         fsm_state_literal_key="selected_services_ids_state")
 
     selected_services_cost = await get_valid_float_by_fsm_state_key(
@@ -147,7 +161,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                # return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # For the future. Checking if clients number >= max client limit
             elif (slot_obj.is_group
@@ -156,7 +170,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                # return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if slot non group and is already reserved
             elif not slot_obj.is_group and slot_obj.reserved:
@@ -164,7 +178,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                # return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if not slot obj or not active
             elif not slot_obj or not slot_obj.active:
@@ -172,7 +186,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                # return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Checking if any slot of selected ones is defined as admin only
             elif (DB_SLOTS_CONFIGS.NEW_SLOT_FROM_TIME_LOSS_FOR_ADMIN_ONLY
@@ -181,7 +195,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                 session_ongoing.rollback()
                 # Call the same functionality handler of the reply keyboard button
                 await main_menu_btn_reply_hdr_pvt(message=message, state=state)
-                return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+                # return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
 
             # Ordinary updating all slots except last one with optional time loss
             if slot_id in selected_slots_ids_except_last_id:
@@ -189,8 +203,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
                     ongoing_session=session_ongoing)
-                print(f"\tTEST INFO: Ordinary updating all slots "
-                      "(except last slot with optional time loss)\n")
+                print(f"\tDB SESSION: Ordinary updating all slots\n"
+                      f"\t(except last slot with optional time loss)\n")
 
             # Ordinary updating last slot if not time loss (effective slot)
             elif slot_id == last_selected_slot_id and not last_slot_time_loss:
@@ -198,8 +212,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
                     ongoing_session=session_ongoing)
-                print(f"\tTEST INFO: Ordinary updating last slot "
-                      f"if not time loss (slot is very effective)\n")
+                print(f"\tDB SESSION: Ordinary updating last slot\n"
+                      f"\tif not time loss (slot is very effective)\n")
 
             # Ordinary updating last slot (because tyme loss is less min limit)
             elif (slot_id == last_selected_slot_id and last_slot_time_loss
@@ -208,8 +222,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
                     ongoing_session=session_ongoing)
-                print(f"\tTEST INFO: Ordinary updating last slot "
-                      f"if not time loss (slot is very effective slot)\n")
+                print(f"\tDB SESSION: Ordinary updating last slot\n"
+                      f"\tif not time loss (slot is very effective slot)\n")
 
             # Ordinary updating last slot if time loss, but NOT make split flag
             elif (slot_id == last_selected_slot_id and last_slot_time_loss
@@ -219,8 +233,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                     object_to_merge=slot_obj,
                     new_update_data=new_update_data,
                     ongoing_session=session_ongoing)
-                print(f"\tTEST INFO: Ordinary updating last slot "
-                      f"if not time loss (slot is very effective slot)\n")
+                print(f"\tDB SESSION: Ordinary updating last slot\n"
+                      f"\tif not time loss (slot is very effective slot)\n")
 
             # Last slot splitting into effective parts (time loss and make split flag)
             elif (slot_id == last_selected_slot_id and last_slot_time_loss
@@ -255,8 +269,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                     creator_id=current_user_id)
 
                 session_ongoing.add(new_slot_obj_from_loss_time)
-                print(f"\tTEST INFO: Last slot split into reserved part"
-                      f" and effective free part because time loss\n")
+                print(f"\tDB SESSION: Last slot split into reserved part\n"
+                      f"\tand effective free part because time loss\n")
 
             # Adding records directly to save non-unique pairs worktime - service
             directly_add_service_worktime_association(
@@ -336,39 +350,99 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
         # Transaction end (with group adding and updating)
         session_ongoing.commit()
-        print(f"\tTEST INFO: WorkTime and Reservation ongoing session "
-              f"was commit (with group adding and updating records)\n")
+        print(f"\tDB SESSION: WorkTime and Reservation ongoing session\n"
+              f"\twas commit (with group records adding and updating)\n")
 
-        # ##############################################################
-        # Info block showing selected services and time interval summary
-        # ##############################################################
-        date_text = get_date_with_month_name(
-            selected_date,
-            language=LANGUAGE_CONFIGS.LANGUAGE)
+    # ##################################################################
+    # Info block showing user selected services and time interval summary
+    # ##################################################################
+    date_text = get_date_with_month_name(
+        selected_date,
+        language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        summary_text = get_selected_services_summary(
-            services_count=len(selected_services_ids),
-            total_cost=selected_services_cost,
-            total_duration=selected_services_duration)
+    summary_text = get_selected_services_summary(
+        services_count=len(selected_services_ids),
+        total_cost=selected_services_cost,
+        total_duration=selected_services_duration)
 
-        slot_time_start_text = get_time_flex_from_datetime(
-            date_value=slot_time_start,
-            language=LANGUAGE_CONFIGS.LANGUAGE)
+    slot_time_start_text = get_time_flex_from_datetime(
+        date_value=slot_time_start,
+        language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        client_time_end_text = get_time_flex_from_datetime(
-            date_value=client_time_end,
-            language=LANGUAGE_CONFIGS.LANGUAGE)
+    client_time_end_text = get_time_flex_from_datetime(
+        date_value=client_time_end,
+        language=LANGUAGE_CONFIGS.LANGUAGE)
 
-        complete_summary_text = get_summary_services_with_slot(
-            date_text=date_text,
-            summary_text=summary_text,
-            slot_time_start=slot_time_start_text,
-            slot_time_end=client_time_end_text)
+    complete_summary_text = get_summary_services_with_slot(
+        date_text=date_text,
+        summary_text=summary_text,
+        slot_time_start=slot_time_start_text,
+        slot_time_end=client_time_end_text)
 
-        await callback_query.message.answer(text=complete_summary_text)
-        await state.clear()
+    # ##################################################################
+    # Delete prior handler intervals slots msgs before saving slots msgs
+    # ##################################################################
+    await delete_intervals_slots_msgs_before_saving_slots(
+        callback_query=callback_query, state=state, bot=bot)
+    # ##################################################################
 
-        # Call the same functionality handler of the reply keyboard button
-        await main_menu_btn_reply_hdr_pvt(message=message, state=state)
+    handlers_list = await get_valid_list_by_fsm_state_key(
+        fsm_state_or_state_dict=state_data,
+        fsm_state_literal_key="handlers_stack")
 
-        return get_handler_answer_flag_dict(upd_actual_msg_min_id=True)
+    prior_handler_dict = handlers_list[-1]
+    prior_handler_msgs_ids = prior_handler_dict.get("handler_messages_ids")
+    messages_ids_to_delete_copy = copy.copy(prior_handler_msgs_ids)
+    prior_inline_message_id = messages_ids_to_delete_copy[0]
+    print(f"\tOrigin data:\n"
+          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\t\tprior_inline_message_id = {prior_inline_message_id}\n")
+
+    try:
+        cur_message = await bot.edit_message_text(
+            text=complete_summary_text,
+            message_id=prior_inline_message_id,
+            chat_id=callback_query.message.chat.id)
+        cur_handler_messages_ids.append(cur_message.message_id)
+        print(f"\tPrior msg was edited to 'Complete Summary' message"
+              f"\tmsg successfully\n")
+
+    except (TelegramBadRequest, Exception) as exception_info:
+        cur_message = await callback_query.message.answer(
+            text=complete_summary_text)
+        cur_handler_messages_ids.append(cur_message.message_id)
+        print(f"\tNew 'Complete Summary' message was created, because "
+              f"\tprior message is not editable: {exception_info}\n")
+
+    cur_message = await re_open_reply_keyboard_message(
+        fsm_state=state,
+        telegram_update_obj=message,
+        re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
+        reply_kbd_opened_state_after_open=True,
+        open_reply_kbd_msg_anyway=True)
+    if cur_message:
+        cur_handler_messages_ids.append(cur_message.message_id)
+
+    await state.update_data(
+        handlers_stack=handlers_list)
+    print(f"\tHandler stack updated:\n"
+          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+
+    state_data = await state.get_data()
+    handlers_list = state_data.get("handlers_stack")
+    print(f"\t\tAll handler_messages_ids returned from handler:")
+    if not handlers_list:
+        print(f"\t\t\thandlers_list = [], handler_messages_ids = []")
+    for idx in range(len(handlers_list)):
+        handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")
+        handler_name = handlers_list[idx].get("handler_name")
+        print(f"\t\t\t{idx}) {handler_msgs_ids} - {handler_name}")
+    print()
+
+    await state.clear()
+
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=True,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

@@ -19,15 +19,14 @@ async def get_valid_state_data_from_fsm_state(
 
 
 async def get_valid_list_by_fsm_state_key(
-        fsm_state_or_dict_from: FSMContext | dict,
+        fsm_state_or_state_dict: FSMContext | dict,
         fsm_state_literal_key: str
 ) -> list:
     state_data = await get_valid_state_data_from_fsm_state(
-        fsm_state_or_dict_from)
+        fsm_state_or_state_dict)
 
     interim_list = state_data.get(fsm_state_literal_key)
     valid_list = [] if interim_list is None else interim_list
-    # valid_list = valid_list if valid_list is not None else []
     return valid_list
 
 
@@ -112,3 +111,15 @@ async def get_valid_str_by_fsm_state_key(
     interim_str = state_data.get(fsm_state_literal_key)
     valid_str = "" if interim_str is None else interim_str
     return valid_str
+
+
+async def get_valid_bool_by_fsm_state_key(
+        fsm_state_or_dict_from: FSMContext | dict,
+        fsm_state_literal_key: str
+) -> bool:
+    state_data = await get_valid_state_data_from_fsm_state(
+        fsm_state_or_dict_from)
+
+    interim_bool = state_data.get(fsm_state_literal_key)
+    valid_bool = False if interim_bool is None else interim_bool
+    return valid_bool

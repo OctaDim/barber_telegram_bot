@@ -1,18 +1,18 @@
+import inspect
+
 from aiogram import Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from telegram.errors_api_telegram.telegram_exception_errors import (
-    TG_EXCEPT_ERRORS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     CurrentCategoryCBData,
     get_categories_enroll_srcs_inl_kbd)
 from telegram.params.messages import (
-    SELECT_CATEGORY_ENROLL_SERVICES)
+    SELECT_SERVICES_CATEGORY)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_dict_by_fsm_state_key,
     get_valid_int_by_fsm_state_key,
@@ -33,7 +33,9 @@ async def category_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     selected_method_prefix = await get_valid_str_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -64,18 +66,19 @@ async def category_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     try:
         await callback_query.message.edit_text(
-            text=SELECT_CATEGORY_ENROLL_SERVICES,
+            text=SELECT_SERVICES_CATEGORY,
             reply_markup=get_categories_enroll_srcs_inl_kbd(
                 current_page_records=current_page_records,
                 total_pages_number=total_pages,
                 selected_category_id=selected_category_id,
                 current_page_number=current_page_number,
                 selected_method_prefix=selected_method_prefix))
-    except TelegramBadRequest as error:
-        if error.message == TG_EXCEPT_ERRORS.MSG_NOT_MODIFIED:
-            print("\tLOG INFO: 'Message not modified' tg exception was intercepted\n")
-            pass
+    except (TelegramBadRequest, Exception) as exception_info:
+        print(f"\tMessage not modified, tg exception intercepted: {exception_info}\n")
 
     await state.update_data(selected_category_id=selected_category_id)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

@@ -71,13 +71,18 @@ def get_masters_enroll_srcs_inl_kbd(current_page_records: List[Master],
             callback_data=CurrentMasterCBData(
                 master_id=master_record.id).pack())
 
+    # builder_inl_kbd.add(create_return_inline_button())
+
     if selected_master_id:
         continue_adjust = [1]
+        # return_continue_adjust = [2]
+
         builder_inl_kbd.button(
             text=ENROLL_MASTERS_BUTTONS.CONTINUE,
             callback_data=MasterToServiceContinueCBData())
     else:
         continue_adjust = []
+        # return_continue_adjust = [1]
 
     builder_inl_kbd.add(create_return_inline_button())
     builder_inl_kbd.add(create_main_menu_inline_button())
@@ -86,7 +91,10 @@ def get_masters_enroll_srcs_inl_kbd(current_page_records: List[Master],
 
     masters_number = len(current_page_records)
 
-    dynamic_adjust = pagination_adjust + [1] * masters_number + continue_adjust + [2]
+    dynamic_adjust = (pagination_adjust + [1]*masters_number + continue_adjust + [2])
+    # dynamic_adjust = (pagination_adjust + [1]*masters_number + return_continue_adjust)
+    # dynamic_adjust = (pagination_adjust + [1]*masters_number + continue_adjust + [1])
+
     builder_inl_kbd.adjust(*dynamic_adjust)
 
     inline_kbd_markup = builder_inl_kbd.as_markup()

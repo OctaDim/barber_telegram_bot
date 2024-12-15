@@ -1,3 +1,5 @@
+import inspect
+
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
@@ -5,7 +7,7 @@ from aiogram.types import CallbackQuery
 
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.reservations_client_user_inl_kbd import (
+from telegram.keyboard_inline.reservations_client_inl_kbd import (
     PreviousReservationPageCBData,
     NextReservationPageCBData,
     get_reservation_client_user_inl_kbd)
@@ -31,7 +33,7 @@ async def next_prev_page_reservation_client_cb_hdr(callback_query: CallbackQuery
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     callback_prefix = callback_data.__prefix__
 
@@ -44,21 +46,35 @@ async def next_prev_page_reservation_client_cb_hdr(callback_query: CallbackQuery
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="paginated_reservations_records")
 
+    total_pages = len(paginated_reservations)
+
     if callback_prefix == PreviousReservationPageCBData.__prefix__:
-        if not paginated_reservations.get(cur_page_number - 1):
-            cur_page_number = len(paginated_reservations)
+        if (cur_page_number - 1) < 1:
+            cur_page_number = total_pages
         else:
             cur_page_number -= 1
     elif callback_prefix == NextReservationPageCBData.__prefix__:
-        if not paginated_reservations.get(cur_page_number + 1):
+        if (cur_page_number + 1) > total_pages:
             cur_page_number = 1
         else:
             cur_page_number += 1
     else:
         cur_page_number = 1
 
+    # if callback_prefix == PreviousReservationPageCBData.__prefix__:
+    #     if not paginated_reservations.get(cur_page_number - 1):
+    #         cur_page_number = len(paginated_reservations)
+    #     else:
+    #         cur_page_number -= 1
+    # elif callback_prefix == NextReservationPageCBData.__prefix__:
+    #     if not paginated_reservations.get(cur_page_number + 1):
+    #         cur_page_number = 1
+    #     else:
+    #         cur_page_number += 1
+    # else:
+    #     cur_page_number = 1
+
     current_page_reservations = paginated_reservations.get(cur_page_number)
-    total_pages = len(paginated_reservations)
 
     await callback_query.message.edit_text(
         text=ALL_RESERVATIONS_HERE,
@@ -70,4 +86,7 @@ async def next_prev_page_reservation_client_cb_hdr(callback_query: CallbackQuery
     await state.update_data(
         current_page_number_of_reservations=cur_page_number)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

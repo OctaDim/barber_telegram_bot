@@ -1,3 +1,4 @@
+import inspect
 from datetime import datetime
 
 from aiogram import Router
@@ -44,7 +45,7 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     await callback_query.answer()
 
@@ -73,7 +74,7 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         calendar_year = datetime.now().year
 
     selected_services_ids = await get_valid_list_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
+        fsm_state_or_state_dict=state_data,
         fsm_state_literal_key="selected_services_ids_state")
 
     selected_services_duration = await get_valid_timedelta_by_fsm_state_key(
@@ -125,4 +126,7 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         cur_year_enroll_srcs_calendar=calendar_year,
         selected_date_enroll_srcs_calendar=None)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

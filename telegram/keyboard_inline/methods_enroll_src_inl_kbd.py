@@ -77,31 +77,36 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
                  f"{ENROLL_METHODS_BUTTONS.ENROLL_CATEGORY_TO_SERVICE}",
             callback_data=MethodCategoryToServiceCBData())
 
+    # builder_inl_kbd.add(create_return_inline_button())
+
     if selected_method_prefix:
         continue_adjust = [1]
+        # return_continue_adjust = [2]
 
-        if selected_method_prefix == MethodCategoryToMasterCBData.__prefix__:
-            callback_data = MethodCategoryToMasterContinueCBData()
-
-        elif selected_method_prefix == MethodCategoryToServiceCBData.__prefix__:
-            callback_data = MethodCategoryToServiceContinueCBD()
-
-        elif selected_method_prefix == MethodMasterToServiceCBData.__prefix__:
-            callback_data = MethodMasterToServiceContinueCBD()
-
-        else:
-            callback_data = None
+        match selected_method_prefix:
+            case MethodCategoryToMasterCBData.__prefix__:
+                callback_data = MethodCategoryToMasterContinueCBData()
+            case MethodCategoryToServiceCBData.__prefix__:
+                callback_data = MethodCategoryToServiceContinueCBD()
+            case MethodMasterToServiceCBData.__prefix__:
+                callback_data = MethodMasterToServiceContinueCBD()
+            case _:
+                callback_data = None
 
         builder_inl_kbd.button(
             text=ENROLL_METHODS_BUTTONS.CONTINUE,
             callback_data=callback_data)
     else:
         continue_adjust = []
+        # return_continue_adjust = [1]
 
     builder_inl_kbd.add(create_return_inline_button())
     builder_inl_kbd.add(create_main_menu_inline_button())
 
     adjust = [1, 1, 1] + continue_adjust + [2]
+    # adjust = [1, 1, 1] + return_continue_adjust + [1]
+    # adjust = [1, 1, 1] + continue_adjust + [1]
+
 
     builder_inl_kbd.adjust(*adjust)
 

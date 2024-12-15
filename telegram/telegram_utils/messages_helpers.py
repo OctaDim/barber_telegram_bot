@@ -10,6 +10,8 @@ from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
 from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
+from telegram.params.icons_services import (
+    SERVICES_ICONS)
 from telegram.params.messages import (
     BETTER_SLOTS_TO_CHOOSE,
     SLOTS_RECOMMENDATIONS)
@@ -17,8 +19,6 @@ from telegram.params.messages_inserts import (
     MSG)
 from telegram.params.messages_multiline import (
     SELECTED_SERVICES_CONGRATS)
-from telegram.params.icons_services import (
-    SERVICES_ICONS)
 
 
 def get_service_brief_info(
@@ -55,15 +55,19 @@ def get_service_brief_info_from_dict(service_info: dict) -> str:
 
 def get_service_detailed_info(
         service_obj: Service,
-        masters_info: str = ""
+        masters_info: str = "",
+        category_name: str = "",
+        service_duration: str = ""
 ) -> str:
     service_detailed_text = (
         f"<b>{SERVICES_ICONS.SERVICE_POINT} {service_obj.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_obj.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICE_DURATION}:  {str(service_obj.time_duration)[:-3]}\n"
-        f"{MSG.MASTERS}: {masters_info}\n"
+        f"{MSG.SERVICE_DURATION}:  {service_duration}\n"
+        f"{MSG.MASTERS}: {masters_info}\n\n"
+        # f"{MSG.CATEGORY_NAME}: {category_name}\n\n"
         f"{MSG.SERVICE_DESCRIPTION}:  {service_obj.description}")
+    service_detailed_text = service_detailed_text.rstrip(".")
     return service_detailed_text
 
 
@@ -113,29 +117,29 @@ def get_slot_advising_icon(time_loss: timedelta) -> str:
 
     if SLOTS_CONFIGS.SHOW_SLOTS_ADVISES_ICONS:
 
-        if (SLOTS_CONFIGS.MOST_ADVISED_TIME_LOSS_LIMIT
+        if (SLOTS_CONFIGS.POINTS_5_TIME_LOSS_LIMIT
                 and time_loss <= timedelta(
-                    minutes=SLOTS_CONFIGS.MOST_ADVISED_TIME_LOSS_LIMIT)):
+                    minutes=SLOTS_CONFIGS.POINTS_5_TIME_LOSS_LIMIT)):
             advised_icon = SLOT_ICONS.MAX_ADVISED_SLOT
 
-        elif (SLOTS_CONFIGS.VERY_ADVISED_TIME_LOSS_LIMIT
+        elif (SLOTS_CONFIGS.POINTS_4_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
-                    minutes=SLOTS_CONFIGS.VERY_ADVISED_TIME_LOSS_LIMIT)):
+                    minutes=SLOTS_CONFIGS.POINTS_4_TIME_LOSS_LIMIT)):
             advised_icon = SLOT_ICONS.HIGHLY_ADVISED_SLOT
 
-        elif (SLOTS_CONFIGS.ADVISED_TIME_LOSS_LIMIT
+        elif (SLOTS_CONFIGS.POINTS_3_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
-                    minutes=SLOTS_CONFIGS.ADVISED_TIME_LOSS_LIMIT)):
+                    minutes=SLOTS_CONFIGS.POINTS_3_TIME_LOSS_LIMIT)):
             advised_icon = SLOT_ICONS.ADVISED_SLOT
 
-        elif (SLOTS_CONFIGS.UNADVISED_TIME_LOSS_LIMIT
+        elif (SLOTS_CONFIGS.POINTS_2_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
-                    minutes=SLOTS_CONFIGS.UNADVISED_TIME_LOSS_LIMIT)):
+                    minutes=SLOTS_CONFIGS.POINTS_2_TIME_LOSS_LIMIT)):
             advised_icon = SLOT_ICONS.STANDARD_SLOT
 
-        elif (SLOTS_CONFIGS.VERY_UNADVISED_TIME_LOSS_LIMIT
+        elif (SLOTS_CONFIGS.POINTS_1_TIME_LOSS_LIMIT
               and time_loss <= timedelta(
-                    minutes=SLOTS_CONFIGS.VERY_UNADVISED_TIME_LOSS_LIMIT)):
+                    minutes=SLOTS_CONFIGS.POINTS_1_TIME_LOSS_LIMIT)):
             advised_icon = SLOT_ICONS.BASIC_SLOT
         else:
             advised_icon = SPECIAL_CHARACTERS.NO_ACTION_EMPTY_u200B
@@ -188,9 +192,10 @@ def get_reservation_detailed_info(reservation_weekday: str,
     text = (f"{reservation_date} | {reservation_weekday}\n"
             f"{MSG.TIME}: {reservation_time_start} - {reservation_time_end}\n\n"
             f"{MSG.DURATION}: {selected_services_duration}\n"
-            f"{MSG.COST}: {selected_services_cost} {MSG.CURRENCY_BRIEF}\n\n"
-            f"{MSG.MASTERS}: {reserved_masters_names}\n"
+            f"{MSG.COST}: {selected_services_cost} {MSG.CURRENCY_BRIEF}\n"
+            f"{MSG.MASTERS}: {reserved_masters_names}\n\n"
             f"{MSG.SERVICES}: {reserved_services_names}")
+    text = text.rstrip(".")
 
     # TG callback query alert message limit max 200 symbols
     text = text[0:197] + "..." if len(text) > 200 else text

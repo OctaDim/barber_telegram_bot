@@ -1,3 +1,5 @@
+import inspect
+
 from aiogram import Router
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
@@ -10,7 +12,7 @@ from telegram.keyboard_inline.categories_enroll_srcs_inl_kbd import (
     PreviousCategoryPageCBData,
     NextCategoryPageCBData)
 from telegram.params.messages import (
-    SELECT_CATEGORY_ENROLL_SERVICES)
+    SELECT_SERVICES_CATEGORY)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -32,7 +34,7 @@ async def next_prev_page_category_enroll_srcs_cb_hdr(callback_query: CallbackQue
     state_data = await state.get_data()
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
-        return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+        return
 
     callback_prefix = callback_data.__prefix__
 
@@ -49,24 +51,38 @@ async def next_prev_page_category_enroll_srcs_cb_hdr(callback_query: CallbackQue
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="paginated_categories_records")
 
+    total_pages = len(paginated_records)
+
     if callback_prefix == PreviousCategoryPageCBData.__prefix__:
-        if not paginated_records.get(cur_page_number - 1):
-            cur_page_number = len(paginated_records)
+        if (cur_page_number - 1) < 1:
+            cur_page_number = total_pages
         else:
             cur_page_number -= 1
     elif callback_prefix == NextCategoryPageCBData.__prefix__:
-        if not paginated_records.get(cur_page_number + 1):
+        if (cur_page_number + 1) > total_pages:
             cur_page_number = 1
         else:
             cur_page_number += 1
     else:
         cur_page_number = 1
 
+    # if callback_prefix == PreviousCategoryPageCBData.__prefix__:
+    #     if not paginated_records.get(cur_page_number - 1):
+    #         cur_page_number = len(paginated_records)
+    #     else:
+    #         cur_page_number -= 1
+    # elif callback_prefix == NextCategoryPageCBData.__prefix__:
+    #     if not paginated_records.get(cur_page_number + 1):
+    #         cur_page_number = 1
+    #     else:
+    #         cur_page_number += 1
+    # else:
+    #     cur_page_number = 1
+
     current_page_records = paginated_records.get(cur_page_number)
-    total_pages = len(paginated_records)
 
     await callback_query.message.edit_text(
-        text=SELECT_CATEGORY_ENROLL_SERVICES,
+        text=SELECT_SERVICES_CATEGORY,
         reply_markup=get_categories_enroll_srcs_inl_kbd(
             current_page_records=current_page_records,
             total_pages_number=total_pages,
@@ -78,4 +94,7 @@ async def next_prev_page_category_enroll_srcs_cb_hdr(callback_query: CallbackQue
         selected_category_id=None,
         current_page_number_of_categories=cur_page_number)
 
-    return get_handler_answer_flag_dict(skip_add_handler_stack=True)
+    return get_handler_answer_flag_dict(
+        add_handler_to_return_stack=False,
+        update_min_actual_msg_id=False,
+        executed_handler_name=inspect.currentframe().f_code.co_name)

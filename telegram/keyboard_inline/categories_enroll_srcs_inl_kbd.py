@@ -13,6 +13,8 @@ from telegram.keyboard_inline.common_buttons_inline import (
 from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodCategoryToServiceContinueCBD,
     MethodCategoryToMasterContinueCBData)
+from telegram.keyboard_inline.submenu_services_inl_kbd import (
+    OurServicesInlineMenuCBData)
 from telegram.params.buttons_enroll_categories import (
     ENROLL_CATEGORIES_BUTTONS)
 from telegram.params.icons_categories import (
@@ -84,20 +86,28 @@ def get_categories_enroll_srcs_inl_kbd(
             callback_data=CurrentCategoryCBData(
                 category_id=category_record.id).pack())
 
+    # builder_inl_kbd.add(create_return_inline_button())
+
     if selected_category_id:
         continue_adjust = [1]
-        if selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__:
-            continue_callback_data = CategoryToServiceContinueCBData
-        elif selected_method_prefix == MethodCategoryToMasterContinueCBData.__prefix__:
-            continue_callback_data = CategoryToMasterContinueCBData
-        else:  # elif selected_method_prefix == "our services reply btn private handler"
-            continue_callback_data = CategoryToOurServicesInfoContinueCBdata
+        # return_continue_adjust = [2]
+
+        match selected_method_prefix:
+            case MethodCategoryToServiceContinueCBD.__prefix__:
+                continue_callback_data = CategoryToServiceContinueCBData
+            case MethodCategoryToMasterContinueCBData.__prefix__:
+                continue_callback_data = CategoryToMasterContinueCBData
+            case OurServicesInlineMenuCBData.__prefix__:
+                continue_callback_data = CategoryToOurServicesInfoContinueCBdata
+            case _:
+                continue_callback_data = CategoryToOurServicesInfoContinueCBdata
 
         builder_inl_kbd.button(
             text=ENROLL_CATEGORIES_BUTTONS.CONTINUE,
             callback_data=continue_callback_data())
     else:
         continue_adjust = []
+        # return_continue_adjust = [1]
 
     builder_inl_kbd.add(create_return_inline_button())
     builder_inl_kbd.add(create_main_menu_inline_button())
@@ -105,7 +115,11 @@ def get_categories_enroll_srcs_inl_kbd(
     pagination_adjust = [3] if total_pages_number > 1 else []
 
     categories_number = len(current_page_records)
-    dynamic_adjust = pagination_adjust + [1] * categories_number + continue_adjust + [2]
+
+    dynamic_adjust = (pagination_adjust + [1]*categories_number + continue_adjust + [2])
+    # dynamic_adjust = (pagination_adjust + [1]*categories_number + return_continue_adjust)
+    # dynamic_adjust = (pagination_adjust + [1]*categories_number + continue_adjust + [1])
+
     builder_inl_kbd.adjust(*dynamic_adjust)
 
     inline_kbd_markup = builder_inl_kbd.as_markup()

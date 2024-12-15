@@ -1,35 +1,55 @@
+import inspect
+
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 
 
 async def execute_last_stack_handler(handlers_list: list[dict]) -> None:
     if len(handlers_list):
-        return_hdr_function = handlers_list[-1].get("handler")
-        return_hdr_event = handlers_list[-1].get("event")
-        return_hdr_data = handlers_list[-1].get("data")
-        await return_hdr_function(return_hdr_event, return_hdr_data)
+        handler_callable_function_obj = handlers_list[-1].get("handler")
+        handler_event = handlers_list[-1].get("event")
+        handler_data = handlers_list[-1].get("data")
+
+        print(f"{'-' * 115}\n\tFunction: {inspect.currentframe().f_code.co_name}\n")
+
+        try:
+            await handler_callable_function_obj(handler_event, handler_data)
+            print(f"Last handler was executed successfully\n")
+        except (TelegramBadRequest, Exception) as exception_info:
+            print(f"Last handler was not executed: {exception_info}\n")
 
 
-def get_handler_answer_flag_dict(skip_add_handler_stack: bool = False,
-                                 upd_actual_msg_min_id: bool = False) -> dict:
+def get_handler_answer_flag_dict(
+        add_handler_to_return_stack: bool = False,
+        handler_messages_ids: list[int] = None,
+        update_min_actual_msg_id: bool = False,
+        executed_handler_name: str = None,
+) -> dict:
     """
     Simple function to easily create dictionary with flag keys.
     Result of this function may be returned from the handler
     to the all update outer middleware optionally, but not necessarily.
     In the future flag keys can be added, if needed.
 
-    :param skip_add_handler_stack: bool. Optional.
-    Define True to skip adding handler to the handlers stack, otherwise
-    any handler will be added to the handler stack automatically
+    :param add_handler_to_return_stack: bool. Optional.
+    Define True to add handler to the handlers return stack to have
+    possibility to return to this handler or directly execute this handler
 
-    :param upd_actual_msg_min_id: bool. Optional.
-    By default, any message id except inline message will update actual
-    message minimum id. Define True to update actual message minimum id
-    for inline message too.
+    :param handler_messages_ids: list[int]. All messages ids of
+    the current handler, that will be deleted on return button.
+    Should be defined if add_handler_to_return_stack parameter is True
+
+    :param update_min_actual_msg_id: bool. Optional.
+    Define True to update actual message minimum id to check
+    further if the message is obsolete.
+
+    :param executed_handler_name: str: Name of the executed handler
+    returned to middleware for logging aims
 
     :return: dictionary with flag keys and values, which can be read
     in middleware
     """
-    return locals()
+    return locals()  # Passing to return all named arguments
 
 
 async def clear_handlers_return_stack_fsm_state(state: FSMContext):
