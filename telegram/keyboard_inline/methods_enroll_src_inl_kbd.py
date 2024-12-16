@@ -28,6 +28,10 @@ class MethodMasterToServiceCBData(CallbackData, prefix="method_master_to_service
     pass
 
 
+class MethodToServiceDirectlyCBData(CallbackData, prefix="method_to_service_directly"):
+    pass
+
+
 class MethodCategoryToMasterContinueCBData(CallbackData, prefix="method_category_to_master_continue"):
     pass
 
@@ -40,9 +44,14 @@ class MethodMasterToServiceContinueCBD(CallbackData, prefix="method_master_to_se
     pass
 
 
+class MethodToServiceDirectlyContinueCBD(CallbackData, prefix="method_to_service_continue"):
+    pass
+
+
 def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
                                     ) -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
+    methods_dynamic_adjust = []
 
     if ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY_AND_MASTER:
         if selected_method_prefix == MethodCategoryToMasterCBData.__prefix__:
@@ -54,6 +63,7 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
             text=f"{selected_icon} "
                  f"{ENROLL_METHODS_BUTTONS.ENROLL_CATEGORY_TO_MASTER}",
             callback_data=MethodCategoryToMasterCBData())
+        methods_dynamic_adjust.append(1)
 
     if ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_MASTER:
         if selected_method_prefix == MethodMasterToServiceCBData.__prefix__:
@@ -65,6 +75,7 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
             text=f"{selected_icon} "
                  f"{ENROLL_METHODS_BUTTONS.ENROLL_MASTER_TO_SERVICE}",
             callback_data=MethodMasterToServiceCBData())
+        methods_dynamic_adjust.append(1)
 
     if ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY:
         if selected_method_prefix == MethodCategoryToServiceCBData.__prefix__:
@@ -76,6 +87,19 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
             text=f"{selected_icon} "
                  f"{ENROLL_METHODS_BUTTONS.ENROLL_CATEGORY_TO_SERVICE}",
             callback_data=MethodCategoryToServiceCBData())
+        methods_dynamic_adjust.append(1)
+
+    if ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_SERVICES:
+        if selected_method_prefix == MethodToServiceDirectlyCBData.__prefix__:
+            selected_icon = METHODS_ICONS.SELECTED
+        else:
+            selected_icon = METHODS_ICONS.UNSELECTED
+
+        builder_inl_kbd.button(
+            text=f"{selected_icon} "
+                 f"{ENROLL_METHODS_BUTTONS.ENROLL_SERVICES_DIRECTLY}",
+            callback_data=MethodToServiceDirectlyCBData())
+        methods_dynamic_adjust.append(1)
 
     # builder_inl_kbd.add(create_return_inline_button())
 
@@ -90,6 +114,8 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
                 callback_data = MethodCategoryToServiceContinueCBD()
             case MethodMasterToServiceCBData.__prefix__:
                 callback_data = MethodMasterToServiceContinueCBD()
+            case MethodToServiceDirectlyCBData.__prefix__:
+                callback_data = MethodToServiceDirectlyContinueCBD()
             case _:
                 callback_data = None
 
@@ -103,10 +129,9 @@ def get_methods_enroll_srcs_inl_kbd(selected_method_prefix: Union[str, None]
     builder_inl_kbd.add(create_return_inline_button())
     builder_inl_kbd.add(create_main_menu_inline_button())
 
-    adjust = [1, 1, 1] + continue_adjust + [2]
-    # adjust = [1, 1, 1] + return_continue_adjust + [1]
-    # adjust = [1, 1, 1] + continue_adjust + [1]
-
+    adjust = methods_dynamic_adjust + continue_adjust + [2]
+    # adjust = methods_dynamic_adjust + return_continue_adjust + [1]
+    # adjust = methods_dynamic_adjust + continue_adjust + [1]
 
     builder_inl_kbd.adjust(*adjust)
 

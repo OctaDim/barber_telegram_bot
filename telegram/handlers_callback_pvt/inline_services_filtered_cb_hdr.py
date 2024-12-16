@@ -27,6 +27,8 @@ from telegram.keyboard_inline.enroll_services_inl_kbd import (
     get_enroll_service_inl_kbd)
 from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
     MasterToServiceContinueCBData)
+from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
+    MethodToServiceDirectlyContinueCBD)
 from telegram.keyboard_reply.pvt_enroll_services_action_reply_kbd import (
     get_enroll_services_reply_kbd)
 from telegram.params.icons_services import (
@@ -52,13 +54,14 @@ inline_services_filtered_enroll_srcs_cb_router = Router(name=__name__)
 inline_services_filtered_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
+@inline_services_filtered_enroll_srcs_cb_router.callback_query(MethodToServiceDirectlyContinueCBD.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(MasterToServiceContinueCBData.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(CategoryToServiceContinueCBData.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(ReturnCalendarToSrcsFilteredCBData.filter())
-async def inline_enroll_services_filtered_cb_hdr(callback_query: CallbackQuery,
-                                                 callback_data: CallbackData,
-                                                 bot: Bot,
-                                                 state: FSMContext):
+async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
+                                             callback_data: CallbackData,
+                                             bot: Bot,
+                                             state: FSMContext):
     state_data = await state.get_data()
     cur_handler_messages_ids = []
 
@@ -91,19 +94,21 @@ async def inline_enroll_services_filtered_cb_hdr(callback_query: CallbackQuery,
             category_id=selected_category_id,
             master_id=selected_master_id,
             active=True,
-            order_by_fields=("price", "name",))
+            order_by_fields=("name", "price",))
     elif selected_master_id:
         all_services_records = get_all_services_ordered(
             master_id=selected_master_id,
             active=True,
-            order_by_fields=("price", "name",))
+            order_by_fields=("name", "price",))
     elif selected_category_id:
         all_services_records = get_all_services_ordered(
             category_id=selected_category_id,
             active=True,
-            order_by_fields=("price", "name",))
-    else:
-        all_services_records = []
+            order_by_fields=("name", "price",))
+    else:  # elif not selected_category_id and not selected_master_id
+        all_services_records = get_all_services_ordered(
+            active=True,
+            order_by_fields=("name", "price",))
 
     if not all_services_records:
         await callback_query.answer(text=NO_SERVICES_FOR_SELECTED_OPTIONS,

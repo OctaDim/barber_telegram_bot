@@ -12,7 +12,8 @@ from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodCategoryToMasterCBData,
     MethodCategoryToServiceCBData,
     MethodMasterToServiceCBData,
-    get_methods_enroll_srcs_inl_kbd)
+    get_methods_enroll_srcs_inl_kbd,
+    MethodToServiceDirectlyCBData)
 from telegram.params.messages import (
     HOW_SELECT_SERVICES)
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -27,6 +28,7 @@ method_selected_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]
 @method_selected_enroll_srcs_cb_router.callback_query(MethodCategoryToMasterCBData.filter())
 @method_selected_enroll_srcs_cb_router.callback_query(MethodCategoryToServiceCBData.filter())
 @method_selected_enroll_srcs_cb_router.callback_query(MethodMasterToServiceCBData.filter())
+@method_selected_enroll_srcs_cb_router.callback_query(MethodToServiceDirectlyCBData.filter())
 async def method_selected_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
                                              callback_data: CallbackData,
                                              state: FSMContext):
