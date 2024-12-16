@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button,
     create_return_inline_button)
-from telegram.params.buttons_contacts import (
+from telegram.params.buttons_submenu_contacts import (
     CONTACTS_BUTTONS)
 
 
