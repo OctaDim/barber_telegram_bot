@@ -29,6 +29,8 @@ from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
     MasterToServiceContinueCBData)
 from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodToServiceDirectlyContinueCBD)
+from telegram.keyboard_inline.submenu_services_inl_kbd import (
+    EnrollServicesWithoutMethodsCBD)
 from telegram.keyboard_reply.pvt_enroll_services_action_reply_kbd import (
     get_enroll_services_reply_kbd)
 from telegram.params.icons_services import (
@@ -54,6 +56,7 @@ inline_services_filtered_enroll_srcs_cb_router = Router(name=__name__)
 inline_services_filtered_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
+@inline_services_filtered_enroll_srcs_cb_router.callback_query(EnrollServicesWithoutMethodsCBD.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(MethodToServiceDirectlyContinueCBD.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(MasterToServiceContinueCBData.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(CategoryToServiceContinueCBData.filter())

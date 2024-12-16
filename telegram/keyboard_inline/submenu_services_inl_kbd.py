@@ -2,6 +2,8 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from telegram.config.configs import (
+    ENROLL_METHODS_CONFIGS)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_services import (
@@ -9,6 +11,10 @@ from telegram.params.buttons_services import (
 
 
 class EnrollServicesInlineMenuCBData(CallbackData, prefix="enroll services inline menu"):
+    pass
+
+
+class EnrollServicesWithoutMethodsCBD(CallbackData, prefix="enroll services without methods"):
     pass
 
 
@@ -27,8 +33,14 @@ class OurPromotionsInlineMenuCBData(CallbackData, prefix="our promotions inline 
 def get_submenu_services_inl_kbd_pvt() -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    builder_inl_kbd.button(text=SERVICES_BUTTONS.ENROLL_SERVICES,
-                           callback_data=EnrollServicesInlineMenuCBData())
+    if not ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_WITHOUT_METHODS:
+        enroll_srcs_callback_data = EnrollServicesInlineMenuCBData()
+    else:
+        enroll_srcs_callback_data = EnrollServicesWithoutMethodsCBD()
+
+    builder_inl_kbd.button(
+        text=SERVICES_BUTTONS.ENROLL_SERVICES,
+        callback_data=enroll_srcs_callback_data)
 
     builder_inl_kbd.button(text=SERVICES_BUTTONS.OUR_PROMOTIONS,
                            callback_data=OurPromotionsInlineMenuCBData())
