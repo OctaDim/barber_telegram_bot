@@ -30,7 +30,7 @@ from telegram.keyboard_inline.masters_enroll_srcs_inl_kbd import (
 from telegram.keyboard_inline.methods_enroll_src_inl_kbd import (
     MethodToServiceDirectlyContinueCBD)
 from telegram.keyboard_inline.submenu_services_inl_kbd import (
-    EnrollServicesWithoutMethodsCBD)
+    EnrollSingleMasterServicesCBData)
 from telegram.keyboard_reply.pvt_enroll_services_action_reply_kbd import (
     get_enroll_services_reply_kbd)
 from telegram.params.icons_services import (
@@ -56,7 +56,7 @@ inline_services_filtered_enroll_srcs_cb_router = Router(name=__name__)
 inline_services_filtered_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@inline_services_filtered_enroll_srcs_cb_router.callback_query(EnrollServicesWithoutMethodsCBD.filter())
+@inline_services_filtered_enroll_srcs_cb_router.callback_query(EnrollSingleMasterServicesCBData.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(MethodToServiceDirectlyContinueCBD.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(MasterToServiceContinueCBData.filter())
 @inline_services_filtered_enroll_srcs_cb_router.callback_query(CategoryToServiceContinueCBData.filter())
@@ -125,7 +125,8 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
         print(f"\tPrior message was edited to 'Select services bellow' "
               f"\tmessage successfully\n")
     except (TelegramBadRequest, Exception) as exception_info:
-        cur_message = await callback_query.message.answer(text=SELECT_SERVICES_BELLOW)
+        cur_message = await callback_query.message.answer(
+            text=SELECT_SERVICES_BELLOW)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew 'Select services bellow' msg was created, because "
               f"\tprior message is not editable: {exception_info}\n")

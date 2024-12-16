@@ -6,7 +6,7 @@ from telegram.config.configs import (
     ENROLL_METHODS_CONFIGS)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
-from telegram.params.buttons_services import (
+from telegram.params.buttons_submenu_services import (
     SERVICES_BUTTONS)
 
 
@@ -14,7 +14,7 @@ class EnrollServicesInlineMenuCBData(CallbackData, prefix="enroll services inlin
     pass
 
 
-class EnrollServicesWithoutMethodsCBD(CallbackData, prefix="enroll services without methods"):
+class EnrollSingleMasterServicesCBData(CallbackData, prefix="enroll services without methods"):
     pass
 
 
@@ -33,23 +33,32 @@ class OurPromotionsInlineMenuCBData(CallbackData, prefix="our promotions inline 
 def get_submenu_services_inl_kbd_pvt() -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    if not ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_WITHOUT_METHODS:
-        enroll_srcs_callback_data = EnrollServicesInlineMenuCBData()
-    else:
-        enroll_srcs_callback_data = EnrollServicesWithoutMethodsCBD()
+    if ENROLL_METHODS_CONFIGS.ENROLL_SINGLE_MASTER_SERVICES:
+        builder_inl_kbd.button(
+            text=SERVICES_BUTTONS.ENROLL_SINGLE_MASTER_SERVICES,
+            callback_data=EnrollSingleMasterServicesCBData().pack())
+
+    any_enroll_services_by_method_flag = any([
+        ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY_AND_MASTER,
+        ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY,
+        ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_SERVICES,
+        ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_MASTER])
+    if any_enroll_services_by_method_flag:
+        builder_inl_kbd.button(
+            text=SERVICES_BUTTONS.ENROLL_SERVICES,
+            callback_data=EnrollServicesInlineMenuCBData().pack())
 
     builder_inl_kbd.button(
-        text=SERVICES_BUTTONS.ENROLL_SERVICES,
-        callback_data=enroll_srcs_callback_data)
+        text=SERVICES_BUTTONS.OUR_PROMOTIONS,
+        callback_data=OurPromotionsInlineMenuCBData().pack())
 
-    builder_inl_kbd.button(text=SERVICES_BUTTONS.OUR_PROMOTIONS,
-                           callback_data=OurPromotionsInlineMenuCBData())
+    builder_inl_kbd.button(
+        text=SERVICES_BUTTONS.MY_RESERVATIONS,
+        callback_data=MyReservationsInlineMenuCBData().pack())
 
-    builder_inl_kbd.button(text=SERVICES_BUTTONS.MY_RESERVATIONS,
-                           callback_data=MyReservationsInlineMenuCBData())
-
-    builder_inl_kbd.button(text=SERVICES_BUTTONS.OUR_SERVICES,
-                           callback_data=OurServicesInlineMenuCBData())
+    builder_inl_kbd.button(
+        text=SERVICES_BUTTONS.OUR_SERVICES,
+        callback_data=OurServicesInlineMenuCBData().pack())
 
     # builder_inl_kbd.add(create_return_inline_button(
     #     delete_inline_msg_on_return=True))
