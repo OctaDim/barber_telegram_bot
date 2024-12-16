@@ -7,6 +7,7 @@ from aiogram.types import TelegramObject
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_int_by_fsm_state_key)
+from telegram.telegram_utils.handlers_stack_utils import show_handlers_stack_logs
 from utilities.dict_utils import (
     empty_dict_if_none)
 
@@ -101,13 +102,4 @@ class AllUpdatesMiddleware(BaseMiddleware):
                   f"\tevent.callback_query.message id = "
                   f"{event.callback_query.message.message_id}\n")
 
-        state_data = await state.get_data()
-        handlers_list = state_data.get("handlers_stack")
-        print(f"\t\tAll handler_messages_ids returned from handler:")
-        if not handlers_list:
-            print(f"\t\t\thandlers_list = [], handler_messages_ids = []")
-        for idx in range(len(handlers_list)):
-            handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")
-            handler_name = handlers_list[idx].get("handler_name")
-            print(f"\t\t\t{idx}) {handler_msgs_ids} - {handler_name}")
-        print()
+        await show_handlers_stack_logs(state=state)

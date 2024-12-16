@@ -49,7 +49,7 @@ from telegram.telegram_utils.fsm_states_utils import (
     get_valid_timedelta_by_fsm_state_key,
     get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
-    get_handler_answer_flag_dict)
+    get_handler_answer_flag_dict, show_handlers_stack_logs)
 from telegram.telegram_utils.messages_helpers import (
     get_selected_services_summary,
     get_summary_services_with_slot)
@@ -426,21 +426,14 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     await state.update_data(
         handlers_stack=handlers_list)
-    print(f"\tHandler stack updated:\n"
+    print(f"\tFSM state 'handlers_stack' updated:\n"
           f"\t\tlen(handlers_list)={len(handlers_list)}\n")
 
-    state_data = await state.get_data()
-    handlers_list = state_data.get("handlers_stack")
-    print(f"\t\tAll handler_messages_ids returned from handler:")
-    if not handlers_list:
-        print(f"\t\t\thandlers_list = [], handler_messages_ids = []")
-    for idx in range(len(handlers_list)):
-        handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")
-        handler_name = handlers_list[idx].get("handler_name")
-        print(f"\t\t\t{idx}) {handler_msgs_ids} - {handler_name}")
-    print()
+    await show_handlers_stack_logs(state=state)
 
     await state.clear()
+    print(f"\tFSM State cleared:\n"
+          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
 
     return get_handler_answer_flag_dict(
         add_handler_to_return_stack=False,
