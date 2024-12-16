@@ -29,68 +29,68 @@ async def delete_intervals_slots_msgs_before_calendar(
 
     if handlers_list is None:
         print(f"\tReturn operations skipped, because\n"
-              f"\t\thandlers_list={handlers_list}\n")
+              f"\thandlers_list={handlers_list}\n")
         return
     elif not len(handlers_list) > 0:
         print(f"\tReturn operations skipped, because\n"
-              f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+              f"\tlen(handlers_list)={len(handlers_list)}\n")
         return
 
     prior_handler_dict = handlers_list[-1]
     prior_handler_msgs_ids = prior_handler_dict.get("handler_messages_ids")
     messages_ids_to_delete = copy.copy(prior_handler_msgs_ids)
     print(f"\tOrigin lists:\n"
-          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-          f"\t\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
+          f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     # Remove first message (editable) id from messages ids list to be deleted
     # to be able to edit by the next handler message
     messages_ids_to_delete.pop(0)
     print(f"\tFirst Inline Message removed from delete list, because\n"
           f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
-          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-          f"\t\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
+          f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     # Remove last enroll services msg id from msgs ids list to be deleted
     # (to exclude opening telegram text keyboard on reply return button)
     messages_ids_to_delete.pop(-1)
     print(f"\tLast Reply Message removed from delete list, because\n"
           f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
-          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-          f"\t\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
+          f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     if messages_ids_to_delete:
         messages_ids_to_delete = list(filter(
             lambda msg_id: msg_id is not None, messages_ids_to_delete))
         print(f"\tNone values removed from delete list:\n"
-              f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-              f"\t\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
+              f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+              f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
         cur_chat_id = callback_query.message.chat.id
         await bot.delete_messages(chat_id=cur_chat_id,
                                   message_ids=messages_ids_to_delete)
         print(f"\tPrior messages deleted successfully:\n"
-              f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-              f"\t\tmessages_ids_to_delete (deleted ids) = {messages_ids_to_delete}\n")
+              f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+              f"\tmessages_ids_to_delete (deleted ids) = {messages_ids_to_delete}\n")
 
         await state.update_data(reply_keyboard_opened_state=False)
         print(f"\tReply Menu opened state updated to False:\n"
-              f"\t\treply_keyboard_opened_state = False\n")
+              f"\treply_keyboard_opened_state = False\n")
 
     else:
         print(f"\tPrior messages not deleted, because\n"
-              f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-              f"\t\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
+              f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+              f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     handlers_list.pop()
     print(f"\t'Intervals Slots Enroll' hdr removed from handlers list (reduced -1):\n"
-          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+          f"\tlen(handlers_list)={len(handlers_list)}\n")
 
     await execute_last_stack_handler(handlers_list)
     print(f"\tPrior handler (-1) was executed:\n"
-          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+          f"\tlen(handlers_list)={len(handlers_list)}\n")
 
     await state.update_data(
         handlers_stack=handlers_list)
     print(f"\tHandler stack updated:\n"
-          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+          f"\tlen(handlers_list)={len(handlers_list)}\n")

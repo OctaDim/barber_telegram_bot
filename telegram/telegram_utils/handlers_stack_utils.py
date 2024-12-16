@@ -54,13 +54,14 @@ def get_handler_answer_flag_dict(
 
 async def show_handlers_stack_logs(
         state: FSMContext,
-        text: str = "Handlers stack logs:"
+        text: str = "Handlers stack logs (each handler messages ids):"
 ) -> None:
     state_data = await state.get_data()
     handlers_list = state_data.get("handlers_stack")
     print(f"\t{text}")
     if not handlers_list:
-        print(f"\t\thandlers_list = [], handler_messages_ids = []")
+        print(f"\t\thandlers_list = []\n"
+              f"\t\thandler_messages_ids = []\n")
     else:
         for idx in range(len(handlers_list)):
             handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")

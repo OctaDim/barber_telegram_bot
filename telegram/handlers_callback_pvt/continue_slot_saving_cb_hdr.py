@@ -395,8 +395,8 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     messages_ids_to_delete_copy = copy.copy(prior_handler_msgs_ids)
     prior_inline_message_id = messages_ids_to_delete_copy[0]
     print(f"\tOrigin data:\n"
-          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-          f"\t\tprior_inline_message_id = {prior_inline_message_id}\n")
+          f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\tprior_inline_message_id = {prior_inline_message_id}\n")
 
     try:
         cur_message = await bot.edit_message_text(
@@ -427,13 +427,13 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     await state.update_data(
         handlers_stack=handlers_list)
     print(f"\tFSM state 'handlers_stack' updated:\n"
-          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+          f"\tlen(handlers_list)={len(handlers_list)}\n")
 
     await show_handlers_stack_logs(state=state)
 
     await state.clear()
     print(f"\tFSM State cleared:\n"
-          f"\t\tlen(handlers_list)={len(handlers_list)}\n")
+          f"\tlen(handlers_list)={len(handlers_list)}\n")
 
     return get_handler_answer_flag_dict(
         add_handler_to_return_stack=False,

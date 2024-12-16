@@ -159,8 +159,8 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
     prior_handler_msgs_ids = prior_handler_dict["handler_messages_ids"]
     messages_ids_to_change = copy.copy(prior_handler_msgs_ids)
     print(f"\tOrigin data (handler [-1]):\n"
-          f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-          f"\t\tmessages_ids_to_change = {messages_ids_to_change}\n")
+          f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+          f"\tmessages_ids_to_change = {messages_ids_to_change}\n")
 
     if selected_services_ids:
         await callback_query.answer(text=summary_text,
@@ -181,11 +181,11 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
             handlers_list.append(prior_handler_dict)
             print(f"\tEnroll services [with continue] reply kbd opened, because\n"
                   f"\tselected_services_ids = {selected_services_ids}\n"
-                  f"\t\treply_kbd_opened_state_after_open = False\n"
-                  f"\t\tprior_reply_message_id = {prior_reply_message_id}\n"
-                  f"\t\tcur_message.message_id = {cur_message.message_id}\n"
-                  f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-                  f"\t\tmessages_ids_to_change = {messages_ids_to_change}\n")
+                  f"\treply_kbd_opened_state_after_open = False\n"
+                  f"\tprior_reply_message_id = {prior_reply_message_id}\n"
+                  f"\tcur_message.message_id = {cur_message.message_id}\n"
+                  f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+                  f"\tmessages_ids_to_change = {messages_ids_to_change}\n")
     else:
         await callback_query.answer(text=NONE_SERVICES_SELECTED,
                                     show_alert=True)
@@ -205,11 +205,11 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
             handlers_list.append(prior_handler_dict)
             print(f"\tEnroll services [no continue] reply kbd opened, because\n"
                   f"\tselected_services_ids = {selected_services_ids}\n"
-                  f"\t\treply_kbd_opened_state_after_open = False\n"
-                  f"\t\tprior_reply_message_id = {prior_reply_message_id}\n"
-                  f"\t\tcur_message.message_id = {cur_message.message_id}\n"
-                  f"\t\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
-                  f"\t\tmessages_ids_to_change = {messages_ids_to_change}\n")
+                  f"\treply_kbd_opened_state_after_open = False\n"
+                  f"\tprior_reply_message_id = {prior_reply_message_id}\n"
+                  f"\tcur_message.message_id = {cur_message.message_id}\n"
+                  f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
+                  f"\tmessages_ids_to_change = {messages_ids_to_change}\n")
 
     await state.update_data(
         selected_services_ids_state=selected_services_ids,
@@ -218,7 +218,7 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
         # Additional update
         handlers_stack=handlers_list)
     print(f"\tState updated when selected-unselected services:\n"
-          f"\t\tlen(handlers_stack) = {len(handlers_list)}\n")
+          f"\tlen(handlers_stack) = {len(handlers_list)}\n")
 
     return get_handler_answer_flag_dict(
         add_handler_to_return_stack=False,

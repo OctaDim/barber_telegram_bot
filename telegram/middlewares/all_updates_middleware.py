@@ -55,7 +55,7 @@ class AllUpdatesMiddleware(BaseMiddleware):
                 current_handler_data["handler_messages_ids"] = cur_handler_msgs_ids
                 current_handler_data["handler_name"] = executed_handler_name
 
-                print(f"\tCurrent Handler messages ids added to cur handler info: "
+                print(f"\tCurrent Handler messages ids added to cur handler info:\n"
                       f"\thandler_messages_ids = {cur_handler_msgs_ids}\n")
 
             else:
