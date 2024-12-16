@@ -52,5 +52,18 @@ def get_handler_answer_flag_dict(
     return locals()  # Passing to return all named arguments
 
 
-async def clear_handlers_return_stack_fsm_state(state: FSMContext):
-    await state.update_data(handlers_stack=None)
+async def show_handlers_stack_logs(
+        state: FSMContext,
+        text: str = "Handlers stack logs:"
+) -> None:
+    state_data = await state.get_data()
+    handlers_list = state_data.get("handlers_stack")
+    print(f"\t{text}")
+    if not handlers_list:
+        print(f"\t\thandlers_list = [], handler_messages_ids = []")
+    else:
+        for idx in range(len(handlers_list)):
+            handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")
+            handler_name = handlers_list[idx].get("handler_name")
+            print(f"\t\t{idx}) {handler_msgs_ids} - {handler_name}")
+        print()
