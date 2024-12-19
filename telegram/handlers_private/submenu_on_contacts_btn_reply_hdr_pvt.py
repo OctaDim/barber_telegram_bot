@@ -30,10 +30,8 @@ async def contacts_btn_to_submenu_reply_hdr_pvt(message: Message,
                                                 bot: Bot,
                                                 state: FSMContext):
     cur_handler_messages_ids = []
-    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
-    # await remove_previous_msgs_before_main_btn(state=state,
-    #                                            message=message)
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     try:
         cur_message = await message.edit_message_text(

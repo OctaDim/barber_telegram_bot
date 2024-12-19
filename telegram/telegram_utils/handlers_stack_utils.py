@@ -66,5 +66,5 @@ async def show_handlers_stack_logs(
         for idx in range(len(handlers_list)):
             handler_msgs_ids = handlers_list[idx].get("handler_messages_ids")
             handler_name = handlers_list[idx].get("handler_name")
-            print(f"\t\t{idx}) {handler_msgs_ids} - {handler_name}")
+            print(f"\t\t{idx})\t{handler_msgs_ids} - {handler_name}")
         print()
