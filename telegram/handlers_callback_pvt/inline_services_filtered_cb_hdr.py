@@ -84,13 +84,18 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
             callback_query=callback_query, state=state, bot=bot)
     # ##################################################################
 
-    selected_category_id = await get_valid_int_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_category_id")
+    # If inline button 'Enroll Master Services' (no criteria for services)
+    if callback_prefix == EnrollSingleMasterServicesCBData.__prefix__:
+        selected_category_id = []
+        selected_master_id = []
+    else:
+        selected_category_id = await get_valid_int_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="selected_category_id")
 
-    selected_master_id = await get_valid_int_by_fsm_state_key(
-        fsm_state_or_dict_from=state_data,
-        fsm_state_literal_key="selected_master_id")
+        selected_master_id = await get_valid_int_by_fsm_state_key(
+            fsm_state_or_dict_from=state_data,
+            fsm_state_literal_key="selected_master_id")
 
     if selected_category_id and selected_master_id:
         all_services_records = get_all_services_ordered(
