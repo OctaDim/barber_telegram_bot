@@ -33,11 +33,6 @@ class OurPromotionsInlineMenuCBData(CallbackData, prefix="our promotions inline 
 def get_submenu_services_inl_kbd_pvt() -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    if ENROLL_METHODS_CONFIGS.ENROLL_SINGLE_MASTER_SERVICES:
-        builder_inl_kbd.button(
-            text=SERVICES_BUTTONS.ENROLL_SINGLE_MASTER_SERVICES,
-            callback_data=EnrollSingleMasterServicesCBData().pack())
-
     any_enroll_services_by_method_flag = any([
         ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY_AND_MASTER,
         ENROLL_METHODS_CONFIGS.ENROLL_SERVICES_BY_CATEGORY,
@@ -47,6 +42,11 @@ def get_submenu_services_inl_kbd_pvt() -> InlineKeyboardMarkup:
         builder_inl_kbd.button(
             text=SERVICES_BUTTONS.ENROLL_SERVICES,
             callback_data=EnrollServicesInlineMenuCBData().pack())
+
+    if ENROLL_METHODS_CONFIGS.ENROLL_SINGLE_MASTER_SERVICES:
+        builder_inl_kbd.button(
+            text=SERVICES_BUTTONS.ENROLL_SINGLE_MASTER_SERVICES,
+            callback_data=EnrollSingleMasterServicesCBData().pack())
 
     builder_inl_kbd.button(
         text=SERVICES_BUTTONS.OUR_PROMOTIONS,
