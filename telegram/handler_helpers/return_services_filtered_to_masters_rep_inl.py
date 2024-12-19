@@ -47,7 +47,7 @@ async def delete_services_filtered_msgs_before_masters(
     # to be able to edit by the next handler message
     messages_ids_to_delete.pop(0)
     print(f"\tFirst Inline Message removed from delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
@@ -55,14 +55,14 @@ async def delete_services_filtered_msgs_before_masters(
     # (to exclude opening telegram text keyboard on reply return button)
     messages_ids_to_delete.pop(-1)
     print(f"\tLast Reply Message removed from delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     # Add user reply kbd "Return to Masters" message to delete list
     messages_ids_to_delete.append(message.message_id)
     print(f"\tReply kbd 'Return to Masters' msg id added to delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tmessage.message_id ('Return to Masters') = {message.message_id}\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")

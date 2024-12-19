@@ -47,7 +47,7 @@ async def delete_srcs_filtered_msgs_before_calendar(
     # # to be able to edit by the next handler message
     messages_ids_to_delete.pop(0)
     print(f"\tFirst Inline Message removed from delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.CONTINUE_ENROLL_SERVICES}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
@@ -55,14 +55,14 @@ async def delete_srcs_filtered_msgs_before_calendar(
     # (to exclude opening telegram text keyboard on reply return button)
     messages_ids_to_delete.pop(-1)
     print(f"\tLast Reply Message removed from delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.CONTINUE_ENROLL_SERVICES}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
     # Add "Continue Enroll Services" Reply kbd msg from user to delete list
     messages_ids_to_delete.append(message.message_id)
     print(f"\tReply kbd 'Continue Enroll Services' msg id added to delete list, because\n"
-          f"\tmessage.text = {ENROLL_SRCS_BUTTONS.CONTINUE_ENROLL_SERVICES}\n"
+          f"\tmessage.text = '{message.text}'\n"
           f"\tmessage.message_id = {message.message_id}\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")

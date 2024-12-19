@@ -51,7 +51,7 @@ async def delete_intervals_slots_msgs_before_saving_slots(
     # (to exclude opening telegram text keyboard on reply return button)
     messages_ids_to_delete.pop(-1)
     print(f"\tLast Reply Message removed from delete list, because\n"
-          # f"\tmessage.text = {ENROLL_SRCS_BUTTONS.RETURN_TO_MASTERS}\n"
+          f"\tcallback_query.message.caption = {callback_query.message.caption}\n"
           f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
           f"\tmessages_ids_to_delete = {messages_ids_to_delete}\n")
 
