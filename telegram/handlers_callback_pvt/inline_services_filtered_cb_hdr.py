@@ -184,9 +184,20 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
               f"\tcur_message.message_id = {cur_message.message_id}\n"
               f"\tcur_handler_messages_ids = {cur_handler_messages_ids}\n")
 
-        delay_seconds = number_or_str_to_float(PAUSE_CONFIGS.LIST_MESSAGES_DELAY)
-        if delay_seconds:
-            await asyncio.sleep(delay_seconds)
+        list_less_30_services_delay = number_or_str_to_float(
+            PAUSE_CONFIGS.LIST_MESSAGES_COMMON_DELAY)
+
+        list_more_30_services_delay = number_or_str_to_float(
+            PAUSE_CONFIGS.LIST_MORE_30_MESSAGES_DELAY)
+
+        if len(all_services_records) > 30 and list_more_30_services_delay:
+            delay_seconds = list_more_30_services_delay
+        elif list_less_30_services_delay:
+            delay_seconds = list_less_30_services_delay
+        else:
+            delay_seconds = 0
+
+        await asyncio.sleep(delay_seconds)
 
         all_services_info_dict[service_record.id] = {
             "text": service_brief_text,

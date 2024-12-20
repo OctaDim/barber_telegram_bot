@@ -76,7 +76,8 @@ class RESERVATIONS_CONFIGS:
 
 @dataclass
 class PAUSE_CONFIGS:
-    LIST_MESSAGES_DELAY: float | int | str = 0  # 0.2
+    LIST_MESSAGES_COMMON_DELAY: float | int | str = 0  # 0 default, 0 - switch off delay
+    LIST_MORE_30_MESSAGES_DELAY: float | int | str = 0.05  # 0.1 default, 0 - switch off delay
     INFO_MESSAGE_DELAY: float | int | str = 5  # 5
     WARNING_MESSAGE_DELAY: float | int | str = 10  # 10
 
