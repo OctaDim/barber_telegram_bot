@@ -28,9 +28,7 @@ async def inline_main_menu_common_cb_hdr(callback_query: CallbackQuery,
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return
 
-    # await callback_query.message.delete()
     # await callback_query.answer()
-
     message = callback_query.message
 
     # Call the same functionality handler of the reply keyboard button

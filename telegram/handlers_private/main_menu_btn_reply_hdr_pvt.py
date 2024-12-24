@@ -10,6 +10,8 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.buttons_common import (
     COMMON_BUTTONS_PARAMS)
+from telegram.params.images_params import (
+    IMAGES_LINKS)
 from telegram.params.messages import (
     SELECT_MAIN_MENU_BUTTON)
 from telegram.telegram_utils.fsm_states_utils import (
@@ -84,6 +86,7 @@ async def main_menu_btn_reply_hdr_pvt(message: Message,
         telegram_update_obj=message,
         re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
         # re_open_reply_msg_text=MAIN_GREETING_RICH_TXT,
+        image_path=IMAGES_LINKS.MAIN_MENU_IMG,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=False)
 

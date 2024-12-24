@@ -129,7 +129,7 @@ async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         telegram_update_obj=callback_query,
         re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
-        reply_kbd_opened_state_after_open=True)
+        reply_kbd_opened_state_after_open=False)
     if cur_message:
         cur_handler_messages_ids.append(cur_message.message_id)
 

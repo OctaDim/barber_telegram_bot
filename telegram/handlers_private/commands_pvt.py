@@ -1,9 +1,10 @@
 import inspect
+import os
 
 from aiogram import Router
 from aiogram.filters.command import CommandStart, Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 
 from database.db_queries.create_user_on_start_query import (
     create_user_on_start)
@@ -13,6 +14,8 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.commands import (
     COMMANDS_PARAMS)
+from telegram.params.images_params import (
+    IMAGES_LINKS)
 from telegram.params.messages import (
     SELECT_MAIN_MENU_BUTTON)
 from telegram.params.messages_multiline import (
@@ -39,8 +42,17 @@ async def start_command(message: Message,
 
     cur_handler_messages_ids = []
 
-    # Comment or remove if main greetings msg with reply keyboard at once
-    await message.answer(text=MAIN_GREETING_RICH_TXT)
+    # Comment if main greetings msg with reply keyboard at once
+    img_path = IMAGES_LINKS.MAIN_GREETING_IMG
+    # img_path = os.path.join(BASE_DIR, img_path)
+    img_path = os.path.normpath(img_path)
+
+    if os.path.exists(img_path) and os.path.isfile(img_path):
+        image_obj = FSInputFile(path=img_path)
+        await message.answer_photo(photo=image_obj,
+                                   caption=MAIN_GREETING_RICH_TXT)
+    else:
+        await message.answer(text=MAIN_GREETING_RICH_TXT)
 
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
@@ -78,8 +90,18 @@ async def menu_command(message: Message,
 
     cur_handler_messages_ids = []
 
-    # Comment or remove if main greetings msg with reply keyboard at once
-    await message.answer(text=MAIN_GREETING_RICH_TXT)
+    # Comment if main greetings msg with reply keyboard at once
+    img_path = IMAGES_LINKS.MAIN_GREETING_IMG
+    # img_path = os.path.join(BASE_DIR, img_path)  # Absolute path
+    img_path = os.path.normpath(img_path)
+
+    if os.path.exists(img_path) and os.path.isfile(img_path):
+        image_obj = FSInputFile(path=img_path)
+        await message.answer_photo(
+            photo=image_obj,
+            caption=MAIN_GREETING_RICH_TXT)
+    else:
+        await message.answer(text=MAIN_GREETING_RICH_TXT)
 
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
