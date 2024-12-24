@@ -88,7 +88,8 @@ async def main_menu_btn_reply_hdr_pvt(message: Message,
         # re_open_reply_msg_text=MAIN_GREETING_RICH_TXT,
         image_path=IMAGES_LINKS.MAIN_MENU_IMG,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
-        reply_kbd_opened_state_after_open=False)
+        reply_kbd_opened_state_after_open=False,
+        open_reply_kbd_msg_anyway=True)
 
     return get_handler_answer_flag_dict(
         add_handler_to_return_stack=False,

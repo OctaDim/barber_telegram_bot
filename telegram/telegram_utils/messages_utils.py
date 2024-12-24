@@ -79,13 +79,11 @@ async def re_open_reply_keyboard_message(
         case _:
             telegram_message_obj = None
 
-    if image_path:
-        # image_path = os.path.join(BASE_DIR, image_path)
-        image_path = os.path.normpath(image_path)
-
     try:
         # Call new reply kbd till deleting prior reply to exclude opening text kbd
         if image_path:
+            # image_path = os.path.join(BASE_DIR, image_path)
+            image_path = os.path.normpath(image_path)
             img_path_exists_flag = os.path.exists(image_path)
             img_file_exists_flag = os.path.isfile(image_path)
         else:
@@ -95,9 +93,10 @@ async def re_open_reply_keyboard_message(
             image_obj = FSInputFile(path=image_path)
             new_reply_message = await telegram_message_obj.answer_photo(
                 photo=image_obj,
-                text=re_open_reply_msg_text,
+                # caption=re_open_reply_msg_text,
                 reply_markup=re_open_reply_keyboard)
             new_reply_message_id = new_reply_message.message_id
+
             print(f"\tNew Reply keyboard Message (with photo) was created, "
                   f"\tbecause main_menu_opened_state = {reply_kbd_opened_state}\n"
                   f"\tnew_reply_message_id = {new_reply_message_id}\n"
@@ -107,6 +106,7 @@ async def re_open_reply_keyboard_message(
                 text=re_open_reply_msg_text,
                 reply_markup=re_open_reply_keyboard)
             new_reply_message_id = new_reply_message.message_id
+
             print(f"\tNew Reply keyboard Message (without photo) was created, "
                   f"\tbecause main_menu_opened_state = {reply_kbd_opened_state}\n"
                   f"\tnew_reply_message_id = {new_reply_message_id}\n"
