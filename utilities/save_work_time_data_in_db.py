@@ -7,12 +7,12 @@ def save_work_time_data_in_db(
         time_start: timedelta,
         time_end: timedelta,
         interval: timedelta,
-        start_break: timedelta,
-        end_break: timedelta,
         days: list,
         master_id: int,
         month,
         year,
+        start_break: timedelta = None,
+        end_break: timedelta = None,
         master_obj=None
 ):
     time_intervals = []
