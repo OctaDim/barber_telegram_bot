@@ -8,6 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 # ######################################################################
+
 # ## Very necessary import to initialize DB models without cycle imports
 # ######################################################################
 import database.db_imports_initialization
@@ -18,6 +19,7 @@ from telegram.handlers_admin.timetable_btn_admin import timetable_admin_btn_rout
 from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
+
 from telegram.handlers_callback_pvt.clicked_cancell_reservation_client_cb_hdr import \
     clicked_cancel_reservation_cb_router
 from telegram.handlers_callback_pvt.clicked_reservation_cancelled_completed_cb_hdr import \
@@ -67,14 +69,18 @@ from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
 from telegram.handlers_callback_admin.services_add_time_duration_cb_data import services_add_time_duration_cb_query
 from telegram.handlers_callback_admin.services_change_cb_data import services_change_cb_query
 from telegram.handlers_callback_admin.services_remove_cb_data import services_remove_cb_query
+
 from telegram.handlers_callback_pvt.selected_service_unselected_cb_hdr import \
     service_selected_unselected_enroll_srcs_cb_router
+
 from telegram.handlers_private.main_menu_btn_reply_hdr_pvt import return_main_menu_pvt_router
 from telegram.handlers_private.return_btn_reply_hdr_pvt import return_button_router
 from telegram.handlers_private.unhandled_update_hdr_pvt import unhandled_update_router
 from telegram.handlers_private.calendar_on_cont_enroll_srcs_btn_rep_hdr_pvt import continue_enroll_srcs_pvt_router
+
 from telegram.handlers_callback_pvt.selected_month_day_calendar_cb_hdr import (
     month_day_selected_calendar_enroll_srcs_cb_router)
+
 from telegram.handlers_callback_pvt.inline_main_menu_common_cb_hdr import inline_main_menu_common_cb_router
 from telegram.handlers_callback_pvt.inline_no_action_common_cb_hdr import no_action_common_cb_router
 from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
@@ -162,8 +168,6 @@ dp.include_router(unhandled_update_router)
 private_chat_commands = [
     BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
                description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
-    # BotCommand(command=COMMANDS_PARAMS.START_CMD.TEXT,
-    #            description=COMMANDS_PARAMS.START_CMD.DESCRIPTION),
 ]
 
 admin_chat_commands = [

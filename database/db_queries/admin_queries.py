@@ -3,18 +3,22 @@ import datetime
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
 from database.db_models.service_model import Service
+from database.db_queries.user_obj_by_telegram_id import get_user_obj_by_telegram_id
 from database.db_utilities.model_object_update import update_object
 
 manager = DBConnection(db_url=db_engine_url)
 
 
-def add_services(data: dict):
+def add_services(data: dict, user_telegram_id):
     with manager as session:
+        user = get_user_obj_by_telegram_id(telegram_id=user_telegram_id)
+
         validate_data = {
             'name': data['name'],
             'description': data['description'],
             'price': data['price'],
-            'time_duration': datetime.time(hour=data['duration_hours'], minute=data['duration_minutes'])
+            'time_duration': datetime.time(hour=data['duration_hours'], minute=data['duration_minutes']),
+            'service_masters': [user.user_masters]
         }
 
         service = session.query(Service).filter(Service.id == data.get('id_service')).first()

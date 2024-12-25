@@ -26,17 +26,17 @@ def get_previous_or_next_int(
 
     if len(next_integers) != 0:
         next_integers = min(next_integers)
-    
+
     if previous_integer:
         return previous_integers
-    
+
     if next_integer:
         return next_integers
-    
+
     return previous_integers, next_integers
 
 
-def get_other_month(select_year: int, select_month: int, action: bool) -> dict | None:
+def get_other_month(select_year: int, select_month: int, action: bool, master_id: int) -> dict | None:
     """
         action: True - next, False - previous
     """
@@ -46,7 +46,7 @@ def get_other_month(select_year: int, select_month: int, action: bool) -> dict |
 
     if action:
         if next_months:
-            days = get_work_time_by_month(month=next_months, year=select_year, list_checker=True)
+            days = get_work_time_by_month(month=next_months, year=select_year, list_checker=True, master_id=master_id)
 
             data = {
                 'month': next_months,
@@ -62,7 +62,7 @@ def get_other_month(select_year: int, select_month: int, action: bool) -> dict |
 
         if next_year:
             months = get_working_time_month_by_month_by_year(year=next_year)
-            days = get_work_time_by_month(month=months[0], year=next_year, list_checker=True)
+            days = get_work_time_by_month(month=months[0], year=next_year, list_checker=True, master_id=master_id)
 
             data = {
                 'month': months[0],
@@ -76,7 +76,8 @@ def get_other_month(select_year: int, select_month: int, action: bool) -> dict |
 
     if previous_months:
         if previous_months:
-            days = get_work_time_by_month(month=previous_months, year=select_year, list_checker=True)
+            days = get_work_time_by_month(month=previous_months, year=select_year, list_checker=True,
+                                          master_id=master_id)
 
             data = {
                 'month': previous_months,
@@ -92,7 +93,7 @@ def get_other_month(select_year: int, select_month: int, action: bool) -> dict |
 
         if previous_year:
             months = get_working_time_month_by_month_by_year(year=previous_year)
-            days = get_work_time_by_month(month=months[-1], year=previous_year, list_checker=True)
+            days = get_work_time_by_month(month=months[-1], year=previous_year, list_checker=True, master_id=master_id)
 
             data = {
                 'month': months[-1],

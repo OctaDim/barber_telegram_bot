@@ -142,8 +142,9 @@ async def preview_service(message: Message, state: FSMContext, cb_data=None):
 async def get_decision(message: Message, state: FSMContext):
     if message.text == BUTTONS_ADD_SERVICES.ADD:
         data = await state.get_data()
+        user_telegram_id = message.from_user.id
 
-        add_services(data)
+        add_services(data, user_telegram_id=user_telegram_id)
 
         await message.answer(text=GetDecision.ADD, reply_markup=get_admin_main_menu_kbd())
         await state.clear()
@@ -229,7 +230,6 @@ async def services_change_or_remove(message: Message, state: FSMContext):
                                                 f'Price: {service.price}\n',
                                            reply_markup=services_select_inl_kbd(action=True, id_service=service.id)
                                            )
-
             messages_id.append(massage.message_id)
 
         return await state.update_data(messages_id=messages_id)

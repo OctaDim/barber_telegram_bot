@@ -12,7 +12,12 @@ services_change_cb_query = Router(name=__name__)
 
 
 @services_change_cb_query.callback_query(ChangeServicesCbData.filter())
-async def get_service(callback_query: CallbackQuery, callback_data: ChangeServicesCbData, state: FSMContext, bot: Bot):
+async def get_service(
+        callback_query: CallbackQuery,
+        callback_data: ChangeServicesCbData,
+        state: FSMContext,
+        bot: Bot
+):
     service = get_one_service(id_service=callback_data.id_services)
 
     time_duration = service.time_duration

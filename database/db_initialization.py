@@ -30,5 +30,7 @@ from database.db_models.reservation_model import Reservation
 # ######################################################################
 
 
-db_connector = DBConnection(db_url=db_engine_url)
-db_connector.create_tables(Base)
+
+if __name__ == '__main__':
+    db_connector = DBConnection(db_url=db_engine_url)
+    db_connector.create_tables(Base)

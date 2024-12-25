@@ -18,21 +18,19 @@ class ReturnStepToMonthWorkTimeCbData(CallbackData, prefix='return-to-month-work
     active: bool
 
 
-def work_time_days_inl_kbd(mount: str, year: int):
+def work_time_days_inl_kbd(mount: str, year: int, current_date, master_id):
     builder = InlineKeyboardBuilder()
 
-    data, month_name = get_days_in_month(month_name=mount, year=year)
+    data, month_name = get_days_in_month(month_name=mount, year=year, current_date=current_date, master_id=master_id)
     data_copy = data.copy()
 
     week_row = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
     calendar_data = []
 
-    callback_data = DaysWorkTimeCbData(days=month_name)
-    builder.button(text=month_name, callback_data=callback_data)
+    builder.button(text=month_name, callback_data=month_name)
 
     for week_day in week_row:
-        callback_data = DaysWorkTimeCbData(days=week_day)
-        builder.button(text=week_day, callback_data=callback_data)
+        builder.button(text=week_day, callback_data=week_day)
 
     for i in range(6):
         if data_copy:
@@ -53,8 +51,13 @@ def work_time_days_inl_kbd(mount: str, year: int):
                     calendar_data.append('-')
 
     for day in calendar_data:
-        callback_data = DaysWorkTimeCbData(days=day)
-        builder.button(text=day, callback_data=callback_data)
+        if day != '-':
+            callback_data = DaysWorkTimeCbData(days=day)
+            builder.button(text=day, callback_data=callback_data)
+
+            continue
+
+        builder.button(text=day, callback_data=day)
 
     buttons = [
         InlineKeyboardButton(
