@@ -14,8 +14,8 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
-    username: Mapped[str] = mapped_column(unique=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=True)
+    username: Mapped[str] = mapped_column(unique=True, nullable=True)
 
     full_name: Mapped[Optional[str]]
     first_name: Mapped[str]
@@ -60,11 +60,8 @@ class User(Base):
         back_populates="master_user")
 
     @property
-    def user_contact(self) -> Optional[str]:
-        if self.full_name and self.phone_number:
-            return f"{self.full_name}, {self.phone_number}"
-        if self.full_name:
-            return f"{self.full_name}, {self.username}"
-        if self.phone_number:
-            return f"{self.phone_number}, {self.username}"
-        return str(self.username)
+    def get_full_name(self) -> Optional[str]:
+        if self.first_name and self.last_name:
+            return f'{self.first_name} {self.last_name}'
+
+        return str(self.first_name)
