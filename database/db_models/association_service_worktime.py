@@ -11,6 +11,7 @@ class ServiceWorkTimeAssociation(Base):
 
     # ### many repeated service_id - work_time_id pairs can be saved ###
     id: Mapped[int] = mapped_column(primary_key=True)
+
     service_id: Mapped[int] = mapped_column(ForeignKey("service.id"))
     work_time_id: Mapped[int] = mapped_column(ForeignKey("work_time.id"))
 
@@ -20,11 +21,9 @@ class ServiceWorkTimeAssociation(Base):
     updated: Mapped[datetime] = mapped_column(onupdate=datetime.now(),
                                               nullable=True)
 
-# ##### only one unique service_id - work_time_id pair can be saved ####
+# ##### For only one unique service_id - work_time_id pair saving ######
 # class ServiceWorkTimeAssociation(Base):
 #     __tablename__ = "service_worktime_association"
-#     service_id: Mapped[int] = mapped_column(ForeignKey("service.id"),
-#                                             primary_key=True)
-#     work_time_id: Mapped[int] = mapped_column(ForeignKey("work_time.id"),
-#                                               primary_key=True)
+#     service_id: Mapped[int] = mapped_column(ForeignKey("service.id"), primary_key=True)
+#     work_time_id: Mapped[int] = mapped_column(ForeignKey("work_time.id"), primary_key=True)
 # ######################################################################

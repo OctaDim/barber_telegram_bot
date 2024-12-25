@@ -3,8 +3,9 @@ from database.db_engine_url import db_engine_url
 from database.db_connection import Base
 
 # ######################################################################
-# ###### Very necessary imports to initialize Postgres DB tables #######
+# ###### Very necessary imports to create Postgres DB tables #######
 # ######################################################################
+import database.db_imports_initialization
 from database.db_models.address_model import Address
 from database.db_models.association_master_breaktime import MasterBreakTimeAssociation
 from database.db_models.association_worktime_user import WorkTimeUserAssociation
@@ -23,6 +24,7 @@ from database.db_models.association_service_worktime import ServiceWorkTimeAssoc
 from database.db_models.association_user_role import UserRoleAssociation
 from database.db_models.association_user_status import UserStatusAssociation
 from database.db_models.association_master_phone import MasterPhoneAssociation
+from database.db_models.reservation_model import Reservation
 
 # ######################################################################
 # ######################################################################

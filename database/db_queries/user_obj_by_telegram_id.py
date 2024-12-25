@@ -15,7 +15,6 @@ def get_user_obj_by_telegram_id(telegram_id: int) -> Optional[User]:
         user_obj_by_telegram_id = session.query(User).options(
             joinedload(User.user_masters)
         ).filter(User.telegram_id == telegram_id).first()
-        return user_obj_by_telegram_id
 
 
 def get_user_by_telegram_id_in_session(telegram_id: int,

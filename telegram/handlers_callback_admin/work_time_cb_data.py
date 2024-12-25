@@ -8,7 +8,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 
 from database.db_queries.get_master_obj_by_telegram_id import get_master_id_by_telegram_id
-from database.db_queries.user_obj_by_telegram_id import get_user_obj_by_telegram_id
 from database.db_queries.work_time_queries import create_work_time
 from telegram.keyboard_inline.work_time_add_break_inl_kbd import add_break_or_not_inl_kbd, \
     AddBreakResponseWorkTimeCbData, add_break_work_time_inl_kbd, AddStartBreakWorkTime, AddEndBreakWorkTime, \

@@ -8,11 +8,10 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand, BotCommandScopeChat
 
 # ######################################################################
-# ###### Very necessary imports to initialize Postgres DB tables #######
-# ######################################################################
-import database.db_initialization
 
+# ## Very necessary import to initialize DB models without cycle imports
 # ######################################################################
+import database.db_imports_initialization
 # ######################################################################
 
 from telegram.config.settings import BOT_CREDENTIALS
@@ -20,8 +19,11 @@ from telegram.handlers_admin.timetable_btn_admin import timetable_admin_btn_rout
 from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
-from telegram.handlers_callback_pvt.clicked_cancell_reservation_client_cb_hdr import clicked_cancel_reservation_cb_router
-from telegram.handlers_callback_pvt.clicked_reservation_cancelled_completed_cb_hdr import clicked_reservation_cancd_completed_rtr
+
+from telegram.handlers_callback_pvt.clicked_cancell_reservation_client_cb_hdr import \
+    clicked_cancel_reservation_cb_router
+from telegram.handlers_callback_pvt.clicked_reservation_cancelled_completed_cb_hdr import \
+    clicked_reservation_cancd_completed_rtr
 from telegram.handlers_callback_pvt.clicked_reservation_date_time_cb_hdr import clicked_reservation_date_time_cb_router
 from telegram.handlers_callback_pvt.inline_ask_administrator_cb_hdr import inline_ask_administrator_cb_router
 from telegram.handlers_callback_pvt.inline_balance_client_cb_hdr import inline_balance_client_router
@@ -32,12 +34,16 @@ from telegram.handlers_callback_pvt.inline_methods_enroll_srcs_cb_hdr import inl
 from telegram.handlers_callback_pvt.inline_payments_history_cb_hdr import inline_payments_history_router
 from telegram.handlers_callback_pvt.inline_promotions_our_cb_hdr import inline_promotions_our_cb_router
 from telegram.handlers_callback_pvt.inline_reservations_client_cb_hdr import inline_client_reservations_cb_router
-from telegram.handlers_callback_pvt.inline_services_our_detail_info_cb_hdr import inline_our_services_by_category_cb_router
+from telegram.handlers_callback_pvt.inline_services_our_detail_info_cb_hdr import (
+    inline_our_services_by_category_cb_router)
 from telegram.handlers_callback_pvt.next_prev_page_reservation_cb_hdr import next_prev_page_reservation_client_cb_router
-from telegram.handlers_callback_pvt.return_intervals_slots_to_calendar_cb_hdr import return_interval_slots_to_calendar_cb_router
+from telegram.handlers_callback_pvt.return_intervals_slots_to_calendar_cb_hdr import \
+    return_interval_slots_to_calendar_cb_router
 from telegram.handlers_callback_pvt.selected_category_cb_hdr import category_selected_enroll_srcs_cb_router
-from telegram.handlers_callback_pvt.inline_intervals_slots_enroll_srcs_cb_hdr import continue_calendar_enroll_srcs_cb_router
-from telegram.handlers_callback_pvt.inline_services_filtered_cb_hdr import inline_services_filtered_enroll_srcs_cb_router
+from telegram.handlers_callback_pvt.inline_intervals_slots_enroll_srcs_cb_hdr import \
+    continue_calendar_enroll_srcs_cb_router
+from telegram.handlers_callback_pvt.inline_services_filtered_cb_hdr import \
+    inline_services_filtered_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.selected_master_cb_hdr import master_selected_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_categories_enroll_srcs_cb_hdr import inline_categories_enroll_srcs_cb_router
 from telegram.handlers_callback_pvt.inline_masters_enroll_srcs_cb_hdr import inline_masters_enroll_srcs_cb_router
@@ -63,12 +69,18 @@ from telegram.handlers_admin.services_btn_admin import services_admin_btn_router
 from telegram.handlers_callback_admin.services_add_time_duration_cb_data import services_add_time_duration_cb_query
 from telegram.handlers_callback_admin.services_change_cb_data import services_change_cb_query
 from telegram.handlers_callback_admin.services_remove_cb_data import services_remove_cb_query
-from telegram.handlers_callback_pvt.selected_service_unselected_cb_hdr import service_selected_unselected_enroll_srcs_cb_router
+
+from telegram.handlers_callback_pvt.selected_service_unselected_cb_hdr import \
+    service_selected_unselected_enroll_srcs_cb_router
+
 from telegram.handlers_private.main_menu_btn_reply_hdr_pvt import return_main_menu_pvt_router
 from telegram.handlers_private.return_btn_reply_hdr_pvt import return_button_router
 from telegram.handlers_private.unhandled_update_hdr_pvt import unhandled_update_router
 from telegram.handlers_private.calendar_on_cont_enroll_srcs_btn_rep_hdr_pvt import continue_enroll_srcs_pvt_router
-from telegram.handlers_callback_pvt.selected_month_day_calendar_cb_hdr import month_day_selected_calendar_enroll_srcs_cb_router
+
+from telegram.handlers_callback_pvt.selected_month_day_calendar_cb_hdr import (
+    month_day_selected_calendar_enroll_srcs_cb_router)
+
 from telegram.handlers_callback_pvt.inline_main_menu_common_cb_hdr import inline_main_menu_common_cb_router
 from telegram.handlers_callback_pvt.inline_no_action_common_cb_hdr import no_action_common_cb_router
 from telegram.handlers_callback_pvt.return_common_cb_hdr import return_common_cb_router
@@ -140,7 +152,7 @@ dp.include_router(inline_our_contacts_cb_router)
 dp.include_router(submenu_contacts_pvt_router)
 dp.include_router(submenu_ask_question_pvt_router)
 dp.include_router(submenu_balance_pvt_router)
-dp.include_router(inline_promotions_our_cb_router)
+dp.include_routers(inline_promotions_our_cb_router)
 dp.include_router(inline_ask_administrator_cb_router)
 dp.include_router(inline_frequent_questions_cb_router)
 dp.include_router(inline_geo_map_router)

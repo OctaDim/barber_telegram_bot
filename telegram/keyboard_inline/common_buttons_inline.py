@@ -1,7 +1,9 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
 
-from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS, SPECIAL_CHARACTERS
+from telegram.params.buttons_common import (
+    COMMON_BUTTONS_PARAMS,
+    SPECIAL_CHARACTERS)
 
 
 class NoActionEmptyCBData(CallbackData, prefix="no_action_empty_inl_common"):
@@ -9,17 +11,22 @@ class NoActionEmptyCBData(CallbackData, prefix="no_action_empty_inl_common"):
 
 
 class ReturnInlineBtnCBData(CallbackData, prefix="return_inl_common"):
-    pass
+    delete_inline_msg_on_return: bool
 
 
 class MainMenuInlineBtnCBData(CallbackData, prefix="main_menu_inl_common"):
     pass
 
 
-def create_return_inline_button():
+def create_return_inline_button(
+        delete_inline_msg_on_return: bool = False
+):
+    callback_data = ReturnInlineBtnCBData(
+        delete_inline_msg_on_return=delete_inline_msg_on_return)
+
     inline_button = InlineKeyboardButton(
         text=COMMON_BUTTONS_PARAMS.RETURN,
-        callback_data=ReturnInlineBtnCBData().pack())
+        callback_data=callback_data.pack())
 
     return inline_button
 

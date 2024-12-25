@@ -40,3 +40,15 @@ def get_fill_symbols_number_via_pixels(text_long: str = "",
     fill_symbols_number = texts_pxl_width_delta / fill_symbol_pxl_width
     fill_symbols_number = int(round(fill_symbols_number, 0))
     return fill_symbols_number
+
+
+def fill_string_with_symbols_via_pixels_len(text_long: str = "",
+                                            text_short: str = "",
+                                            fill_symbol: str = ""
+                                            ) -> str:
+    symbols_number = get_fill_symbols_number_via_pixels(
+        text_long=text_long,
+        text_short=text_short,
+        fill_symbol=fill_symbol)
+    result_string = text_short + fill_symbol * symbols_number
+    return result_string
