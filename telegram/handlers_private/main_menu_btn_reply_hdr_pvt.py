@@ -6,6 +6,8 @@ from aiogram.types import Message
 
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
+from telegram.handler_helpers.delete_prior_msgs_on_main_menu_btn import (
+    delete_prior_msgs_on_main_menu_reply_inl_btn)
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.buttons_common import (
@@ -14,6 +16,8 @@ from telegram.params.images_params import (
     IMAGES_LINKS)
 from telegram.params.messages import (
     SELECT_MAIN_MENU_BUTTON)
+from telegram.params.messages_multiline import (
+    MAIN_MENU_PHOTO_RICH_TXT)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_int_by_fsm_state_key)
@@ -31,37 +35,17 @@ async def main_menu_btn_reply_hdr_pvt(message: Message,
                                       state: FSMContext):
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
+    # ##################################################################
+    # Delete prior messages before Main Menu reply keyboard msg opening
+    # ##################################################################
+    await delete_prior_msgs_on_main_menu_reply_inl_btn(message=message,
+                                                       state=state)
+    # ##################################################################
+
     handlers_list = await get_valid_list_by_fsm_state_key(
         fsm_state_or_state_dict=state,
         fsm_state_literal_key="handlers_stack")
     print(f"\tOrigin handler stack: len(handlers_list)={len(handlers_list)}\n")
-
-    if len(handlers_list) > 0:
-        prior_handler_dict = handlers_list[-1]
-        prior_handler_msgs_ids = prior_handler_dict.get("handler_messages_ids")
-        print(f"\tOrigin delete list: "
-              f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n")
-
-        if prior_handler_msgs_ids:
-            prior_handler_msgs_ids = list(filter(
-                lambda msg_id: msg_id is not None, prior_handler_msgs_ids))
-            print(f"\tNone values removed from delete list: "
-                  f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n")
-
-        if prior_handler_msgs_ids:
-            bot = message.bot
-            cur_chat_id = message.chat.id
-            await bot.delete_messages(chat_id=cur_chat_id,
-                                      message_ids=prior_handler_msgs_ids)
-            print(f"\tPrior messages were deleted successfully\n"
-                  f"\tprior_handler_msgs_ids (deleted ids) = {prior_handler_msgs_ids}\n")
-
-            await state.update_data(main_menu_opened_state=False)
-            print(f"\tMain Menu opened state updated to False\n")
-
-        else:
-            print(f"\tPrior messages were not deleted, because "
-                  f"\tprior_handler_msgs_ids = {prior_handler_msgs_ids}\n")
 
     # Saving the first handler only (Main Menu) before clearing state
     new_handlers_list = handlers_list[:1]
@@ -85,8 +69,8 @@ async def main_menu_btn_reply_hdr_pvt(message: Message,
         fsm_state=state,
         telegram_update_obj=message,
         re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
-        # re_open_reply_msg_text=MAIN_GREETING_RICH_TXT,
         image_path=IMAGES_LINKS.MAIN_MENU_IMG,
+        # image_caption_text=SELECT_MAIN_MENU_BUTTON,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=False,
         open_reply_kbd_msg_anyway=True)

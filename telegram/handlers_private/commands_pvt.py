@@ -1,10 +1,9 @@
 import inspect
-import os
 
 from aiogram import Router
 from aiogram.filters.command import CommandStart, Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message
 
 from database.db_queries.create_user_on_start_query import (
     create_user_on_start)
@@ -23,7 +22,8 @@ from telegram.params.messages_multiline import (
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
-    re_open_reply_keyboard_message)
+    re_open_reply_keyboard_message,
+    re_open_photo_reply_message)
 
 on_start_router = Router(name=__name__)
 on_start_router.message.filter(ChatTypesFilter(["private"]))
@@ -43,15 +43,12 @@ async def start_command(message: Message,
     cur_handler_messages_ids = []
 
     # Comment if main greetings msg with reply keyboard at once
-    img_path = IMAGES_LINKS.MAIN_GREETING_IMG
-    # img_path = os.path.join(BASE_DIR, img_path)
-    img_path = os.path.normpath(img_path)
-
-    if os.path.exists(img_path) and os.path.isfile(img_path):
-        image_obj = FSInputFile(path=img_path)
-        await message.answer_photo(photo=image_obj,
-                                   caption=MAIN_GREETING_RICH_TXT)
-    else:
+    cur_message = await re_open_photo_reply_message(
+        telegram_update_obj=message,
+        image_path=IMAGES_LINKS.MAIN_GREETING_IMG,
+        image_caption_text=MAIN_GREETING_RICH_TXT,
+        keyboard=None)
+    if not cur_message:
         await message.answer(text=MAIN_GREETING_RICH_TXT)
 
     cur_message = await re_open_reply_keyboard_message(
@@ -91,16 +88,12 @@ async def menu_command(message: Message,
     cur_handler_messages_ids = []
 
     # Comment if main greetings msg with reply keyboard at once
-    img_path = IMAGES_LINKS.MAIN_GREETING_IMG
-    # img_path = os.path.join(BASE_DIR, img_path)  # Absolute path
-    img_path = os.path.normpath(img_path)
-
-    if os.path.exists(img_path) and os.path.isfile(img_path):
-        image_obj = FSInputFile(path=img_path)
-        await message.answer_photo(
-            photo=image_obj,
-            caption=MAIN_GREETING_RICH_TXT)
-    else:
+    cur_message = await re_open_photo_reply_message(
+        telegram_update_obj=message,
+        image_path=IMAGES_LINKS.MAIN_GREETING_IMG,
+        image_caption_text=MAIN_GREETING_RICH_TXT,
+        keyboard=None)
+    if not cur_message:
         await message.answer(text=MAIN_GREETING_RICH_TXT)
 
     cur_message = await re_open_reply_keyboard_message(

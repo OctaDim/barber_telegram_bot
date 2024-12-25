@@ -1,12 +1,12 @@
 import asyncio
 import inspect
 import os
-from typing import Union
+from typing import Union, Optional
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (CallbackQuery, Message, ReplyKeyboardMarkup,
-                           FSInputFile)
+                           FSInputFile, InlineKeyboardMarkup)
 
 from telegram.params.messages import (
     CANNOT_USE_OBSOLETE_MSG)
@@ -46,14 +46,56 @@ async def inline_keyboard_is_actual(state: FSMContext | dict,
     return True
 
 
+async def re_open_photo_reply_message(
+        telegram_update_obj: Union[Message, CallbackQuery],
+        image_path: str,
+        image_caption_text: str = None,
+        keyboard: Optional[Union[
+            InlineKeyboardMarkup, ReplyKeyboardMarkup]] = None
+) -> Message | None:
+    print(f"{'-' * 115}\n\tFunction: {inspect.currentframe().f_code.co_name}\n")
+
+    match telegram_update_obj:
+        case CallbackQuery() as telegram_update_obj:
+            telegram_message_obj = telegram_update_obj.message
+        case Message() as telegram_update_obj:
+            telegram_message_obj = telegram_update_obj
+        case _:
+            telegram_message_obj = None
+
+    if image_path:
+        # image_path = os.path.join(BASE_DIR, image_path)
+        image_path = os.path.normpath(image_path)
+        img_file_exists_flag = os.path.isfile(image_path)
+
+        if img_file_exists_flag:
+            image_obj = FSInputFile(path=image_path)
+            new_photo_message = await telegram_message_obj.answer_photo(
+                photo=image_obj,
+                caption=image_caption_text,
+                reply_markup=keyboard)
+            new_photo_message_id = new_photo_message.message_id
+            print(f"\tNew Photo Reply Message was created:\n"
+                  f"\tnew_photo_message_id = {new_photo_message_id}\n"
+                  f"\timage_path = {image_path}\n")
+        else:
+            new_photo_message = None
+            print(f"\tNew Photo Reply Message was not created, because \n"
+                  f"\timage_path = {image_path}\n"
+                  f"\tos.path.isfile(image_path) = {img_file_exists_flag}")
+
+        return new_photo_message
+
+
 async def re_open_reply_keyboard_message(
         fsm_state: FSMContext,
         telegram_update_obj: Union[Message, CallbackQuery],
         re_open_reply_msg_text: str,
         re_open_reply_keyboard: ReplyKeyboardMarkup,
+        image_path: str = None,
+        image_caption_text: str = None,
         reply_kbd_opened_state_after_open: bool = False,
-        open_reply_kbd_msg_anyway: bool = False,
-        image_path: str = None
+        open_reply_kbd_msg_anyway: bool = False
 ) -> Message | None:
     print(f"{'-' * 115}\n\tFunction: {inspect.currentframe().f_code.co_name}\n")
 
@@ -80,27 +122,29 @@ async def re_open_reply_keyboard_message(
             telegram_message_obj = None
 
     try:
-        # Call new reply kbd till deleting prior reply to exclude opening text kbd
         if image_path:
             # image_path = os.path.join(BASE_DIR, image_path)
             image_path = os.path.normpath(image_path)
-            img_path_exists_flag = os.path.exists(image_path)
             img_file_exists_flag = os.path.isfile(image_path)
         else:
-            img_path_exists_flag, img_file_exists_flag = False, False
+            img_file_exists_flag = False
 
-        if image_path and img_path_exists_flag and img_file_exists_flag:
+        # New repl kbd (+photo) till del prior reply to exclude open tg txt kbd
+        if img_file_exists_flag:
             image_obj = FSInputFile(path=image_path)
             new_reply_message = await telegram_message_obj.answer_photo(
                 photo=image_obj,
-                # caption=re_open_reply_msg_text,
-                reply_markup=re_open_reply_keyboard)
+                caption=image_caption_text,
+                reply_markup=re_open_reply_keyboard,
+                protect_content=True)
             new_reply_message_id = new_reply_message.message_id
 
-            print(f"\tNew Reply keyboard Message (with photo) was created, "
+            print(f"\tNew Photo Reply Message was created, "
                   f"\tbecause main_menu_opened_state = {reply_kbd_opened_state}\n"
-                  f"\tnew_reply_message_id = {new_reply_message_id}\n"
+                  f"\tnew_photo_message_id = {new_reply_message_id}\n"
                   f"\timage_path = {image_path}\n")
+
+        # New repl kbd (no photo) till del prior reply to exclude open tg txt kbd
         else:
             new_reply_message = await telegram_message_obj.answer(
                 text=re_open_reply_msg_text,
@@ -111,8 +155,7 @@ async def re_open_reply_keyboard_message(
                   f"\tbecause main_menu_opened_state = {reply_kbd_opened_state}\n"
                   f"\tnew_reply_message_id = {new_reply_message_id}\n"
                   f"\timage_path = {image_path}\n"
-                  f"\timg_path_exists_flag = {img_path_exists_flag}\n"
-                  f"\timg_file_exists_flag = {img_file_exists_flag}\n")
+                  f"\tos.path.isfile(image_path) = {img_file_exists_flag}\n")
 
     except (TelegramBadRequest, Exception) as exception_info:
         print(f"\tNew Reply keyboard Message was not created: {exception_info}\n")
