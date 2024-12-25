@@ -16,8 +16,6 @@ from telegram.params.images_params import (
     IMAGES_LINKS)
 from telegram.params.messages import (
     SELECT_MAIN_MENU_BUTTON)
-from telegram.params.messages_multiline import (
-    MAIN_MENU_PHOTO_RICH_TXT)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_int_by_fsm_state_key)
