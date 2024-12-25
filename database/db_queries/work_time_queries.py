@@ -30,7 +30,8 @@ def create_work_time(
         work_time = WorkTime(
             time_start=time_start,
             time_end=time_end,
-            slot_duration=slot_duration
+            slot_duration=slot_duration,
+            master_id=master_id
         )
 
         session.add(work_time)
@@ -40,11 +41,13 @@ def create_work_time(
 def create_break_time(
         start_break: datetime,
         end_break: datetime,
+        master_obj
 ):
     with manager as session:
         break_time = BreakTime(
             start_break=start_break,
-            end_break=end_break
+            end_break=end_break,
+            break_time_masters=master_obj
         )
 
         session.add(break_time)
