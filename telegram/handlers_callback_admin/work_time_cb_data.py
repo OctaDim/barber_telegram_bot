@@ -106,13 +106,21 @@ async def get_inl_kdb_add_days_work_time(
     month = callback_data.mount
     year = callback_data.year
 
+    current_date = callback_query.message.date
+
+    master_id = get_master_id_by_telegram_id(telegram_id=callback_query.from_user.id)
+
     await state.update_data(month=month, year=year)
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
         text=PICK_DAY,
-        reply_markup=work_time_days_inl_kbd(mount=callback_data.mount, year=year)
+        reply_markup=work_time_days_inl_kbd(
+            mount=callback_data.mount,
+            year=year,
+            current_date=current_date,
+            master_id=master_id)
     )
 
 
@@ -430,8 +438,7 @@ async def get_response_add_break(
         )
 
         master_id = get_master_id_by_telegram_id(telegram_id=callback_query.from_user.id)
-        print(master_id)
-        print(type(master_id))
+
         save_work_time_data_in_db(
             time_start=state_data.get('time_start'),
             time_end=state_data.get('time_end'),
