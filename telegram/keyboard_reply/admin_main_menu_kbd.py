@@ -10,8 +10,9 @@ def get_admin_main_menu_kbd():
     builder.button(text=MAIN_MANU_ADMIN_PARAMS.SERVICES)
     builder.button(text=MAIN_MANU_ADMIN_PARAMS.WORK_TIME)
     builder.button(text=MAIN_MANU_ADMIN_PARAMS.TIMETABLE)
+    builder.button(text=MAIN_MANU_ADMIN_PARAMS.CONTACTS)
 
-    builder.adjust(1, 1)
+    builder.adjust(2, 2)
 
     keyboard_markup = builder.as_markup(
         input_field_placeholder=SELECT_ACTION,
