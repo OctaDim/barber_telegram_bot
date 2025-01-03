@@ -14,14 +14,15 @@ from telegram.handlers_admin.contacts_admin_social_network_btn_admin import add_
 
 from telegram.keyboard_inline.contacts_for_master_choose_social_network_inl_kbd import choose_social_network_inl_kbd, \
     NameSocialNetworkCbData, OtherSocialNetworkCbData
-from telegram.keyboard_inline.contacts_for_master_get_action_by_address import get_action_by_address
+from telegram.keyboard_inline.contacts_for_master_get_action_by_address import get_action_by_address, \
+    ReturnToContactsCbData
 from telegram.keyboard_inline.contacts_for_master_get_action_by_social_network import get_action_by_social_networks, \
     AddNewSocialNetworkCbData, ChangeSocialNetworkCbData, RemoveSocialNetworkCbData
 from telegram.keyboard_inline.contacts_for_master_get_all_social_networks_for_changes import \
     get_all_social_networks_for_changes_inl_kbd, SocialNetworkForChangesCbData
 from telegram.keyboard_inline.contacts_for_master_get_all_social_networks_for_delete import \
     get_all_social_networks_for_delete_inl_kbd, SocialNetworkForDeleteCbData
-from telegram.keyboard_inline.contacts_for_master_inl_kbd import ContactAdminCbData
+from telegram.keyboard_inline.contacts_for_master_inl_kbd import ContactAdminCbData, contacts_by_admin_inl_kbd
 from telegram.keyboard_inline.contacts_for_master_preview_social_network_inl_kbd import \
     ConfirmPreviewSocialNetworkCbData, ChangePreviewSocialNetworkCbData, preview_social_network_inl_kbd
 from telegram.keyboard_inline.contacts_for_master_select_change_inl_kbd import \
@@ -333,3 +334,14 @@ async def delete_social_network(
     )
 
 
+@contacts_for_master_social_network_master_cb_query.callback_query(ReturnToContactsCbData.filter())
+async def return_to_admin_contacts(
+        callback_query: CallbackQuery,
+        bot: Bot
+):
+    await bot.edit_message_text(
+        message_id=callback_query.message.message_id,
+        chat_id=callback_query.message.chat.id,
+        text=SELECT_ACTION,
+        reply_markup=contacts_by_admin_inl_kbd()
+    )

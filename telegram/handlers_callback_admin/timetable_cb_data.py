@@ -91,6 +91,7 @@ async def get_days_by_month(
 @timetable_cb_query.callback_query(BackToAdminMenuTimetableCbData.filter())
 async def back_to_admin_menu_timetable(
         callback_query: CallbackQuery,
+        state: FSMContext,
         bot: Bot
 ):
     await bot.delete_message(
@@ -103,6 +104,8 @@ async def back_to_admin_menu_timetable(
         text=ButtonAdminPanelOrMainMenu.ADMIN_PANEL,
         reply_markup=get_admin_main_menu_kbd()
     )
+
+    await state.clear()
 
 
 @timetable_cb_query.callback_query(DaysTimetableCbData.filter())
