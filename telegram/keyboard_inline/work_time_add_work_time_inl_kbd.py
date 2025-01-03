@@ -3,9 +3,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from datetime import timedelta
 
+from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.keyboard_inline.work_time_add_days_inl_kbd import NextStepTimeWorkTimeCbData
 from telegram.keyboard_inline.work_time_interval_add_inl_kbd import IntervalNextStepTimeWorkTimeCbData
-from telegram.params.work_time_cb_data_message import CONTINUED, RETURN
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL
 
 
 class StartWorkCbData(CallbackData, prefix='start-work'):
@@ -43,9 +44,15 @@ def add_work_time_inl_kbd(
 
     buttons = [
         InlineKeyboardButton(
-            text=RETURN, callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year,active_return=True).pack()),
-        InlineKeyboardButton(text=CONTINUED, callback_data=NextStepAddWorkTime(next_step=True).pack())
+            text=RETURN,
+            callback_data=NextStepTimeWorkTimeCbData(
+                mount=mount, year=year,active_return=True).pack()),
+        InlineKeyboardButton(
+            text=RETURN_ADMIN_PANEL,
+            callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
     ]
+
+    builder.row(InlineKeyboardButton(text=CONTINUED, callback_data=NextStepAddWorkTime(next_step=True).pack()))
 
     builder.row(*buttons)
 
