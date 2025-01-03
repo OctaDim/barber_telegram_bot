@@ -7,17 +7,8 @@ from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenu
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
 
 
-class GetBreakIdTimeTableCbData(CallbackData, prefix='get-break_id'):
-    break_id: int
-
-
-def get_action_break_time_inl_kbd(break_id):
+def return_to_get_info_about_day():
     builder = InlineKeyboardBuilder()
-
-    builder.row(InlineKeyboardButton(
-        text='Сделай время активным',
-        callback_data=GetBreakIdTimeTableCbData(break_id=break_id).pack()
-    ))
 
     builder.row(
         InlineKeyboardButton(

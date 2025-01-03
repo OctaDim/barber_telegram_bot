@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData
-from telegram.params.work_time_cb_data_message import CONTINUED
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN
 
 
 class HoursIntervalWorkTimeCbData(CallbackData, prefix='hours-work-time-interval'):
@@ -41,7 +41,7 @@ def add_interval_work_time_services_inl_kbd(mount: str, year: int):
 
     buttons = [
         InlineKeyboardButton(
-            text='Return',
+            text=RETURN,
             callback_data=MonthWorkTimeCbData(mount=mount, year=year).pack()
         ),
         InlineKeyboardButton(

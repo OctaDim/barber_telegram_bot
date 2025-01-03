@@ -5,7 +5,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_day_inl_kbd import BackToMonthTimetableCbData
-from telegram.keyboard_inline.timetable_get_month_inl_kbd import MonthTimetableCbData
+from telegram.keyboard_inline.timetable_get_month_inl_kbd import MonthTimetableCbData, BackToAdminMenuTimetableCbData
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
 from utilities.get_select_date_for_timetable import get_select_date
 
 
@@ -168,11 +169,16 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
     builder.row(button)
 
     button = InlineKeyboardButton(
-        text='return',
+        text=RETURN,
         callback_data=MonthTimetableCbData(year=date.year, month=date.month).pack()
     )
 
-    builder.row(button)
+    builder.row(
+        button,
+        InlineKeyboardButton(
+            text=RETURN_ADMIN_PANEL,
+            callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
+    )
 
     inline_keyboard_markup = builder.as_markup()
 

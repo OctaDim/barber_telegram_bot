@@ -2,7 +2,9 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
-from telegram.params.work_time_cb_data_message import CONTINUED
+from telegram.keyboard_inline.timetable_get_info_about_work_day_inl_kbd import AddMoreWorkTimeTimetableCbData
+from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL
 
 
 class AddIntervalWorkTimeCbData(CallbackData, prefix='add-work-time-interval'):
@@ -14,7 +16,7 @@ class AddIntervalNextStepTimeWorkTimeCbData(CallbackData, prefix='add-service-en
 
 
 
-def add_work_time_interval_inl_kbd():
+def add_work_time_interval_inl_kbd(work_time):
     builder = InlineKeyboardBuilder()
 
     builder.row(InlineKeyboardButton(text="Часы", callback_data="hour"))
@@ -39,15 +41,23 @@ def add_work_time_interval_inl_kbd():
     for i in range(0, len(minutes_buttons), 4):
         builder.row(*minutes_buttons[i:i + 4])
 
-    buttons = [
-        InlineKeyboardButton(
-            text='Return',
-            callback_data='dadsa'
-        ),
-        InlineKeyboardButton(
+    builder.row(InlineKeyboardButton(
             text=CONTINUED,
             callback_data=AddIntervalNextStepTimeWorkTimeCbData(next_step=True).pack()
-        )
+        ))
+
+    buttons = [
+        InlineKeyboardButton(
+            text=RETURN,
+            callback_data=AddMoreWorkTimeTimetableCbData.from_date(
+                time_start_work_day=work_time[0].time_start,
+                time_end_work_day=work_time[-1].time_end
+            ).pack()
+        ),
+        InlineKeyboardButton(
+            text=RETURN_ADMIN_PANEL,
+            callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
+
     ]
 
     builder.row(*buttons)
