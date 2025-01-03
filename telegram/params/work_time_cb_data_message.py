@@ -13,3 +13,5 @@ SELECT_START_AND_END_WORKING_DAY = 'You have to select the start and end of the 
 PICK_END_OF_THE_DAY = 'You have to pick the end of the day.'
 PICK_START_OF_THE_DAY = 'We have to choose the beginning of the work day.'
 CONTINUED = 'To be continued.'
+RETURN = 'Return'
+RETURN_ADMIN_PANEL = 'Admin panel'
