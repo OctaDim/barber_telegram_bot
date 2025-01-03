@@ -30,6 +30,8 @@ class Timetable(StatesGroup):
     work_time_id = State()
     name_new_client = State()
     phone_new_client = State()
+    date_day = State()
+    reserved_slot = State()
 
 
 @timetable_admin_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.TIMETABLE)

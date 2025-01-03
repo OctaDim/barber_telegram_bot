@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from telegram.keyboard_inline.work_time_add_days_inl_kbd import NextStepTimeWorkTimeCbData
 from telegram.keyboard_inline.work_time_interval_add_inl_kbd import IntervalNextStepTimeWorkTimeCbData
-from telegram.params.work_time_cb_data_message import CONTINUED
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN
 
 
 class StartWorkCbData(CallbackData, prefix='start-work'):
@@ -43,7 +43,7 @@ def add_work_time_inl_kbd(
 
     buttons = [
         InlineKeyboardButton(
-            text='Return', callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year,active_return=True).pack()),
+            text=RETURN, callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year,active_return=True).pack()),
         InlineKeyboardButton(text=CONTINUED, callback_data=NextStepAddWorkTime(next_step=True).pack())
     ]
 

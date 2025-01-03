@@ -4,6 +4,10 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
+from telegram.keyboard_inline.timetable_get_day_inl_kbd import NextStepDaysTimetableCbData
+from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
+
 
 class CurrentTimeStartWorkTimeCbData(CallbackData, prefix='new-time-start-work-time'):
     pass
@@ -39,14 +43,19 @@ def add_more_work_time_inl_kbd(time_start: datetime, time_end: datetime):
 
     buttons = [
         InlineKeyboardButton(
-            text='Return',
-            callback_data='dsa'
+            text=RETURN,
+            callback_data=NextStepDaysTimetableCbData(
+                next_step=True).pack()
         ),
         InlineKeyboardButton(
+            text=RETURN_ADMIN_PANEL,
+            callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
+    ]
+
+    builder.row(InlineKeyboardButton(
             text='Continue',
             callback_data=NextStepAddNewWorkTimeCbData().pack()
-        )
-    ]
+        ))
 
     builder.row(*buttons)
 
