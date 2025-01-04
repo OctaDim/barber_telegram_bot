@@ -7,7 +7,7 @@ class MSG:
     TIME: str = "Время"
     NAME: str = "Имя"
     PRICE: str = "Цена"
-    DURATION: str = "Продолжительность"
+    DURATION: str = "Длительность"
     COST: str = "Стоимость"
     DESCRIPTION: str = "Описание"
     COUNT: str = "Количество"

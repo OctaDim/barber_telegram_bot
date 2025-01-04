@@ -8,7 +8,8 @@ from aiogram.utils.keyboard import (InlineKeyboardBuilder,
 from database.db_models.reservation_model import (
     Reservation)
 from telegram.config.configs import (
-    LANGUAGE_CONFIGS)
+    LANGUAGE_CONFIGS,
+    RESERVATIONS_CONFIGS)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_return_inline_button,
     create_main_menu_inline_button)
@@ -104,9 +105,14 @@ def get_reservation_client_user_inl_kbd(
         cur_reservation_cb_data = ReservationClickedDateTimeCBData(
             reservation_id=reservation_id).pack()
 
-        builder_inl_kbd.button(
-            text=f"{reservation_date_text} | {reservation_weekday}",
-            callback_data=cur_reservation_cb_data)
+        if RESERVATIONS_CONFIGS.SHOW_RESERVATION_WEEKDAY:
+            builder_inl_kbd.button(
+                text=f"{reservation_date_text} {reservation_weekday}",
+                callback_data=cur_reservation_cb_data)
+        else:
+            builder_inl_kbd.button(
+                text=f"{reservation_date_text}",
+                callback_data=cur_reservation_cb_data)
 
         builder_inl_kbd.button(
             text=f"{time_start_text}  -  {time_end_text}",
