@@ -31,7 +31,7 @@ from telegram.params.services_btn_admin_message import (
     AddTimeDurationServiceMessage,
     AddPriceMessage,
     GetDecision,
-    ChangeService
+    ChangeService, service_details_message
 )
 
 from database.db_queries.admin_queries import add_services
@@ -128,12 +128,15 @@ async def preview_service(message: Message, state: FSMContext, cb_data=None):
 
     time_duration = get_time_duration_for_admin_preview(hours=data['duration_hours'], minutes=data['duration_minutes'])
 
-    await message.answer(text=f'Name: {data["name"]}\n'
-                              f'Description: {data["description"]}\n'
-                              f'Time duration: {time_duration}\n'
-                              f'Price: {data["price"]}\n',
-                         reply_markup=get_keyboard()
-                         )
+    await message.answer(
+        text=service_details_message.format(
+            data["name"],
+            data["description"],
+            time_duration,
+            data["price"]
+        ),
+        reply_markup=get_keyboard()
+    )
 
     await state.set_state(Services.decision)
 
@@ -224,12 +227,16 @@ async def services_change_or_remove(message: Message, state: FSMContext):
                 minutes=minutes
             )
 
-            massage = await message.answer(text=f'Name: {service.name}\n'
-                                                f'Description: {service.description}\n'
-                                                f'Time duration: {time_duration}\n'
-                                                f'Price: {service.price}\n',
-                                           reply_markup=services_select_inl_kbd(action=True, id_service=service.id)
-                                           )
+            massage = await message.answer(
+                text=service_details_message.format(
+                    service.name,
+                    service.description,
+                    time_duration,
+                    service.price
+                ),
+                reply_markup=services_select_inl_kbd(
+                    action=True, id_service=service.id)
+            )
             messages_id.append(massage.message_id)
 
         return await state.update_data(messages_id=messages_id)
@@ -244,12 +251,15 @@ async def services_change_or_remove(message: Message, state: FSMContext):
             minutes=minutes
         )
 
-        message = await message.answer(text=f'Name: {service.name}\n'
-                                            f'Description: {service.description}\n'
-                                            f'Time duration: {time_duration}\n'
-                                            f'Price: {service.price}\n',
-                                       reply_markup=services_select_inl_kbd(id_service=service.id, quantity=len(data))
-                                       )
+        message = await message.answer(
+            text=service_details_message.format(
+                service.name,
+                service.description,
+                time_duration,
+                service.price
+            ),
+            reply_markup=services_select_inl_kbd(id_service=service.id, quantity=len(data))
+        )
 
         messages_id.append(message.message_id)
 

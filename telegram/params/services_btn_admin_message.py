@@ -25,3 +25,11 @@ class ChangeService:
     NAME = 'Enter a new name for the service'
     DESCRIPTION = 'Enter a new description for the service'
     PRICE = 'Enter a new price for the service'
+
+
+service_details_message = (
+    "Name: {}\n"
+    "Description: {}\n"
+    "Time duration: {}\n"
+    "Price: {}\n"
+)
