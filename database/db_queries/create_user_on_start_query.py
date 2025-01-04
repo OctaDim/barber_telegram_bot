@@ -1,3 +1,5 @@
+import re
+
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
 from database.db_models.master_model import Master
@@ -9,6 +11,12 @@ manager = DBConnection(db_url=db_engine_url)
 
 def create_user_on_start(data: dict, master: bool):
     with manager as session:
+        user = session.query(User).filter(
+            User.telegram_id == data.get('id')).one_or_none()
+
+        if user:
+            return True
+
         if master:
             role_objs = session.query(UserRole).filter(UserRole.name == 'Master').all()
         else:
@@ -22,6 +30,9 @@ def create_user_on_start(data: dict, master: bool):
             'birth_date': data.get('birthdate'),
             'user_roles': role_objs
         }
+
+        if re.match(r'^[\sᅠ]*$', valid_data.get('first_name')):
+            return False
 
         user = User(**valid_data)
 
@@ -38,3 +49,5 @@ def create_user_on_start(data: dict, master: bool):
 
             session.add(Master(**valid_data))
             session.commit()
+
+        return True
