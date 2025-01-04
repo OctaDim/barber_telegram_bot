@@ -2,7 +2,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.work_time_cb_data_message import RETURN_ADMIN_PANEL
+from telegram.params.work_time_cb_data_message import RETURN_ADMIN_PANEL, RETURN, continue_button_text
 from utilities.get_days_calendar import get_days_in_month
 
 
@@ -63,7 +63,7 @@ def work_time_days_inl_kbd(mount: str, year: int, current_date, master_id):
 
     buttons = [
         InlineKeyboardButton(
-            text='Return',
+            text=RETURN,
             callback_data=ReturnStepToMonthWorkTimeCbData(active=True).pack()
         ),
         InlineKeyboardButton(
@@ -73,7 +73,7 @@ def work_time_days_inl_kbd(mount: str, year: int, current_date, master_id):
     ]
 
     builder.row(InlineKeyboardButton(
-            text='Продолжить',
+            text=continue_button_text,
             callback_data=NextStepTimeWorkTimeCbData(mount=mount, year=year, active_return=False).pack()
         ))
 

@@ -1,5 +1,7 @@
 import re
 
+from telegram.params.work_time_cb_data_message import hour_abbreviation
+
 
 def get_the_time_from_the_inl_keyboard(keyboard):
     data = ''
@@ -7,7 +9,7 @@ def get_the_time_from_the_inl_keyboard(keyboard):
     for row in keyboard:
         for button in row:
             if '✅' in button.text:
-                if 'h' in button.text:
+                if hour_abbreviation in button.text:
                     button_text = re.sub(r'\D+', '', button.callback_data)
                     data += str(button_text)
                     continue

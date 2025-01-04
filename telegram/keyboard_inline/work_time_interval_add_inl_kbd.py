@@ -4,7 +4,8 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.keyboard_inline.work_time_add_month_inl_kbd import MonthWorkTimeCbData
-from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL, minutes_label, hours_label, \
+    hours_step_label_template, minutes_step_label_template, hour_label
 
 
 class HoursIntervalWorkTimeCbData(CallbackData, prefix='hours-work-time-interval'):
@@ -18,24 +19,24 @@ class IntervalNextStepTimeWorkTimeCbData(CallbackData, prefix='service-end-time-
 def add_interval_work_time_services_inl_kbd(mount: str, year: int):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Часы", callback_data="hour"))
+    builder.row(InlineKeyboardButton(text=hours_label, callback_data=hour_label))
 
     hours_buttons = []
     for hours_step in range(0, 12):
-        callback_data = HoursIntervalWorkTimeCbData(time=f"{hours_step}h")
+        callback_data = HoursIntervalWorkTimeCbData(time=hours_step_label_template.format(hours_step))
 
-        hours_buttons.append(InlineKeyboardButton(text=f"{hours_step}h", callback_data=callback_data.pack()))
+        hours_buttons.append(InlineKeyboardButton(text=hours_step_label_template.format(hours_step), callback_data=callback_data.pack()))
 
     for i in range(0, len(hours_buttons), 4):
         builder.row(*hours_buttons[i:i + 4])
 
-    builder.row(InlineKeyboardButton(text="Минуты", callback_data="minutes"))
+    builder.row(InlineKeyboardButton(text=minutes_label, callback_data=minutes_label))
 
     minutes_buttons = []
     for minutes_step in range(0, 60, 5):
-        callback_data = HoursIntervalWorkTimeCbData(time=f"{minutes_step}m")
+        callback_data = HoursIntervalWorkTimeCbData(time=minutes_step_label_template.format(minutes_step))
 
-        minutes_buttons.append(InlineKeyboardButton(text=f"{minutes_step}m", callback_data=callback_data.pack()))
+        minutes_buttons.append(InlineKeyboardButton(text=minutes_step_label_template.format(minutes_step), callback_data=callback_data.pack()))
 
     for i in range(0, len(minutes_buttons), 4):
         builder.row(*minutes_buttons[i:i + 4])

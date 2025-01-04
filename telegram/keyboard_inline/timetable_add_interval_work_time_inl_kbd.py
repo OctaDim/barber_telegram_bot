@@ -4,7 +4,8 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_info_about_work_day_inl_kbd import AddMoreWorkTimeTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL
+from telegram.params.work_time_cb_data_message import CONTINUED, RETURN, RETURN_ADMIN_PANEL, hours_label, \
+    hours_step_label_template, minutes_label, minutes_step_label_template, continue_button_text
 
 
 class AddIntervalWorkTimeCbData(CallbackData, prefix='add-work-time-interval'):
@@ -19,32 +20,32 @@ class AddIntervalNextStepTimeWorkTimeCbData(CallbackData, prefix='add-service-en
 def add_work_time_interval_inl_kbd(work_time):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text="Часы", callback_data="hour"))
+    builder.row(InlineKeyboardButton(text=hours_label, callback_data="hour"))
 
     hours_buttons = []
     for hours_step in range(0, 12):
-        callback_data = AddIntervalWorkTimeCbData(time=f"{hours_step}h")
-
-        hours_buttons.append(InlineKeyboardButton(text=f"{hours_step}h", callback_data=callback_data.pack()))
+        time = hours_step_label_template.format(hours_step)
+        callback_data = AddIntervalWorkTimeCbData(time=time)
+        hours_buttons.append(InlineKeyboardButton(text=time, callback_data=callback_data.pack()))
 
     for i in range(0, len(hours_buttons), 4):
         builder.row(*hours_buttons[i:i + 4])
 
-    builder.row(InlineKeyboardButton(text="Минуты", callback_data="minutes"))
+    builder.row(InlineKeyboardButton(text=minutes_label, callback_data="minutes"))
 
     minutes_buttons = []
     for minutes_step in range(0, 60, 5):
-        callback_data = AddIntervalWorkTimeCbData(time=f"{minutes_step}m")
-
-        minutes_buttons.append(InlineKeyboardButton(text=f"{minutes_step}m", callback_data=callback_data.pack()))
+        time = minutes_step_label_template.format(minutes_step)
+        callback_data = AddIntervalWorkTimeCbData(time=time)
+        minutes_buttons.append(InlineKeyboardButton(text=time, callback_data=callback_data.pack()))
 
     for i in range(0, len(minutes_buttons), 4):
         builder.row(*minutes_buttons[i:i + 4])
 
     builder.row(InlineKeyboardButton(
-            text=CONTINUED,
-            callback_data=AddIntervalNextStepTimeWorkTimeCbData(next_step=True).pack()
-        ))
+        text=continue_button_text,
+        callback_data=AddIntervalNextStepTimeWorkTimeCbData(next_step=True).pack()
+    ))
 
     buttons = [
         InlineKeyboardButton(
@@ -56,8 +57,8 @@ def add_work_time_interval_inl_kbd(work_time):
         ),
         InlineKeyboardButton(
             text=RETURN_ADMIN_PANEL,
-            callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
-
+            callback_data=BackToAdminMenuTimetableCbData(active=True).pack()
+        )
     ]
 
     builder.row(*buttons)

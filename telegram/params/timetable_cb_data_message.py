@@ -16,4 +16,10 @@ work_start_end_time_cannot_match_error = "Work start and end time cannot be the 
 interval_overlap_with_work_time_message = "You added an interval starting at {}, but it overlaps with the main work time {} - {}"
 work_end_before_start_error = "Work end time {} cannot be earlier than the start time {}. Please enter a valid end time."
 invalid_action_message = "This is not allowed."
-
+available_label = "Available"
+overlapped_label = "Overlapped"
+break_label = "Break"
+add_work_time_label = "Add work time"
+return_time_label = "Return time"
+page_label_template = "PAGE {}/{}"
+make_time_active_label = "Make time active"

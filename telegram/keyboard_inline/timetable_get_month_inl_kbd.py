@@ -3,7 +3,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
 
 from database.db_queries.work_time_queries import get_working_time_month_by_month_by_year
-from telegram.params.work_time_cb_data_message import RETURN
+from telegram.params.work_time_cb_data_message import RETURN, back_action, next_action
 from utilities.get_month_calendar_for_timetable import get_month_dict_for_timetable
 
 
@@ -25,9 +25,9 @@ def timetable_get_month_inl_kbd(year: int, month: int):
     builder = InlineKeyboardBuilder()
 
     first_row = [
-        InlineKeyboardButton(text='<<', callback_data=YearTimetableCbData(year=year, action='back').pack()),
+        InlineKeyboardButton(text='<<', callback_data=YearTimetableCbData(year=year, action=back_action).pack()),
         InlineKeyboardButton(text=f'{year}', callback_data=f'{year}'),
-        InlineKeyboardButton(text='>>', callback_data=YearTimetableCbData(year=year, action='next').pack()),
+        InlineKeyboardButton(text='>>', callback_data=YearTimetableCbData(year=year, action=next_action).pack()),
     ]
 
     builder.row(*first_row)
