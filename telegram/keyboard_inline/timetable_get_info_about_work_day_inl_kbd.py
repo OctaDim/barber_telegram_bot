@@ -8,7 +8,7 @@ from telegram.keyboard_inline.timetable_get_day_inl_kbd import BackToMonthTimeta
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import MonthTimetableCbData, BackToAdminMenuTimetableCbData
 from telegram.params.timetable_cb_data_message import available_label, overlapped_label, break_label, \
     add_work_time_label, page_label_template
-from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, back_action, next_action
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, PRIOR_PAGE, NEXT_PAGE
 from utilities.get_select_date_for_timetable import get_select_date
 
 
@@ -91,7 +91,7 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
     second_row = [
         InlineKeyboardButton(text='<<<',
                              callback_data=SelectDayTimetableCbData.from_date(
-                                 action=back_action,
+                                 action=PRIOR_PAGE,
                                  date_day=date.date()).pack()),
 
         InlineKeyboardButton(text=f'{date_data.get('weekday')}',
@@ -101,7 +101,7 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
 
         InlineKeyboardButton(text='>>>',
                              callback_data=SelectDayTimetableCbData.from_date(
-                                 action=next_action,
+                                 action=NEXT_PAGE,
                                  date_day=date.date()).pack())
     ]
 

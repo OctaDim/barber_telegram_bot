@@ -2,8 +2,8 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
-from telegram.params.work_time_cb_data_message import CONTINUED, hours_label, hour_label, minutes_step_label_template, \
-    hours_step_label_template, minutes_label, hour_step_label_template, minute_step_label_template
+from telegram.params.work_time_cb_data_message import CONTINUED, HOURS_LABEL, HOUR_LABEL, MINUTES_STEP_LABEL_TEMPLATE, \
+    HOURS_STEP_LABEL_TEMPLATE, MINUTES_LABEL, HOUR_STEP_LABEL_TEMPLATE, MINUTE_STEP_LABEL_TEMPLATE
 
 
 class StartWorkTimeCbData(CallbackData, prefix='work-time-start'):
@@ -17,36 +17,36 @@ class NextStepStartWorkTimeCbData(CallbackData, prefix='work-time-start-next-ste
 def add_start_time_work_inl_kbd():
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text=hours_label, callback_data=hour_label))
+    builder.row(InlineKeyboardButton(text=HOURS_LABEL, callback_data=HOUR_LABEL))
 
     hours_buttons = []
 
     for hour_step in range(0, 24):
         if len(str(hour_step)) == 2:
-            callback_data = StartWorkTimeCbData(time_start=hours_step_label_template.format(hour_step))
+            callback_data = StartWorkTimeCbData(time_start=HOURS_STEP_LABEL_TEMPLATE.format(hour_step))
             hours_buttons.append(InlineKeyboardButton(
-                text=hours_step_label_template.format(hour_step), callback_data=callback_data.pack()))
+                text=HOURS_STEP_LABEL_TEMPLATE.format(hour_step), callback_data=callback_data.pack()))
             continue
 
-        callback_data = StartWorkTimeCbData(time_start=hour_step_label_template.format(hour_step))
-        hours_buttons.append(InlineKeyboardButton(text=hour_step_label_template.format(hour_step), callback_data=callback_data.pack()))
+        callback_data = StartWorkTimeCbData(time_start=HOUR_STEP_LABEL_TEMPLATE.format(hour_step))
+        hours_buttons.append(InlineKeyboardButton(text=HOUR_STEP_LABEL_TEMPLATE.format(hour_step), callback_data=callback_data.pack()))
 
     for i in range(0, len(hours_buttons), 5):
         builder.row(*hours_buttons[i:i+5])
 
     builder.row(InlineKeyboardButton(
-        text=minutes_label, callback_data=minutes_label))
+        text=MINUTES_LABEL, callback_data=MINUTES_LABEL))
 
     minutes_buttons = []
     for minutes_step in range(0, 60, 5):
         if len(str(minutes_step)) == 2:
-            callback_data = StartWorkTimeCbData(time_start=minutes_step_label_template.format(minutes_step))
+            callback_data = StartWorkTimeCbData(time_start=MINUTES_STEP_LABEL_TEMPLATE.format(minutes_step))
             minutes_buttons.append(InlineKeyboardButton(
-                text=minutes_step_label_template.format(minutes_step), callback_data=callback_data.pack()))
+                text=MINUTES_STEP_LABEL_TEMPLATE.format(minutes_step), callback_data=callback_data.pack()))
             continue
 
-        callback_data = StartWorkTimeCbData(time_start=minute_step_label_template.format(minutes_step))
-        minutes_buttons.append(InlineKeyboardButton(text=minute_step_label_template.format(minutes_step), callback_data=callback_data.pack()))
+        callback_data = StartWorkTimeCbData(time_start=MINUTE_STEP_LABEL_TEMPLATE.format(minutes_step))
+        minutes_buttons.append(InlineKeyboardButton(text=MINUTE_STEP_LABEL_TEMPLATE.format(minutes_step), callback_data=callback_data.pack()))
 
     for i in range(0, len(minutes_buttons), 4):
         builder.row(*minutes_buttons[i:i + 4])
@@ -55,4 +55,3 @@ def add_start_time_work_inl_kbd():
     builder.row(InlineKeyboardButton(text=CONTINUED, callback_data=callback_data.pack()))
 
     return builder.as_markup()
-

@@ -17,8 +17,6 @@ from telegram.params.messages import (
     SLOTS_RECOMMENDATIONS)
 from telegram.params.messages_inserts import (
     MSG)
-from telegram.params.messages_multiline import (
-    SELECTED_SERVICES_CONGRATS)
 
 
 def get_service_brief_info(
@@ -164,12 +162,13 @@ def get_slots_advising_explanation():
     return text
 
 
-def get_summary_services_with_slot(date_text: str,
+def get_summary_services_with_slot(congratulation_text: str,
+                                   date_text: str,
                                    summary_text: str,
                                    slot_time_start: str,
                                    slot_time_end: str) -> str:
     complete_text = (
-        f"{SELECTED_SERVICES_CONGRATS}\n\n"
+        f"{congratulation_text}\n\n"
         f"{CALENDAR_ICONS.CALENDAR} <b>{MSG.SELECTED_DATE}:</b>\n"
         f"{date_text}\n\n"
         f"{summary_text}\n\n"

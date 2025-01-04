@@ -53,7 +53,7 @@ from telegram.params.timetable_cb_data_message import SELECT_A_DAYS, SELECT_A_MO
     current_work_time_message, work_start_end_time_cannot_match_error, interval_overlap_with_work_time_message, \
     work_end_before_start_error, invalid_action_message
 from telegram.params.work_time_cb_data_message import CHOOSE_TWO_VALUE, ADD_INTERVAL, INTERVAL_CANNOT_BE_0H_OM, RETURN, \
-    RETURN_ADMIN_PANEL, back_action, next_action
+    RETURN_ADMIN_PANEL, PRIOR_PAGE, NEXT_PAGE
 
 from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
 from utilities.calendar_utils import get_month_name_by_number
@@ -216,7 +216,7 @@ async def get_the_previous_or_next_day(
 
     previous_number, next_number = get_previous_or_next_int(list_integers=days, select_integer=day)
 
-    if cb_data.get('action') == back_action:
+    if cb_data.get('action') == PRIOR_PAGE:
         if previous_number:
             work_time = get_day_work_time(date_day=cb_data.get('date_day').replace(day=previous_number))
             break_time = get_break_time_by_day(date_day=cb_data.get('date_day').replace(day=previous_number))
@@ -264,7 +264,7 @@ async def get_the_previous_or_next_day(
 
         return await callback_query.answer(text=no_previous_records_message, show_alert=True)
 
-    if cb_data.get('action') == next_action:
+    if cb_data.get('action') == NEXT_PAGE:
         if next_number:
             work_time = get_day_work_time(date_day=cb_data.get('date_day').replace(day=next_number))
             break_time = get_break_time_by_day(date_day=cb_data.get('date_day').replace(day=next_number))

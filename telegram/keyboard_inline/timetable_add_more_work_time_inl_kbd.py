@@ -6,7 +6,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_day_inl_kbd import NextStepDaysTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, continue_button_text
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, CONTINUE_BUTTON_TXT
 
 
 class CurrentTimeStartWorkTimeCbData(CallbackData, prefix='new-time-start-work-time'):
@@ -53,7 +53,7 @@ def add_more_work_time_inl_kbd(time_start: datetime, time_end: datetime):
     ]
 
     builder.row(InlineKeyboardButton(
-            text=continue_button_text,
+            text=CONTINUE_BUTTON_TXT,
             callback_data=NextStepAddNewWorkTimeCbData().pack()
         ))
 

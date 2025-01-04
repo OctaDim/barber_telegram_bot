@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
-from telegram.params.work_time_cb_data_message import hours_label, minutes_label, continue_button_text
+from telegram.params.work_time_cb_data_message import HOURS_LABEL, MINUTES_LABEL, CONTINUE_BUTTON_TXT
 
 
 class TimeServicesWorkTimeCbData(CallbackData, prefix='start-time-work-time'):
@@ -16,7 +16,7 @@ class AddServiceDurationWorkTimeCbData(CallbackData, prefix='add-duration-time')
 def add_duration_services_work_time_services_inl_kbd(time_start: list = None):
     builder = InlineKeyboardBuilder()
 
-    builder.row(InlineKeyboardButton(text=hours_label, callback_data="hour"))
+    builder.row(InlineKeyboardButton(text=HOURS_LABEL, callback_data="hour"))
 
     hours_buttons = []
     for hours_step in range(1, 17):
@@ -27,7 +27,7 @@ def add_duration_services_work_time_services_inl_kbd(time_start: list = None):
     for i in range(0, len(hours_buttons), 4):
         builder.row(*hours_buttons[i:i+4])
 
-    builder.row(InlineKeyboardButton(text=minutes_label, callback_data="minutes"))
+    builder.row(InlineKeyboardButton(text=MINUTES_LABEL, callback_data="minutes"))
 
     minutes_buttons = []
     for minutes_step in range(0, 60, 5):
@@ -39,6 +39,6 @@ def add_duration_services_work_time_services_inl_kbd(time_start: list = None):
         builder.row(*minutes_buttons[i:i+4])
 
     callback_data = AddServiceDurationWorkTimeCbData(next_step=True)
-    builder.row(InlineKeyboardButton(text=continue_button_text, callback_data=callback_data.pack()))
+    builder.row(InlineKeyboardButton(text=CONTINUE_BUTTON_TXT, callback_data=callback_data.pack()))
 
     return builder.as_markup()

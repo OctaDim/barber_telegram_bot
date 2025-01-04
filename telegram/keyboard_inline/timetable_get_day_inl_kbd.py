@@ -4,7 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 from datetime import datetime
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, continue_button_text
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, CONTINUE_BUTTON_TXT
 from utilities.get_days_calendar_by_timetable import get_days_in_month_by_logbook
 
 
@@ -81,7 +81,7 @@ def timetable_get_day_inl_kbd(month: int, year: int, date_days: dict, current_da
         builder.button(text=day, callback_data='day')
 
     callback_data = NextStepDaysTimetableCbData(next_step=True)
-    builder.button(text=continue_button_text, callback_data=callback_data.pack())
+    builder.button(text=CONTINUE_BUTTON_TXT, callback_data=callback_data.pack())
 
     builder.adjust(1, 7)
 

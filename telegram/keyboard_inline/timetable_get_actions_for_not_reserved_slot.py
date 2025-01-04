@@ -5,8 +5,8 @@ from aiogram.filters.callback_data import CallbackData
 from telegram.keyboard_inline.timetable_get_day_inl_kbd import NextStepDaysTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.params.timetable_cb_data_message import return_time_label
-from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, book_client_label, overlap_time_label, \
-    edit_label
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, ENROLL_CLIENT, OVERLAP_TIME_LABEL, \
+    EDIT_LABEL
 
 
 class BlockOutTimeCbData(CallbackData, prefix='block-out-time'):
@@ -30,15 +30,15 @@ def get_actions_for_not_reserved_slot(
     if work_time_active is True:
         buttons = [
             InlineKeyboardButton(
-                text=book_client_label,
+                text=ENROLL_CLIENT,
                 callback_data=AddClientToSlot(work_time_id=work_time_id).pack()
             ),
             InlineKeyboardButton(
-                text=overlap_time_label,
+                text=OVERLAP_TIME_LABEL,
                 callback_data=BlockOutTimeCbData(work_time_id=work_time_id).pack(),
             ),
             InlineKeyboardButton(
-                text=edit_label,
+                text=EDIT_LABEL,
                 callback_data=ChangeTimeSlot(work_time_id=work_time_id).pack()
             )
         ]
