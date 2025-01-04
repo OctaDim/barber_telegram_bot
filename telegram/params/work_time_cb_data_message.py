@@ -27,8 +27,19 @@ break_cannot_end_after_workday_end = "Break cannot end after the workday end."
 break_end_before_workday_start_error = "Break end cannot be earlier than the workday start."
 break_end_not_in_interval_error = "Break end does not fall within the selected interval {}."
 break_end_before_start_error = "Your break end time is set before the start time {}."
-
-
-
-
-
+next_action = 'next'
+back_action = 'back'
+continue_button_text = "Continue"
+hours_label = "Hours"
+minutes_label = "Minutes"
+hours_step_label_template = "{}h"
+minutes_step_label_template = "{}m"
+hour_label = "hour"
+yes_label = "yes"
+no_label = 'no'
+hour_abbreviation = "h"
+hour_step_label_template = "0{}h"
+minute_step_label_template = "0{}m"
+book_client_label = "Book client."
+overlap_time_label = "Overlap time"
+edit_label = "Edit"

@@ -46,7 +46,7 @@ def add_work_time_inl_kbd(
         InlineKeyboardButton(
             text=RETURN,
             callback_data=NextStepTimeWorkTimeCbData(
-                mount=mount, year=year,active_return=True).pack()),
+                mount=mount, year=year, active_return=True).pack()),
         InlineKeyboardButton(
             text=RETURN_ADMIN_PANEL,
             callback_data=BackToAdminMenuTimetableCbData(active=True).pack())

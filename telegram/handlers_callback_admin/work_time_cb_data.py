@@ -45,7 +45,7 @@ from telegram.params.work_time_cb_data_message import SELECT_A_MONTH, PICK_DAY, 
     add_break_prompt, add_break_time_prompt, add_break_start_time_prompt, add_break_end_time_prompt, \
     break_cannot_start_before_workday, break_cannot_start_after_workday_end, break_start_not_in_interval_prompt, \
     break_start_after_end_error, break_end_before_workday_start_error, break_cannot_end_after_workday_end, \
-    break_end_not_in_interval_error, break_end_before_start_error
+    break_end_not_in_interval_error, break_end_before_start_error, next_action, no_label
 from utilities.save_work_time_data_in_db import save_work_time_data_in_db
 from utilities.tick_the_butthon import tick_the_button
 from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
@@ -77,7 +77,7 @@ async def get_another_month(
     year = callback_data.year
     month = callback_query.message.date.month
 
-    if callback_data.action == 'next':
+    if callback_data.action == next_action:
         year += 1
         if year != callback_query.message.date.year:
             month = 1
@@ -428,7 +428,7 @@ async def get_response_add_break(
     cb_data = callback_data.response
     state_data = await state.get_data()
 
-    if cb_data == 'no':
+    if cb_data == no_label:
         await bot.delete_message(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id

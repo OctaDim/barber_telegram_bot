@@ -6,7 +6,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_info_about_work_day_inl_kbd import WorkTimeSlotTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
+from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, continue_button_text
 
 
 class TimeStartSlotTimetableCbData(CallbackData, prefix='time-start-slot'):
@@ -48,7 +48,9 @@ def refresh_slot_time_inl_kbd(
 
     callback_data = ContinueRefreshSlotTimeCbData(active=True).pack()
     builder.row(
-        InlineKeyboardButton(text='Continue', callback_data=callback_data)
+        InlineKeyboardButton(
+            text=continue_button_text,
+            callback_data=callback_data)
     )
 
     builder.row(
