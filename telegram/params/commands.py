@@ -14,4 +14,4 @@ class COMMANDS_PARAMS:
 
     class ADMIN_PANEL:
         TEXT: str = "admin"
-        DESCRIPTION: str = "⚙️ Панель Админа"
+        DESCRIPTION: str = "⚙️ Меню Администратора"
