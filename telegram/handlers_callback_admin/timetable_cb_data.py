@@ -47,8 +47,13 @@ from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.params.button_admin_panel_or_main_menu import ButtonAdminPanelOrMainMenu
 from telegram.params.messages import SUCCESSFULLY
 from telegram.params.timetable_cb_data_message import SELECT_A_DAYS, SELECT_A_MONTH, SELECT_A_DAYS_SHOW_ALERT, \
-    SLOT_MANAGEMENT
-from telegram.params.work_time_cb_data_message import CHOOSE_TWO_VALUE, ADD_INTERVAL, INTERVAL_CANNOT_BE_0H_OM, RETURN
+    SLOT_MANAGEMENT, no_previous_records_message, no_next_records_message, select_action_prompt, enter_new_time_prompt, \
+    enter_new_slot_start_time_prompt, new_time_cannot_be_less_or_equal_error, \
+    new_time_cannot_start_later_than_old_error, enter_new_slot_end_time_prompt, success_message, \
+    current_work_time_message, work_start_end_time_cannot_match_error, interval_overlap_with_work_time_message, \
+    work_end_before_start_error, invalid_action_message
+from telegram.params.work_time_cb_data_message import CHOOSE_TWO_VALUE, ADD_INTERVAL, INTERVAL_CANNOT_BE_0H_OM, RETURN, \
+    RETURN_ADMIN_PANEL
 
 from telegram.telegram_utils.fsm_states_utils import get_valid_list_by_fsm_state_key
 from utilities.calendar_utils import get_month_name_by_number
@@ -167,7 +172,6 @@ async def get_day_work_time_timetable(
 ):
     state_data = await state.get_data()
     state_date_day = state_data.get('date_day')
-    print(state_date_day)
 
     if state_date_day is None:
         keyboard = callback_query.message.reply_markup.inline_keyboard
@@ -189,7 +193,7 @@ async def get_day_work_time_timetable(
         text=SLOT_MANAGEMENT,
         reply_markup=get_info_about_work_day(work_time=work_time, break_time=break_time)
     )
-    print(date_day)
+
     await state.update_data(date_day=date_day)
 
 
@@ -258,7 +262,7 @@ async def get_the_previous_or_next_day(
                 month=data_previous_month.get('month'),
                 year=data_previous_month.get('year')))
 
-        return await callback_query.answer(text='Нет предыдущих записей.', show_alert=True)
+        return await callback_query.answer(text=no_previous_records_message, show_alert=True)
 
     if cb_data.get('action') == 'next':
         if next_number:
@@ -305,7 +309,7 @@ async def get_the_previous_or_next_day(
                 month=data_next_month.get('month'),
                 year=data_next_month.get('year')))
 
-        return await callback_query.answer(text='Нет сдедующих записей.', show_alert=True)
+        return await callback_query.answer(text=no_next_records_message, show_alert=True)
 
 
 @timetable_cb_query.callback_query(WorkTimeSlotTimetableCbData.filter(), ReservedSlotFilter())
@@ -344,7 +348,7 @@ async def get_action_by_clear_slot(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Select action.',
+        text=select_action_prompt,
         reply_markup=get_actions_for_not_reserved_slot(
             work_time_id=work_time_id,
             work_time_active=work_time_obj.active,
@@ -395,7 +399,7 @@ async def change_slot_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время',
+        text=enter_new_time_prompt,
         reply_markup=refresh_slot_time_inl_kbd(
             time_start=slot.time_start,
             time_end=slot.time_end,
@@ -419,7 +423,7 @@ async def get_inl_kbd_add_new_time_start(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время начала слота',
+        text=enter_new_slot_start_time_prompt,
         reply_markup=add_new_time_start_slot()
     )
 
@@ -437,7 +441,7 @@ async def get_start_time_slot(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время начала слота',
+        text=enter_new_slot_start_time_prompt,
         reply_markup=new_keyboard
     )
 
@@ -460,10 +464,10 @@ async def next_step_start_time_slot(
     work_time_obj = cb_data.get('work_time_obj')
 
     if time_start <= work_time_obj.time_start.time():
-        return await callback_query.answer(text='Новое время не может быть меньше или равно старому', show_alert=True)
+        return await callback_query.answer(text=new_time_cannot_be_less_or_equal_error, show_alert=True)
 
     if time_start >= work_time_obj.time_end.time():
-        return await callback_query.answer(text='Новое врем не может начинаться позднее чем старое', show_alert=True)
+        return await callback_query.answer(text=new_time_cannot_start_later_than_old_error, show_alert=True)
 
     time_end = cb_data.get('time_end_slot')
     time_start = work_time_obj.time_start.replace(hour=time_start.hour, minute=time_start.minute)
@@ -471,7 +475,7 @@ async def next_step_start_time_slot(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время',
+        text=enter_new_time_prompt,
         reply_markup=refresh_slot_time_inl_kbd(
             time_start=time_start,
             time_end=time_end,
@@ -491,7 +495,7 @@ async def get_inl_kbd_add_new_time_end(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время конца слота',
+        text=enter_new_slot_end_time_prompt,
         reply_markup=add_new_time_end_slot()
     )
 
@@ -509,7 +513,7 @@ async def get_end_time_slot(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время конца слота',
+        text=enter_new_slot_end_time_prompt,
         reply_markup=new_keyboard
     )
 
@@ -532,10 +536,10 @@ async def next_step_end_time_slot(
     work_time_obj = cb_data.get('work_time_obj')
 
     if time_end >= work_time_obj.time_end.time():
-        return await callback_query.answer(text='Новое время не может быть меньше или равно старому', show_alert=True)
+        return await callback_query.answer(text=new_time_cannot_be_less_or_equal_error, show_alert=True)
 
     if time_end <= work_time_obj.time_start.time():
-        return await callback_query.answer(text='Новое врем не может начинаться позднее чем старое', show_alert=True)
+        return await callback_query.answer(text=new_time_cannot_start_later_than_old_error, show_alert=True)
 
     time_start = cb_data.get('time_start_slot')
     time_end = work_time_obj.time_end.replace(hour=time_end.hour, minute=time_end.minute)
@@ -543,7 +547,7 @@ async def next_step_end_time_slot(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Введите новое время',
+        text=enter_new_time_prompt,
         reply_markup=refresh_slot_time_inl_kbd(
             time_start=time_start,
             time_end=work_time_obj.time_end.replace(hour=time_end.hour, minute=time_end.minute),
@@ -611,7 +615,7 @@ async def refresh_slot_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(work_time=work_time_list, break_time=break_time_list)
         )
 
@@ -627,7 +631,7 @@ async def get_action_break_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Select action',
+        text=select_action_prompt,
         reply_markup=get_action_break_time_inl_kbd(break_id=cb_data)
     )
 
@@ -642,7 +646,7 @@ async def create_new_work_time(
 
     date_day = create_work_time_by_break_time(break_id=break_id)
 
-    await callback_query.answer(text='Успешно', show_alert=True)
+    await callback_query.answer(text=success_message, show_alert=True)
 
     work_time_list = get_day_work_time(date_day=date_day)
     break_time_list = get_break_time_by_day(date_day=date_day)
@@ -650,7 +654,7 @@ async def create_new_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Выберите действие',
+        text=select_action_prompt,
         reply_markup=get_info_about_work_day(work_time=work_time_list, break_time=break_time_list)
     )
 
@@ -669,7 +673,7 @@ async def get_new_page(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Выберите действие',
+        text=select_action_prompt,
         reply_markup=get_info_about_work_day(
             work_time=work_time_list,
             break_time=break_time_list,
@@ -697,9 +701,10 @@ async def add_more_work_time(
         date_day=cb_data.get('time_end_work_day')
     )
 
-    text = (f'Текущее время работы составляет: \n'
-            f'{current_time_start_work_day.time().strftime("%H:%M")} - '
-            f'{current_time_end_work_day.time().strftime("%H:%M")}')
+    text = current_work_time_message.format(
+        current_time_start_work_day.time().strftime("%H:%M"),
+        current_time_end_work_day.time().strftime("%H:%M")
+    )
 
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
@@ -721,9 +726,10 @@ async def get_inl_kbd_add_new_time_start_work_time(
 ):
     state_data = await state.get_data()
 
-    text = (f'Текущее время работы составляет: \n'
-            f'{state_data.get("current_time_start_work_day").time().strftime("%H:%M")} - '
-            f'{state_data.get("current_time_end_work_day").time().strftime("%H:%M")}')
+    text = current_work_time_message.format(
+        state_data.get("current_time_start_work_day").time().strftime("%H:%M"),
+        state_data.get("current_time_end_work_day").time().strftime("%H:%M")
+    )
 
     await bot.edit_message_text(
         message_id=callback_query.message.message_id,
@@ -774,9 +780,11 @@ async def add_new_time_start_work_time(
 
     if current_time_start <= new_time_start < current_time_end or new_time_start == current_time_start:
         return await callback_query.answer(
-            text=f'Вы добавили интервал, начинающийся в {new_time_start.strftime('%H:%M')},'
-                 f' но он пересекается с основным рабочим временем {current_time_start.strftime('%H:%M')} - '
-                 f'{current_time_end.strftime('%H:%M')}',
+            text=interval_overlap_with_work_time_message.format(
+                new_time_start.strftime('%H:%M'),
+                current_time_start.strftime('%H:%M'),
+                current_time_end.strftime('%H:%M')
+            ),
             show_alert=True)
 
     if state_data.get('time_end_slot'):
@@ -784,14 +792,16 @@ async def add_new_time_start_work_time(
 
         if new_time_start == time_end:
             return await callback_query.answer(
-                text='Время начала и окончания работы не могут совпадать. Пожалуйста, введите корректное время окончания.',
+                text=work_start_end_time_cannot_match_error,
                 show_alert=True
             )
 
         if new_time_start > time_end:
             return await callback_query.answer(
-                text=f'Время окончания работы {time_end.strftime('%H:%M')} не может быть раньше времени начала'
-                     f' {new_time_start.strftime('%H:%M')}. Пожалуйста, введите корректное время окончания.',
+                text=work_end_before_start_error.format(
+                    time_end.strftime('%H:%M'),
+                    new_time_start.strftime('%H:%M')
+                ),
                 show_alert=True
             )
 
@@ -872,13 +882,14 @@ async def add_new_time_end_work_time(
     if state_data.get('time_start_slot'):
         if time_start.time() > time_end:
             return await callback_query.answer(
-                text=f'Время окончания работы {time_end.strftime('%H:%M')} не может быть раньше времени начала'
-                     f' {time_start.strftime('%H:%M')}. Пожалуйста, введите корректное время окончания.',
+                text=work_end_before_start_error.format(
+                    time_end.strftime('%H:%M'),
+                    time_start.strftime('%H:%M')),
                 show_alert=True)
 
         if time_start.time() == time_end:
             return await callback_query.answer(
-                text='Время начала и окончания работы не могут совпадать. Пожалуйста, введите корректное время окончания.',
+                text=work_start_end_time_cannot_match_error,
                 show_alert=True
             )
 
@@ -912,7 +923,7 @@ async def add_slot_duration_work_time(
     state_data = await state.get_data()
 
     if state_data.get('time_start_slot') is None and state_data.get('time_end_slot') is None:
-        await callback_query.answer(text='Так нельзя', show_alert=True)
+        await callback_query.answer(text=invalid_action_message, show_alert=True)
         return
 
     work_time = get_day_work_time(date_day=state_data.get('date_day'))
@@ -975,7 +986,7 @@ async def next_step_add_interval_work_time(
 
     if time_start_slot is None and time_end_slot.time() > current_time_end_work_day.time():
 
-        await callback_query.answer(text='SUCCESSFULLY', show_alert=True)
+        await callback_query.answer(text=success_message, show_alert=True)
 
         save_work_time_data_in_db(
             time_start=timedelta(hours=current_time_end_work_day.hour, minutes=current_time_end_work_day.minute),
@@ -995,7 +1006,7 @@ async def next_step_add_interval_work_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(
                 work_time=work_time_list,
                 break_time=break_time_list
@@ -1007,7 +1018,7 @@ async def next_step_add_interval_work_time(
     elif time_end_slot is None or (time_start_slot.time() < current_time_start_work_day.time()) and (
             current_time_start_work_day.time() <= time_end_slot.time() <= current_time_end_work_day.time()):
 
-        await callback_query.answer(text='SUCCESSFULLY', show_alert=True)
+        await callback_query.answer(text=success_message, show_alert=True)
 
         save_work_time_data_in_db(
             time_start=timedelta(hours=time_start_slot.hour, minutes=time_start_slot.minute),
@@ -1027,7 +1038,7 @@ async def next_step_add_interval_work_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(
                 work_time=work_time_list,
                 break_time=break_time_list
@@ -1039,7 +1050,7 @@ async def next_step_add_interval_work_time(
     elif time_end_slot.time() > current_time_end_work_day.time() and (
             time_start_slot.time() < current_time_start_work_day.time()):
 
-        await callback_query.answer(text='SUCCESSFULLY', show_alert=True)
+        await callback_query.answer(text=success_message, show_alert=True)
 
         save_work_time_data_in_db(
             time_start=timedelta(hours=time_start_slot.hour, minutes=time_start_slot.minute),
@@ -1071,7 +1082,7 @@ async def next_step_add_interval_work_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(
                 work_time=work_time_list,
                 break_time=break_time_list
@@ -1081,7 +1092,7 @@ async def next_step_add_interval_work_time(
         return
 
     elif time_end_slot.time() < current_time_start_work_day.time():
-        await callback_query.answer(text='SUCCESSFULLY', show_alert=True)
+        await callback_query.answer(text=success_message, show_alert=True)
 
         master_obj = work_time_list[0].work_time_masters.id
 
@@ -1104,7 +1115,7 @@ async def next_step_add_interval_work_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(
                 work_time=work_time_list,
                 break_time=break_time_list
@@ -1114,7 +1125,7 @@ async def next_step_add_interval_work_time(
         return
 
     else:
-        await callback_query.answer(text='SUCCESSFULLY', show_alert=True)
+        await callback_query.answer(text=success_message, show_alert=True)
 
         master_obj = work_time_list[0].work_time_masters.id
 
@@ -1137,7 +1148,7 @@ async def next_step_add_interval_work_time(
         await bot.edit_message_text(
             chat_id=callback_query.message.chat.id,
             message_id=callback_query.message.message_id,
-            text='Выберите действие',
+            text=select_action_prompt,
             reply_markup=get_info_about_work_day(
                 work_time=work_time_list,
                 break_time=break_time_list
@@ -1185,7 +1196,7 @@ async def add_new_service(
 
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text='Admin Panel',
+        text=RETURN_ADMIN_PANEL,
         reply_markup=get_info_about_work_day(
             work_time=work_time_list,
             break_time=break_time_list

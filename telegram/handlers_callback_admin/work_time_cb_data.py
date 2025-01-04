@@ -41,7 +41,11 @@ from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.params.messages import SUCCESSFULLY
 from telegram.params.work_time_cb_data_message import SELECT_A_MONTH, PICK_DAY, PICK_ONE_DAY, ADD_INTERVAL, \
     INTERVAL_CANNOT_BE_0H_OM, SELECT_WORKING_DAY, CHOOSE_TWO_VALUE, ADD_START_TIME, ADD_END_TIME, TIME_ADDED, \
-    TOTAL_OPERATING_TIME_LESS_INTERVAL, SELECT_START_AND_END_WORKING_DAY, PICK_END_OF_THE_DAY, PICK_START_OF_THE_DAY
+    TOTAL_OPERATING_TIME_LESS_INTERVAL, SELECT_START_AND_END_WORKING_DAY, PICK_END_OF_THE_DAY, PICK_START_OF_THE_DAY, \
+    add_break_prompt, add_break_time_prompt, add_break_start_time_prompt, add_break_end_time_prompt, \
+    break_cannot_start_before_workday, break_cannot_start_after_workday_end, break_start_not_in_interval_prompt, \
+    break_start_after_end_error, break_end_before_workday_start_error, break_cannot_end_after_workday_end, \
+    break_end_not_in_interval_error, break_end_before_start_error
 from utilities.save_work_time_data_in_db import save_work_time_data_in_db
 from utilities.tick_the_butthon import tick_the_button
 from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
@@ -409,7 +413,7 @@ async def next_step_add_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Желаете ли вы добавить перерыв?',
+        text=add_break_prompt,
         reply_markup=add_break_or_not_inl_kbd()
     )
 
@@ -457,7 +461,7 @@ async def get_response_add_break(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время перерыва',
+        text=add_break_time_prompt,
         reply_markup=add_break_work_time_inl_kbd()
     )
 
@@ -470,7 +474,7 @@ async def create_start_break_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время начало перерыва',
+        text=add_break_start_time_prompt,
         reply_markup=add_start_break_time_work_inl_kbd()
     )
 
@@ -483,7 +487,7 @@ async def create_end_break_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время конца перерыва',
+        text=add_break_end_time_prompt,
         reply_markup=add_end_break_time_work_inl_kbd()
     )
 
@@ -501,7 +505,7 @@ async def get_start_break_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время начало перерыва',
+        text=add_break_start_time_prompt,
         reply_markup=new_keyboard
     )
 
@@ -519,7 +523,7 @@ async def get_end_break_work_time(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text='Добавьте время конца перерыва',
+        text=add_break_end_time_prompt,
         reply_markup=new_keyboard
     )
 
@@ -548,22 +552,22 @@ async def next_step_start_break_work_time(
     time_end_break = state_data.get('time_end_break')
 
     if time_start > time_start_break:
-        return await callback_query.answer(text='Перерыва не может начинаться раньше чем начало рабочего дня.',
+        return await callback_query.answer(text=break_cannot_start_before_workday,
                                            show_alert=True)
 
     if time_end < time_start_break:
-        return await callback_query.answer(text='Перерыв не может начинаться после конца рабочего дня.',
+        return await callback_query.answer(text=break_cannot_start_after_workday_end,
                                            show_alert=True)
 
     if time_start_break - time_start < interval or time_end - time_start_break <= interval:
         return await callback_query.answer(
-            text=f'Начало перерыва не помещинается в выбранный вами интервал {interval}.',
+            text=break_start_not_in_interval_prompt.format(interval),
             show_alert=True)
 
     if time_end_break:
         if time_start_break >= time_end_break:
             return await callback_query.answer(
-                text=f'Невозможно поставить начало времени перерыва после окончание перерыва {time_end_break}',
+                text=break_start_after_end_error.format(time_end_break),
                 show_alert=True
             )
 
@@ -607,22 +611,22 @@ async def next_step_end_break_work_time(
     time_start_break = state_data.get('time_start_break')
 
     if time_start > time_end_break:
-        return await callback_query.answer(text='Конец перерыва не может быть раньше чем начало рабочего дня.',
+        return await callback_query.answer(text=break_end_before_workday_start_error,
                                            show_alert=True)
 
     if time_end < time_end_break:
-        return await callback_query.answer(text='Перерыв не может заканчиваться после конца рабочего дня.',
+        return await callback_query.answer(text=break_cannot_end_after_workday_end,
                                            show_alert=True)
 
     if time_end_break - time_start <= interval or time_end - time_end_break < interval:
         return await callback_query.answer(
-            text=f'Конец перерыва не помещинается в выбранный вами интервал {interval}.',
+            text=break_end_not_in_interval_error.format(interval),
             show_alert=True)
 
     if time_start_break:
         if time_end_break < time_start_break:
             return await callback_query.answer(
-                text=f'У вас время окончание перерыва стоит перед началом {time_start_break}',
+                text=break_end_before_start_error.format(time_start_break),
                 show_alert=True
             )
 
