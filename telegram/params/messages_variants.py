@@ -1,6 +1,6 @@
 SERVICES_SALUTES_VARIANTS = [
-    "Thank you! You have been selected our services",
-    "Congratulations! You have been selected our services",
-    "Super! You have been selected our services",
-    "You are cute! You have been selected our services",
+    "Спасибо! Вы выбрали наши услуги. Ждем вас! 😊",
+    "Отлично! Вы выбрали наши услуги. Будем рады вас видеть!",
+    "Супер! Вы выбрали наши услуги. Готовы сделать ваш визит комфортным!",
+    "Отличный выбор! Вы выбрали наши услуги. До встречи!",
 ]

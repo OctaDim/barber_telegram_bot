@@ -3,28 +3,30 @@ from dataclasses import dataclass
 
 @dataclass
 class AddTimeDurationServiceMessage:
-    SELECT_DURATION = 'Select the duration of the service in <b>HOURS</b> and <b>MINUTES:</b>'
-    HOURS = 'Hours:'
-    MINUTES = 'Minutes:'
+    SELECT_DURATION = 'Выберите продолжительность в <b>IN_HOURS</b> и <b>IN_MINUTES:</b>'
+    HOURS = 'Часов:'
+    MINUTES = 'Минут:'
+    IN_HOURS = "часах"
+    IN_MINUTES = "минутах"
 
 
 @dataclass
 class AddPriceMessage:
-    ENTER_NUMBER = 'Enter a number'
+    ENTER_NUMBER = 'Введите число'
 
 
 @dataclass
 class GetDecision:
-    ADD = 'Service added.'
-    REMOVE = 'Service removed.'
-    CHANGE = 'Choose what you want to change.'
+    ADD = 'Услуга добавлена'
+    REMOVE = 'Услуга удалена'
+    CHANGE = 'Выберите для изменения'
 
 
 @dataclass
 class ChangeService:
-    NAME = 'Enter a new name for the service'
-    DESCRIPTION = 'Enter a new description for the service'
-    PRICE = 'Enter a new price for the service'
+    NAME = 'Введите новое название услуги'
+    DESCRIPTION = 'Введите новое описание для услуги'
+    PRICE = 'Введите новую цену для услуги'
 
 
 service_details_message = (

@@ -4,7 +4,7 @@ from datetime import timedelta
 
 @dataclass
 class BUTTONS_CHANGE_SERVICES:
-    NAME: str = "Name"
-    DESCRIPTION: str = "Description"
-    PRICE: str = "Price"
-    DURATION: str = "Time time_duration"
+    NAME: str = "Название"
+    DESCRIPTION: str = "Описание"
+    PRICE: str = "Цена"
+    DURATION: str = "Продолжительность"

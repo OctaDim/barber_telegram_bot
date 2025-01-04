@@ -4,7 +4,7 @@ from typing import Literal, Union
 
 @dataclass
 class LANGUAGE_CONFIGS:
-    LANGUAGE: Literal["EN", "RU"] = "EN"
+    LANGUAGE: Literal["EN", "RU"] = "RU"
     PHONE_NUMBER_REGION: Literal["BY", "RU", "US", "international"] = "BY"
 
 

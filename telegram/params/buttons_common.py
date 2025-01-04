@@ -3,16 +3,16 @@ from dataclasses import dataclass
 
 @dataclass
 class COMMON_BUTTONS_PARAMS:
-    START = "🚀 Start"
-    MAIN_MENU = "📂 Main Menu"
+    START = "🚀 Старт"
+    MAIN_MENU = "📂 Главное Меню"
     SAY_BYE = "🚪 Say 'Bye-Bye'"
-    RETURN = "↩️ Return"
+    RETURN = "↩️ Вернуться"
 
 
 @dataclass
 class CONFIRM_DIALOG_BUTTONS:
-    YES = "YES"
-    NO = "NO"
+    YES = "ДА"
+    NO = "НЕТ"
 
 
 @dataclass

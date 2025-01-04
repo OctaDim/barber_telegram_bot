@@ -14,6 +14,6 @@ class PreviewAddress(MapsLinkBuilder):
 Проверьте введенные данные:\n
     - Ваш адрес:  <a href="{self.get_link()}">{self.address}</a>\n\n
 
-Если всё верно, нажмите «{confirm}». Если нужно исправить, нажмите «{change}».'''
+Всё верно - нажмите «{confirm}». Нужно исправить - нажмите «{change}»'''
 
         return url, preview_text

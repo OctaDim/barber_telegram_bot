@@ -1,7 +1,7 @@
-ZERO_DURATION_NOT_ALLOWED = '⚠️ Select another value! \nDuration cannot be 00h:00m.'
-HOURS = '🟢 Hours:'
-MINUTES_SIGN_UP = '🔴 Minutes: <b>Select Value</b> ⚠️'
-YOU_CHOSEN_HOURS = "You've chosen the hours, you still need to choose the <b>minutes</b> ↖️"
-MINUTES = '🟢 Minutes:'
-HOURS_SIGN_UP = '🔴 Hours: <b>Select Value</b> ⚠️'
-YOU_CHOSEN_MINUTES = "You've chosen the minutes, you still need to choose the <>hours</b> ↖️"
+ZERO_DURATION_NOT_ALLOWED = '⚠️ Выберите другие значение! \nПродолжительность не может быть равна 00:00.'
+HOURS = '🟢 Часы:'
+MINUTES_SIGN_UP = '🔴 Минуты: <b>Выберите значение</b> ⚠️'
+YOU_CHOSEN_HOURS = "Вы выбрали только часы. Вам ещё нужно выбрать <b>минуты</b> ↖️"
+MINUTES = '🟢 Минуты:'
+HOURS_SIGN_UP = '🔴 Часы: <b>Выберите значение</b> ⚠️'
+YOU_CHOSEN_MINUTES = "Вы выбрали только минуты. Вам еще нужно выбрать <>часы</b> ↖️"

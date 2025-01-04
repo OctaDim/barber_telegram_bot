@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class ENROLL_METHODS_BUTTONS:
-    ENROLL_CATEGORY_TO_MASTER: str = "by Category and Master"
-    ENROLL_MASTER_TO_SERVICE: str = "by Master"
-    ENROLL_CATEGORY_TO_SERVICE: str = "by Category"
-    ENROLL_SERVICES_DIRECTLY: str = "by Services"
-    CONTINUE: str = "▶️ Continue"
+    ENROLL_CATEGORY_TO_MASTER: str = "по Категории и Мастеру"
+    ENROLL_MASTER_TO_SERVICE: str = "по Мастеру"
+    ENROLL_CATEGORY_TO_SERVICE: str = "по Категории"
+    ENROLL_SERVICES_DIRECTLY: str = "по Услугам"
+    CONTINUE: str = "▶️ Продолжить"

@@ -14,8 +14,8 @@ class SOCIAL_NETWORK:
 
 @dataclass
 class SELECT_SOCIAL_NETWORK_CHANGE:
-    USERNAME = 'Username'
-    SOCIAL_NETWORKS = 'Social network'
+    USERNAME = 'Имя пользователя'
+    SOCIAL_NETWORKS = 'Социальная сеть'
 
 
 class PreviewSocialNetwork:
@@ -26,21 +26,21 @@ class PreviewSocialNetwork:
     def generate_preview(self):
         return f'''Проверьте введенные данные:\n
 - Социальная сеть:  {self.social_network}\n
-- Ваш username:  {self.username}\n\n
+- Ваше имя пользователя:  {self.username}\n\n
 
-Если всё верно, нажмите «{confirm}». Если нужно исправить, нажмите «{change}».'''
+Всё верно - нажмите «{confirm}». Нужно исправить - нажмите «{change}»'''
 
     def generate_preview_for_changes(self):
         return f'''Проверьте введенные данные:\n
         - Социальная сеть:  {self.social_network}\n
         - Ваш username:  {self.username}\n\n
 
-Если нужно исправить, нажмите «{change}».'''
+Если нужно исправить, нажмите «{change}»'''
 
     def generate_preview_for_delete(self):
         return f'''Проверьте введенные данные:\n
         - Социальная сеть:  {self.social_network}\n
         - Ваш username:  {self.username}\n\n
 
-Если нужно исправить, нажмите «{remove}».'''
+Если нужно исправить, нажмите «{remove}»'''
 # cls_utils

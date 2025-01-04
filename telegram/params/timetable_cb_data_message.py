@@ -1,7 +1,7 @@
-SELECT_A_MONTH = 'Select the month you are interested in.\n🔹- current month.'
-SELECT_A_DAYS = 'Select the day you are interested in.\n🔹- current day.'
-SELECT_A_DAYS_SHOW_ALERT = 'You have to pick one day from the list.'
-SLOT_MANAGEMENT = 'Daily Time Slot Management'
+SELECT_A_MONTH = 'Введите интересующий вас месяц.\n🔹- текущий месяц'
+SELECT_A_DAYS = 'Введите интересующий вас день.\n🔹- сегодняшний день'
+SELECT_A_DAYS_SHOW_ALERT = 'Вам нужно выбрать какой-нибудь день'
+SLOT_MANAGEMENT = 'Управление ежедневным расписанием'
 no_previous_records_message = "No previous records."
 no_next_records_message = "No next records."
 select_action_prompt = "Select action."

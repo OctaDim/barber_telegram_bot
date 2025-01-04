@@ -31,17 +31,20 @@ from telegram.config.configs import (
     DB_SLOTS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.handler_helpers.forward_intervals_slots_to_saving_inl_inl import \
-    delete_intervals_slots_msgs_before_saving_slots
+from telegram.handler_helpers.forward_intervals_slots_to_saving_inl_inl import (
+    delete_intervals_slots_msgs_before_saving_slots)
 from telegram.handlers_private.main_menu_btn_reply_hdr_pvt import (
     main_menu_btn_reply_hdr_pvt)
 from telegram.keyboard_inline.enrollment_intervals_inl_kbd import (
     ContinueSlotSavingCBData)
-from telegram.keyboard_reply.pvt_main_menu_reply_kbd import get_pvt_main_menu_reply_kbd
+from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
+    get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
     SLOT_ALREADY_TAKEN,
     MAX_PERSON_GROUP_LIMIT_REACHED,
-    CLIENT_ALREADY_ENROLLED, DATE_NOT_SET, SELECT_MAIN_MENU_BUTTON)
+    CLIENT_ALREADY_ENROLLED,
+    DATE_NOT_SET,
+    AFTER_SAVING_MAIN_MENU_BTN)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -417,7 +420,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=AFTER_SAVING_MAIN_MENU_BTN,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True,
         open_reply_kbd_msg_anyway=True)

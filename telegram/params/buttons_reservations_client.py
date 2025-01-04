@@ -3,10 +3,10 @@ from dataclasses import dataclass
 
 @dataclass
 class RESERVATIONS_BUTTONS:
-    PAGE: str = "PAGE"
-    CANCEL_RESERVATION: str = "🚫 Cancel"
-    COMPLETED_RESERVATION: str = "🔆 Completed"
-    CANCELLED_BY_USER: str = "❄️ Cancelled"
-    CANCELLED_BY_ADMIN: str = "❄️ Cancelled"
-    CANCEL_RESERVATION_YES: str = "YES"
-    CANCEL_RESERVATION_NO: str = "NO"
+    PAGE: str = "Стр"
+    CANCEL_RESERVATION: str = "🚫 Отменить"
+    COMPLETED_RESERVATION: str = "🔆 Выполнено"
+    CANCELLED_BY_USER: str = "❄️ Отменено клиентом"
+    CANCELLED_BY_ADMIN: str = "❄️ Отменено админом"
+    CANCEL_RESERVATION_YES: str = "ДА"
+    CANCEL_RESERVATION_NO: str = "НЕТ"

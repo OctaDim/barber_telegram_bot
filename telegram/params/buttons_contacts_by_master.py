@@ -3,6 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class CONTACTS_BY_MASTER_PARAMS():
-    ADDRESS = 'Address'
-    SOCIAL_NETWORKS = 'Social networks'
-    WORK_SCHEDULE = 'Work schedule'
+    ADDRESS = 'Адреса'
+    SOCIAL_NETWORKS = 'Социальные сети'
+    WORK_SCHEDULE = 'Рабочее расписание'
