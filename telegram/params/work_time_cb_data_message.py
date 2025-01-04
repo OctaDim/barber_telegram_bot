@@ -15,3 +15,20 @@ PICK_START_OF_THE_DAY = 'We have to choose the beginning of the work day.'
 CONTINUED = 'To be continued.'
 RETURN = 'Return'
 RETURN_ADMIN_PANEL = 'Admin panel'
+add_break_prompt = "Would you like to add a break?"
+add_break_time_prompt = "Add break time"
+add_break_start_time_prompt = "Add break start time"
+add_break_end_time_prompt = "Add break end time"
+break_cannot_start_before_workday = "Break cannot start earlier than the workday start."
+break_cannot_start_after_workday_end = "Break cannot start after the workday end."
+break_start_not_in_interval_prompt = "Break start does not fall within the selected interval {}."
+break_start_after_end_error = "Cannot set break start time after break end time {}"
+break_cannot_end_after_workday_end = "Break cannot end after the workday end."
+break_end_before_workday_start_error = "Break end cannot be earlier than the workday start."
+break_end_not_in_interval_error = "Break end does not fall within the selected interval {}."
+break_end_before_start_error = "Your break end time is set before the start time {}."
+
+
+
+
+
