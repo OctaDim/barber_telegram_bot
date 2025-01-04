@@ -16,7 +16,7 @@ from telegram.params.commands import (
 from telegram.params.images_params import (
     IMAGES_LINKS)
 from telegram.params.messages import (
-    SELECT_MAIN_MENU_BUTTON)
+    SELECT_MAIN_MENU)
 from telegram.params.messages_multiline import (
     MAIN_GREETING_RICH_TXT)
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -54,7 +54,7 @@ async def start_command(message: Message,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         # Set reply_kbd_opened_state_after_open=True
         # if main greetings message with reply keyboard at once
@@ -99,7 +99,7 @@ async def menu_command(message: Message,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         # Set reply_kbd_opened_state_after_open=True
         # if main greetings message with reply keyboard at once

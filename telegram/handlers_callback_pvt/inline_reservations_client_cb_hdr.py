@@ -25,7 +25,7 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import get_pvt_main_menu_re
 from telegram.params.messages import (
     NO_CLIENT_RESERVATIONS,
     ALL_RESERVATIONS_HERE,
-    OR_SELECT_MAIN_MENU_BUTTON)
+    OR_SELECT_MAIN_MENU)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
@@ -121,7 +121,7 @@ async def inline_reservations_client_user_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True)
     if cur_message:

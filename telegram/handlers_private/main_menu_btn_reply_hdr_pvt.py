@@ -15,7 +15,7 @@ from telegram.params.buttons_common import (
 from telegram.params.images_params import (
     IMAGES_LINKS)
 from telegram.params.messages import (
-    SELECT_MAIN_MENU_BUTTON)
+    SELECT_MAIN_MENU)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_int_by_fsm_state_key)
@@ -66,9 +66,9 @@ async def main_menu_btn_reply_hdr_pvt(message: Message,
     await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=SELECT_MAIN_MENU,
         image_path=IMAGES_LINKS.MAIN_MENU_IMG,
-        # image_caption_text=SELECT_MAIN_MENU_BUTTON,
+        # image_caption_text=SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=False,
         open_reply_kbd_msg_anyway=True)

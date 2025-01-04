@@ -1,5 +1,5 @@
 # WARNINGS SECTION
-CANNOT_USE_OBSOLETE_MSG = "⚠️ Это меню устарело, используйте новое меню ⬇️⬇️⬇️"
+CANNOT_USE_OBSOLETE_MSG = "⚠️ Это меню устарело. Используйте новое меню ⬇️"
 UNKNOWN_COMMAND_ENTERED = "⚠️ Неизвестная команда. Попробуйте ещё раз!"
 IN_DEVELOP_PROCESS = "ℹ️ В процессе разработки. Скоро будет! 🚀"
 
@@ -16,10 +16,10 @@ SUCCESSFULLY = 'Действие успешно'
 
 # MENU SECTION
 SELECT_ACTION = "Выберите действие:"
-SELECT_MAIN_MENU_BUTTON = "Выберите услуги и сделайте шаг к совершенству! 💯"
-OR_SELECT_MAIN_MENU_BUTTON = "меню:"
-AFTER_SAVING_MAIN_MENU_BTN = "меню:"
-OR_SELECT_ENROLL_SRCS_MENU_BTN = "меню:"
+SELECT_MAIN_MENU = "Выберите услуги и сделайте шаг к совершенству! 💯"
+OR_SELECT_MAIN_MENU = "меню:"
+AFTER_SLOT_SAVING_MAIN_MENU = "меню:"
+OR_SELECT_ENROLL_SERVICES_MENU = "меню:"
 CAN_USE_LEFT_MENU = "ℹ️ Вы можете выбрать команду по кнопке меню:"
 
 # CLIENT CATEGORIES ENROLL SECTION
@@ -46,7 +46,7 @@ ALL_SERVICES_CANCELLED = "ℹ️ Все услуги отменены"
 CHOOSE_SERVICES_DAY = "👉 Выберите день месяца для записи: ⤵️"
 
 # CLIENT INTERVALS SLOTS ENROLL SECTION
-SELECT_ENROLLMENT_SLOT = "Выберите временное окошко для записи: ⤵️"
+SELECT_ENROLLMENT_SLOT = "Выберите время для записи: ⤵️"
 NO_FREE_ENROLLMENT_SLOTS = "ℹ️ Нет свободных окошек. Попробуйте изменить выбранные услуги или дату"
 SLOTS_RECOMMENDATIONS = "Рейтинг времени для записи\n"
 BETTER_SLOTS_TO_CHOOSE = "ℹ️ Рекомендуем время с более высоким рейтингом"

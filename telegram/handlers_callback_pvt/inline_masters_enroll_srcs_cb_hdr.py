@@ -25,7 +25,7 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
 from telegram.params.messages import (
     NO_AVAILABLE_MASTERS,
     SELECT_MASTER,
-    OR_SELECT_MAIN_MENU_BUTTON)
+    OR_SELECT_MAIN_MENU)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -127,7 +127,7 @@ async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=False)
     if cur_message:

@@ -37,7 +37,7 @@ from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.params.messages import (
     SELECT_SERVICES_BELLOW,
-    OR_SELECT_ENROLL_SRCS_MENU_BTN,
+    OR_SELECT_ENROLL_SERVICES_MENU,
     NO_SERVICES_FOR_SELECTED_OPTIONS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key)
@@ -207,7 +207,7 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_ENROLL_SRCS_MENU_BTN,
+        re_open_reply_msg_text=OR_SELECT_ENROLL_SERVICES_MENU,
         re_open_reply_keyboard=get_enroll_services_reply_kbd(
             show_continue_button=False),
         reply_kbd_opened_state_after_open=False,

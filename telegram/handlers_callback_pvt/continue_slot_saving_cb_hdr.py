@@ -1,5 +1,6 @@
 import copy
 import inspect
+import random
 from datetime import timedelta
 
 from aiogram import Router, Bot
@@ -44,7 +45,9 @@ from telegram.params.messages import (
     MAX_PERSON_GROUP_LIMIT_REACHED,
     CLIENT_ALREADY_ENROLLED,
     DATE_NOT_SET,
-    AFTER_SAVING_MAIN_MENU_BTN)
+    AFTER_SLOT_SAVING_MAIN_MENU)
+from telegram.params.messages_variants import (
+    SERVICES_CONGRATS_VARIANTS)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_dict_by_fsm_state_key,
@@ -57,7 +60,8 @@ from telegram.telegram_utils.messages_helpers import (
     get_selected_services_summary,
     get_summary_services_with_slot)
 from telegram.telegram_utils.messages_utils import (
-    inline_keyboard_is_actual, re_open_reply_keyboard_message)
+    inline_keyboard_is_actual,
+    re_open_reply_keyboard_message)
 from utilities.calendar_utils import (
     get_date_with_month_name,
     get_time_flex_from_datetime)
@@ -376,7 +380,10 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         date_value=client_time_end,
         language=LANGUAGE_CONFIGS.LANGUAGE)
 
+    congratulation_txt = random.choice(SERVICES_CONGRATS_VARIANTS)
+
     complete_summary_text = get_summary_services_with_slot(
+        congratulation_text=congratulation_txt,
         date_text=date_text,
         summary_text=summary_text,
         slot_time_start=slot_time_start_text,
@@ -420,7 +427,7 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=AFTER_SAVING_MAIN_MENU_BTN,
+        re_open_reply_msg_text=AFTER_SLOT_SAVING_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True,
         open_reply_kbd_msg_anyway=True)

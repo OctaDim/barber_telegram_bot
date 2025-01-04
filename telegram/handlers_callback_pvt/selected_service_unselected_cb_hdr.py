@@ -19,7 +19,7 @@ from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.params.messages import (
     NONE_SERVICES_SELECTED,
-    OR_SELECT_ENROLL_SRCS_MENU_BTN)
+    OR_SELECT_ENROLL_SERVICES_MENU)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_dict_by_fsm_state_key,
     get_valid_timedelta_by_fsm_state_key,
@@ -169,7 +169,7 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
         cur_message = await re_open_reply_keyboard_message(
             fsm_state=state,
             telegram_update_obj=callback_query,
-            re_open_reply_msg_text=OR_SELECT_ENROLL_SRCS_MENU_BTN,
+            re_open_reply_msg_text=OR_SELECT_ENROLL_SERVICES_MENU,
             re_open_reply_keyboard=get_enroll_services_reply_kbd(
                 show_continue_button=True),
             reply_kbd_opened_state_after_open=True)
@@ -192,7 +192,7 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
         cur_message = await re_open_reply_keyboard_message(
             fsm_state=state,
             telegram_update_obj=callback_query,
-            re_open_reply_msg_text=OR_SELECT_ENROLL_SRCS_MENU_BTN,
+            re_open_reply_msg_text=OR_SELECT_ENROLL_SERVICES_MENU,
             re_open_reply_keyboard=get_enroll_services_reply_kbd(
                 show_continue_button=False),
             reply_kbd_opened_state_after_open=False,

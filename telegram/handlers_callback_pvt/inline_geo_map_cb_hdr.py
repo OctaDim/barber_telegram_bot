@@ -12,7 +12,7 @@ from telegram.keyboard_inline.submenu_contacts_inl_kbd import (
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
-    OR_SELECT_MAIN_MENU_BUTTON,
+    OR_SELECT_MAIN_MENU,
     IN_DEVELOP_PROCESS)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
@@ -41,7 +41,7 @@ async def inline_frequent_questions_cb_hdr(callback_query: CallbackQuery,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True)
     if cur_message:

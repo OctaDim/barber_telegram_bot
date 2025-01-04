@@ -33,7 +33,7 @@ from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
 from telegram.params.messages import (
     SELECT_ENROLLMENT_SLOT,
-    NO_FREE_ENROLLMENT_SLOTS, OR_SELECT_MAIN_MENU_BUTTON)
+    NO_FREE_ENROLLMENT_SLOTS, OR_SELECT_MAIN_MENU)
 from telegram.params.messages_inserts import MSG
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
@@ -213,7 +213,7 @@ async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuer
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True,
         # open_reply_kbd_msg_anyway=False)  # AAAAAAAAAAAAAAA

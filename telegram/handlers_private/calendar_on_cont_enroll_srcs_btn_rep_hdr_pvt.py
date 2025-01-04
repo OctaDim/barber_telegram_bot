@@ -29,7 +29,7 @@ from telegram.params.buttons_enroll_service import (
 from telegram.params.messages import (
     CHOOSE_SERVICES_DAY,
     SELECT_MIN_ONE_SERVICE,
-    OR_SELECT_MAIN_MENU_BUTTON)
+    OR_SELECT_MAIN_MENU)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key,
     get_valid_float_by_fsm_state_key,
@@ -165,7 +165,7 @@ async def calendar_on_continue_enroll_srcs_btn_rep_hdr(message: Message,
     cur_message = await re_open_reply_keyboard_message(
         fsm_state=state,
         telegram_update_obj=message,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU_BUTTON,
+        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True,
         open_reply_kbd_msg_anyway=True)
