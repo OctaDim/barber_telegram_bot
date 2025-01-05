@@ -23,3 +23,5 @@
 # TEST: str = "🧔🏻"
 # TEST: str = "👩🏻‍🦰"
 # TEST: str = "👩🏻"
+# TEST: str = "👋"
+# TEST: str = "✋"

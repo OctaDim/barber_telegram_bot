@@ -1,18 +1,17 @@
 # WARNINGS SECTION
-CANNOT_USE_OBSOLETE_MSG = "⚠️ Это меню устарело. Используйте новое меню ⬇️"
+CANNOT_USE_OBSOLETE_MSG = "*️⃣ Извините, это меню устарело. Зайдите в меню заново через главное меню ⬇️"
 UNKNOWN_COMMAND_ENTERED = "⚠️ Неизвестная команда. Попробуйте ещё раз!"
 IN_DEVELOP_PROCESS = "ℹ️ В процессе разработки. Скоро будет! 🚀"
 
 # GREETINGS SECTION
-MAIN_GREETING = "Привет!"
-WELCOME_ON_START = "Добро пожаловать!"
+WELCOME_ON_START = "✋ Добро пожаловать!"
 
 # ADMIN CREATE SERVICE SECTION
 ADD_NAME_SERVICE = "Отправьте имя новой услуги:"
 ADD_DESCRIPTION_SERVICE = "Отправьте описание новой услуги:"
-ADD_PRICE_SERVICE = "Укажите цену новой услуги:"
+ADD_PRICE_SERVICE = "Отправьте цену новой услуги:"
 CHOOSE_AN_ACTION = 'Выберите действие'
-SUCCESSFULLY = 'Действие успешно'
+SUCCESSFULLY = 'Действие выполнено успешно'
 
 # MENU SECTION
 SELECT_ACTION = "Выберите действие:"
@@ -24,7 +23,7 @@ CAN_USE_LEFT_MENU = "ℹ️ Вы можете выбрать команду по
 
 # CLIENT CATEGORIES ENROLL SECTION
 SELECT_SERVICES_CATEGORY = "Выберите категорию для записи на одну или несколько услуг: ⤵️"
-NO_AVAILABLE_CATEGORIES = "ℹ️ Нет доступных категорий"
+NO_AVAILABLE_CATEGORIES = "ℹ️ Извините, нет доступных категорий"
 
 # CLIENT MASTERS ENROLL SECTION
 SELECT_MASTER = "Выберите мастера для записи на его услуги: ⤵️"
@@ -33,12 +32,12 @@ NO_AVAILABLE_MASTERS = "ℹ️ Нет доступных мастеров"
 # CLIENT SERVICES ENROLL SECTION
 SELECT_SERVICES_SECTION = "Выберите желаемый раздел в услугах"
 HOW_SELECT_SERVICES = "Выберите, как вы хотите записаться на услуги: ⤵️"
-NO_SERVICES = "Извините, нет доступных услуг"
+NO_SERVICES = "Нет доступных услуг"
 NO_SERVICES_FOR_CATEGORY = "ℹ️ Извините, нет услуг в этой категории"
 NO_SERVICES_FOR_SELECTED_OPTIONS = "ℹ️ Нет возможных услуг для выбранных условий"
-SEE_OUR_SERVICES = "Это все наши услуги: ⤵️"
+SEE_OUR_SERVICES = "Рады предложить вам все наши услуги: ⤵️"
 SELECT_SERVICES_BELLOW = "Выберите одну или несколько одинаковых и/или разных услуг: ⤵️"
-SELECT_MIN_ONE_SERVICE = "⚠️ Выберите хотя бы одну или несколько услуг, чтобы продолжить"
+SELECT_MIN_ONE_SERVICE = "⚠️ Выберите минимум одну или несколько услуг, чтобы продолжить"
 NONE_SERVICES_SELECTED = "ℹ️ Выберите одну или несколько разных и/или одинаковых услуг, чтобы продолжить"
 ALL_SERVICES_CANCELLED = "ℹ️ Все услуги отменены"
 
