@@ -395,15 +395,22 @@ async def next_step_add_work_time(
     interval = state_data.get('interval')
 
     if time_start is None and time_end is None:
-        return await callback_query.answer(text=SELECT_START_AND_END_WORKING_DAY, show_alert=True)
+        return await callback_query.answer(
+            text=SELECT_START_AND_END_WORKING_DAY, show_alert=True)
 
     if time_end is None:
-        return await callback_query.answer(text=PICK_END_OF_THE_DAY, show_alert=True)
+        return await callback_query.answer(
+            text=PICK_END_OF_THE_DAY, show_alert=True)
 
     if time_start is None:
-        return await callback_query.answer(text=PICK_START_OF_THE_DAY, show_alert=True)
+        return await callback_query.answer(
+            text=PICK_START_OF_THE_DAY, show_alert=True)
 
     total_operating_time = time_end - time_start
+
+    if total_operating_time.days < 0:
+        return await callback_query.answer(
+            text=BREAK_START_LESS_WORK_TIME, show_alert=True)
 
     if total_operating_time < interval:
         return await callback_query.answer(
@@ -583,7 +590,7 @@ async def next_step_start_break_work_time(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
         reply_markup=add_break_work_time_inl_kbd(time_start_break=time_start_break, time_end_break=time_end_break),
-        text=SELECT_WORKING_DAY,
+        text=ADD_BREAK_ACTION,
     )
 
 
@@ -642,7 +649,7 @@ async def next_step_end_break_work_time(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
         reply_markup=add_break_work_time_inl_kbd(time_start_break=time_start_break, time_end_break=time_end_break),
-        text=SELECT_WORKING_DAY,
+        text=ADD_BREAK_ACTION,
     )
 
 

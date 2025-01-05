@@ -52,7 +52,9 @@ def add_work_time_inl_kbd(
             callback_data=BackToAdminMenuTimetableCbData(active=True).pack())
     ]
 
-    builder.row(InlineKeyboardButton(text=CONTINUED, callback_data=NextStepAddWorkTime(next_step=True).pack()))
+    builder.row(InlineKeyboardButton(
+        text=CONTINUED,
+        callback_data=NextStepAddWorkTime(next_step=True).pack()))
 
     builder.row(*buttons)
 
