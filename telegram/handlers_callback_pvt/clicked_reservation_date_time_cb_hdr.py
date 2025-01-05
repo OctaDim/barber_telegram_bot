@@ -66,7 +66,7 @@ async def clicked_reservation_date_time_cb_hdr(callback_query: CallbackQuery,
         timedelta_value=services_total_duration,
         language=LANGUAGE_CONFIGS.LANGUAGE,
         abbrev_symbols="1",
-        separator=" : ")
+        separator=":")
 
     services_total_cost = reservation_obj.reserved_services_total_cost
 
