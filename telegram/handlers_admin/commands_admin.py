@@ -9,7 +9,7 @@ from database.db_queries.create_user_on_start_query import create_user_on_start
 from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.filters.chat_types_filter import IsAdmin
 from telegram.params.commands import COMMANDS_PARAMS
-from telegram.params.register_user import write_first_name
+from telegram.params.register_user import WRITE_NAME
 
 admin_panel = Router()
 admin_panel.message.filter(IsAdmin())
@@ -44,7 +44,7 @@ async def start_command(message: Message, state: FSMContext):
 
 
 async def register_first_name_master(message: Message, state: FSMContext):
-    await message.answer(text=write_first_name)
+    await message.answer(text=WRITE_NAME)
 
     await state.set_state(AdminPanelState.first_name_new_user)
 

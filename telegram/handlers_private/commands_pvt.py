@@ -9,6 +9,7 @@ from database.db_queries.create_user_on_start_query import (
     create_user_on_start)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
+from telegram.fsm_states.register_new_client_user import RegisterNewClientState
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.commands import (
@@ -19,6 +20,7 @@ from telegram.params.messages import (
     SELECT_MAIN_MENU)
 from telegram.params.messages_multiline import (
     MAIN_GREETING_RICH_TXT)
+from telegram.params.register_user import WRITE_NAME
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
@@ -33,6 +35,13 @@ on_start_router.message.filter(ChatTypesFilter(["private"]))
 async def start_command(message: Message,
                         state: FSMContext):
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
+
+    data = message.from_user.dict()
+    result = create_user_on_start(data=data, master=False)
+    if not result:
+        await message.answer(text=WRITE_NAME)
+        await state.set_state(RegisterNewClientState.new_client_name)
+        return
 
     await state.clear()
     handlers_list = []
@@ -63,9 +72,6 @@ async def start_command(message: Message,
         cur_handler_messages_ids.append(cur_message.message_id)
 
     # await state.update_data()
-
-    data = message.from_user.dict()
-    create_user_on_start(data=data, master=False)
 
     return get_handler_answer_flag_dict(
         add_handler_to_return_stack=False,

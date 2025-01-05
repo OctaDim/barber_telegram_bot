@@ -1,1 +1,1 @@
-write_first_name = 'Please, write your first name and second name'
+WRITE_NAME = 'Please, write your name'
