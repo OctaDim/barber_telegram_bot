@@ -12,7 +12,7 @@ from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
 from utilities.get_select_date_for_timetable import get_select_date
 
 
-class SelectDayTimetableCbData(CallbackData, prefix='select-day-timetable'):
+class SelectDayTimetableCbData(CallbackData, prefix='select-day-tm'):
     action: str
     date_day: str
 
