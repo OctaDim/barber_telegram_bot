@@ -85,6 +85,8 @@ def get_reservation_client_user_inl_kbd(
         reservation_date = reservation_obj.reservation_date
         reservation_date_text = get_date_flex_from_datetime(
             date_value=reservation_date,
+            separator=".",
+            year_abbreviated=True,
             language=LANGUAGE_CONFIGS.LANGUAGE)
 
         reservation_weekday = get_weekday_flex_abbr_by_date(
@@ -115,7 +117,7 @@ def get_reservation_client_user_inl_kbd(
                 callback_data=cur_reservation_cb_data)
 
         builder_inl_kbd.button(
-            text=f"{time_start_text}  -  {time_end_text}",
+            text=f"{time_start_text}-{time_end_text}",
             callback_data=cur_reservation_cb_data)
 
         if reservation_obj.cancelled_by_client:

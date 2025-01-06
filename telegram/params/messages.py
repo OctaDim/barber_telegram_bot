@@ -27,41 +27,41 @@ NO_AVAILABLE_CATEGORIES = "ℹ️ Извините, нет доступных к
 
 # CLIENT MASTERS ENROLL SECTION
 SELECT_MASTER = "Выберите мастера для записи на его услуги: ⤵️"
-NO_AVAILABLE_MASTERS = "ℹ️ Нет доступных мастеров"
+NO_AVAILABLE_MASTERS = "ℹ️ Извините, нет доступных мастеров"
 
 # CLIENT SERVICES ENROLL SECTION
 SELECT_SERVICES_SECTION = "Выберите желаемый раздел в услугах"
 HOW_SELECT_SERVICES = "Выберите, как вы хотите записаться на услуги: ⤵️"
-NO_SERVICES = "Нет доступных услуг"
+NO_SERVICES = "ℹ️ Извините, Нет доступных услуг"
 NO_SERVICES_FOR_CATEGORY = "ℹ️ Извините, нет услуг в этой категории"
-NO_SERVICES_FOR_SELECTED_OPTIONS = "ℹ️ Нет возможных услуг для выбранных условий"
+NO_SERVICES_FOR_SELECTED_OPTIONS = "ℹ️ Извините, нет доступных услуг для выбранных условий"
 SEE_OUR_SERVICES = "Рады предложить вам все наши услуги: ⤵️"
 SELECT_SERVICES_BELLOW = "Выберите одну или несколько одинаковых и/или разных услуг: ⤵️"
-SELECT_MIN_ONE_SERVICE = "⚠️ Выберите минимум одну или несколько услуг, чтобы продолжить"
+SELECT_MIN_ONE_SERVICE = "*️⃣ Выберите минимум одну или несколько услуг, чтобы продолжить"
 NONE_SERVICES_SELECTED = "ℹ️ Выберите одну или несколько разных и/или одинаковых услуг, чтобы продолжить"
 ALL_SERVICES_CANCELLED = "ℹ️ Все услуги отменены"
 
 # CLIENT CALENDAR ENROLL SECTION
-CHOOSE_SERVICES_DAY = "👉 Выберите день месяца для записи: ⤵️"
+CHOOSE_SERVICES_DAY = "Выберите день месяца для записи: ⤵️"
 
 # CLIENT INTERVALS SLOTS ENROLL SECTION
 SELECT_ENROLLMENT_SLOT = "Выберите время для записи: ⤵️"
-NO_FREE_ENROLLMENT_SLOTS = "ℹ️ Нет свободных окошек. Попробуйте изменить выбранные услуги или дату"
+NO_FREE_ENROLLMENT_SLOTS = "ℹ️ Извините, нет свободного времени. Попробуйте изменить выбранные услуги или дату"
 SLOTS_RECOMMENDATIONS = "Рейтинг времени для записи\n"
-BETTER_SLOTS_TO_CHOOSE = "ℹ️ Рекомендуем время с более высоким рейтингом"
+BETTER_SLOTS_TO_CHOOSE = "ℹ️ Рекомендуем выбрать время для записи с более высоким рейтингом"
 CHOOSE_OTHER_SLOTS = "Эти слоты доступны для записи, но лучше выбрать с более высоким рейтингом"
-SLOT_ALREADY_TAKEN = "⚠️ Извините, кто-то успел зарезервировать окошко перед вами. Пожалуйста, начните сначала"
-DATE_NOT_SET = "⚠️ Дата не указана. Пожалуйста, начните сначала"
+SLOT_ALREADY_TAKEN = "*️⃣ Извините, кто-то успел зарезервировать время перед вами. Пожалуйста, начните заново"
+DATE_NOT_SET = "*️⃣ Извините, дата не указана. Пожалуйста, начните заново"
 
 # CLIENT GROUP INTERVALS SLOTS ENROLL SECTION
-MAX_PERSON_GROUP_LIMIT_REACHED = "⚠️ Максимальное количество людей в группе достигнуто. Попробуйте другую"
-CLIENT_ALREADY_ENROLLED = "Вы уже записаны на это окошко"
+MAX_PERSON_GROUP_LIMIT_REACHED = "*️⃣ Максимальное количество людей в группе достигнуто. Попробуйте другую группу"
+CLIENT_ALREADY_ENROLLED = "*️⃣ Извините, вы уже записаны на это время"
 
 # CLIENT RESERVATIONS SECTION
 ALL_RESERVATIONS_HERE = "Все ваши записи здесь. Вы можете посмотреть детали записей или отменить: ⤵️"
 NO_CLIENT_RESERVATIONS = "ℹ️ У вас ещё нет записей. Скорее запишитесь на наши услуги"
-RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь еще раз"
-RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь еще раз"
+RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь заново"
+RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь заново"
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"
 CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите отменить эту запись?"
 
@@ -74,4 +74,4 @@ NO_CONTACTS = "Извините, пока нет доступных контак
 SELECT_QUESTION_SECTION = "Выберите желаемый раздел в вопросах"
 
 # CLIENT BALANCE SECTION
-SELECT_BALANCE_SECTION = "Выберите желаемый раздел баланса и платежей"
+SELECT_BALANCE_SECTION = "Выберите желаемый раздел"

@@ -6,8 +6,8 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_day_inl_kbd import BackToMonthTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import MonthTimetableCbData, BackToAdminMenuTimetableCbData
-from telegram.params.timetable_cb_data_message import available_label, overlapped_label, break_label, \
-    add_work_time_label, page_label_template
+from telegram.params.timetable_cb_data_message import AVAILABLE, OVERLAPPED, BREAK, \
+    ADD_NEW_WORK_TIME_INTERVAL, PAGE
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, PRIOR_PAGE, NEXT_PAGE
 from utilities.get_select_date_for_timetable import get_select_date
 
@@ -118,7 +118,7 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
                                  page=page - 1,
                                  date_day=date.date()).pack()),
 
-        InlineKeyboardButton(text=page_label_template.format(work_time.index(work_time[page]) + 1, len(work_time)),
+        InlineKeyboardButton(text=PAGE.format(work_time.index(work_time[page]) + 1, len(work_time)),
                              callback_data=MonthTimetableCbData(
                                  year=date.year,
                                  month=date.month).pack()),
@@ -136,25 +136,25 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
         time_end_str = slot.time_end.strftime('%H:%M')
 
         if slot.reserved is False:
-            reserved_text = available_label
+            reserved_text = AVAILABLE
         else:
             reserved_text = slot.work_time_clients[0].get_full_name
 
         if slot.active is False:
-            reserved_text = overlapped_label
+            reserved_text = OVERLAPPED
 
         buttons = [
             InlineKeyboardButton(
                 text=f'{time_start_str}-{time_end_str}',
                 callback_data=WorkTimeSlotTimetableCbData(
                     id_work_time=slot.id,
-                    reserved_slot=reserved_text not in [available_label, overlapped_label]
+                    reserved_slot=reserved_text not in [AVAILABLE, OVERLAPPED]
                 ).pack()),
 
             InlineKeyboardButton(text=reserved_text,
                                  callback_data=WorkTimeSlotTimetableCbData(
                                      id_work_time=slot.id,
-                                     reserved_slot=reserved_text not in [available_label, overlapped_label]
+                                     reserved_slot=reserved_text not in [AVAILABLE, OVERLAPPED]
                                  ).pack())
         ]
 
@@ -168,7 +168,7 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
                             text=f'{break_start_str}-{break_end_str}',
                             callback_data=BreakTimeSlotTimetableCbData(id_break_time=break_id).pack()
                         ),
-                        InlineKeyboardButton(text=break_label,
+                        InlineKeyboardButton(text=BREAK,
                                              callback_data=BreakTimeSlotTimetableCbData(id_break_time=break_id).pack())
                     ]
 
@@ -180,7 +180,7 @@ def get_info_about_work_day(work_time: list, break_time: list, page: int = 0):
     ).pack()
 
     button = InlineKeyboardButton(
-        text=add_work_time_label,
+        text=ADD_NEW_WORK_TIME_INTERVAL,
         callback_data=callback_data
     )
 

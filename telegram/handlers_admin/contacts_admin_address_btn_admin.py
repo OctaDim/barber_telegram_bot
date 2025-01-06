@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from telegram.filters.chat_types_filter import IsAdmin
 from telegram.keyboard_inline.contacts_for_master_preview_address import preview_address_inl_kbd
 from telegram.params.button_contacts_for_master_address import PreviewAddress
-from telegram.params.contacts_for_master_cb_data_message import enter_address
+from telegram.params.contacts_for_master_cb_data_message import ENTER_ADDRESS
 
 contacts_admin_address_btn_router = Router(name=__name__)
 contacts_admin_address_btn_router.message.filter(IsAdmin())
@@ -27,7 +27,7 @@ async def add_address(
     await bot.edit_message_text(
         message_id=message.message_id,
         chat_id=message.chat.id,
-        text=enter_address
+        text=ENTER_ADDRESS
     )
 
     await state.set_state(ContactsAdminAddress.address)

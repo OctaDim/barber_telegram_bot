@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class AddTimeDurationServiceMessage:
-    SELECT_DURATION = 'Выберите продолжительность в <b>IN_HOURS</b> и <b>IN_MINUTES:</b>'
+    SELECT_DURATION = 'Выберите продолжительность в <b>часах</b> и <b>минутах</b>:'
     HOURS = 'Часов:'
     MINUTES = 'Минут:'
     IN_HOURS = "часах"
@@ -30,8 +30,8 @@ class ChangeService:
 
 
 service_details_message = (
-    "Name: {}\n"
-    "Description: {}\n"
-    "Time duration: {}\n"
-    "Price: {}\n"
+    "Название: {}\n"
+    "Описание: {}\n"
+    "Продолжительность: {}\n"
+    "Цена: {}\n"
 )

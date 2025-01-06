@@ -15,7 +15,7 @@ from telegram.keyboard_inline.contacts_for_master_preview_social_network_inl_kbd
 from telegram.params.button_social_networks import PreviewSocialNetwork
 
 from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS
-from telegram.params.contacts_for_master_cb_data_message import add_username, enter_other_social_network
+from telegram.params.contacts_for_master_cb_data_message import ADD_USERNAME, ENTER_ADDITIONAL_SOCIAL_NETWORK
 from telegram.params.messages import SELECT_ACTION
 
 contacts_admin_social_network_btn_router = Router(name=__name__)
@@ -45,7 +45,7 @@ async def add_username_social_network(
     if state_data.get('social_network') is None:
         await state.update_data(social_network=message.text)
 
-        await message.answer(text=add_username)
+        await message.answer(text=ADD_USERNAME)
 
         await state.set_state(ContactsAdminSocialNetwork.username_social_network)
 
@@ -68,7 +68,7 @@ async def add_username_social_network(
     await bot.edit_message_text(
         message_id=message.message_id,
         chat_id=message.chat.id,
-        text=add_username
+        text=ADD_USERNAME
     )
 
     await state.set_state(ContactsAdminSocialNetwork.username_social_network)
@@ -82,7 +82,7 @@ async def add_other_social_network(
     await bot.edit_message_text(
         message_id=message.message_id,
         chat_id=message.chat.id,
-        text=enter_other_social_network
+        text=ENTER_ADDITIONAL_SOCIAL_NETWORK
     )
 
     await state.set_state(ContactsAdminSocialNetwork.social_network)

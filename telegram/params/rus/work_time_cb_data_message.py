@@ -14,4 +14,4 @@ PICK_END_OF_THE_DAY = 'Выберите время конца рабочего �
 PICK_START_OF_THE_DAY = 'Выберите время начала рабочего дня для продолжения'
 CONTINUED = 'Продолжить'
 RETURN = 'Вернуться'
-RETURN_ADMIN_PANEL = 'Админ - Меню'
+RETURN_ADMIN_PANEL = 'Админ Меню'

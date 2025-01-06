@@ -1,1 +1,1 @@
-WRITE_NAME = 'Please, write your name'
+WRITE_NAME = 'Отправьте ваше имя'

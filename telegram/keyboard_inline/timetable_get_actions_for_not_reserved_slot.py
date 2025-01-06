@@ -4,7 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_day_inl_kbd import NextStepDaysTimetableCbData
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
-from telegram.params.timetable_cb_data_message import return_time_label
+from telegram.params.timetable_cb_data_message import RETURN_SLOT_ACTIVE
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, ENROLL_CLIENT, OVERLAP_TIME_LABEL, \
     EDIT_LABEL
 
@@ -46,7 +46,7 @@ def get_actions_for_not_reserved_slot(
     else:
         buttons = [
             InlineKeyboardButton(
-                text=return_time_label,
+                text=RETURN_SLOT_ACTIVE,
                 callback_data=BlockOutTimeCbData(work_time_id=work_time_id).pack(),
             )
         ]

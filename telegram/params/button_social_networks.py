@@ -9,7 +9,7 @@ class SOCIAL_NETWORK:
     TELEGRAM = ('Telegram', 'https://t.me/')
     VK = ('VK', 'https://vk.com/')
     FACEBOOK = ('Facebook', 'https://www.facebook.com/')
-    OTHERS = 'Others'
+    OTHERS = 'Другие'
 
 
 @dataclass
@@ -25,22 +25,17 @@ class PreviewSocialNetwork:
 
     def generate_preview(self):
         return f'''Проверьте введенные данные:\n
-- Социальная сеть:  {self.social_network}\n
+- Социальная сеть:  {self.social_network}
 - Ваше имя пользователя:  {self.username}\n\n
-
-Всё верно - нажмите «{confirm}». Нужно исправить - нажмите «{change}»'''
+всё верно - нажмите «{confirm}»
+нужно исправить - нажмите «{change}»'''
 
     def generate_preview_for_changes(self):
         return f'''Проверьте введенные данные:\n
-        - Социальная сеть:  {self.social_network}\n
-        - Ваш username:  {self.username}\n\n
-
-Если нужно исправить, нажмите «{change}»'''
+- Социальная сеть:  {self.social_network}
+- Ваше имя пользователя:  {self.username}'''
 
     def generate_preview_for_delete(self):
         return f'''Проверьте введенные данные:\n
-        - Социальная сеть:  {self.social_network}\n
-        - Ваш username:  {self.username}\n\n
-
-Если нужно исправить, нажмите «{remove}»'''
-# cls_utils
+- Социальная сеть:  {self.social_network}
+- Ваше имя пользователя:  {self.username}'''

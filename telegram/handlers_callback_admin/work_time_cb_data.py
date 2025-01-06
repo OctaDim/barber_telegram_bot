@@ -43,9 +43,9 @@ from telegram.params.work_time_cb_data_message import SELECT_A_MONTH, PICK_DAY, 
     INTERVAL_CANNOT_BE_0H_OM, SELECT_WORKING_DAY, CHOOSE_TWO_VALUE, ADD_START_TIME, ADD_END_TIME, TIME_ADDED, \
     TOTAL_OPERATING_TIME_LESS_INTERVAL, SELECT_START_AND_END_WORKING_DAY, PICK_END_OF_THE_DAY, PICK_START_OF_THE_DAY, \
     ADD_BREAK_QUESTION, ADD_BREAK_ACTION, ADD_BREAK_START_TIME, ADD_BREAK_END_TIME, \
-    BREAK_START_LESS_WORK_TIME, BREAK_START_EXCEED_WORK_TIME, BREAK_START_NOT_IN_WORK_INTERVAL, \
+    BREAK_START_LESS_WORK_TIME, BREAK_START_EXCEED_WORK_TIME, \
     BREAK_START_EXCEED_BREAK_END, BREAK_END_LESS_WORK_TIME, BREAK_END_EXCEED_WORK_TIME, \
-    BREAK_END_NOT_IN_WORK_INTERVAL, BREAK_END_LESS_BREAK_START, NEXT_PAGE, NO_LABEL
+    BREAK_END_LESS_BREAK_START, NEXT_PAGE, NO_LABEL
 from utilities.save_work_time_data_in_db import save_work_time_data_in_db
 from utilities.tick_the_butthon import tick_the_button
 from utilities.get_start_or_end_work_time import get_the_time_from_the_inl_keyboard
@@ -566,11 +566,6 @@ async def next_step_start_break_work_time(
         return await callback_query.answer(text=BREAK_START_EXCEED_WORK_TIME,
                                            show_alert=True)
 
-    if time_start_break - time_start < interval or time_end - time_start_break <= interval:
-        return await callback_query.answer(
-            text=BREAK_START_NOT_IN_WORK_INTERVAL.format(interval),
-            show_alert=True)
-
     if time_end_break:
         if time_start_break >= time_end_break:
             return await callback_query.answer(
@@ -624,11 +619,6 @@ async def next_step_end_break_work_time(
     if time_end < time_end_break:
         return await callback_query.answer(text=BREAK_END_EXCEED_WORK_TIME,
                                            show_alert=True)
-
-    if time_end_break - time_start <= interval or time_end - time_end_break < interval:
-        return await callback_query.answer(
-            text=BREAK_END_NOT_IN_WORK_INTERVAL.format(interval),
-            show_alert=True)
 
     if time_start_break:
         if time_end_break < time_start_break:

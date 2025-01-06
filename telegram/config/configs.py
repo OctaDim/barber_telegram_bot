@@ -48,7 +48,7 @@ class SLOTS_CONFIGS:
     SHOW_SLOT_MASTER_FULL_NAME: bool = True
     SHOW_SAME_TIME_START_SLOT_NUMBER: bool = False
     SHOW_SAME_TIME_START_FIRST_SLOT_NUMBER: bool = True
-    SHOW_SLOTS_ADVISES_ICONS: bool = True
+    SHOW_SLOTS_ADVISES_ICONS: bool = False
     SHOW_SLOTS_ADVISING_ICON_HINT: bool = True
     POINTS_5_TIME_LOSS_LIMIT: Union[int, 0] = 0  # In minutes. 0 to switch off diapason
     POINTS_4_TIME_LOSS_LIMIT: Union[int, 0] = 0  # In minutes. 0 to switch off diapason

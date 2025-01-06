@@ -33,7 +33,7 @@ from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.params.button_admin_panel_or_main_menu import ButtonAdminPanelOrMainMenu
 from telegram.params.button_social_networks import PreviewSocialNetwork
 from telegram.params.buttons_contacts_by_master import CONTACTS_BY_MASTER_PARAMS
-from telegram.params.contacts_for_master_cb_data_message import choose_a_social_network, select_change
+from telegram.params.contacts_for_master_cb_data_message import SELECT_SOCIAL_NETWORK, SELECT_TO_CHANGE
 from telegram.params.messages import SELECT_ACTION, SUCCESSFULLY
 
 contacts_for_master_social_network_master_cb_query = Router(name=__name__)
@@ -73,7 +73,7 @@ async def choose_social_network(
     await bot.edit_message_text(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id,
-        text=choose_a_social_network,
+        text=SELECT_SOCIAL_NETWORK,
         reply_markup=choose_social_network_inl_kbd()
     )
 
@@ -167,7 +167,7 @@ async def change_obtained_social_network_data(
     await bot.edit_message_text(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id,
-        text=select_change,
+        text=SELECT_TO_CHANGE,
         reply_markup=change_obtained_social_network_data_inl_kbd()
     )
 
@@ -180,7 +180,7 @@ async def change_obtained_social_network(
     await bot.edit_message_text(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id,
-        text=choose_a_social_network,
+        text=SELECT_SOCIAL_NETWORK,
         reply_markup=choose_social_network_inl_kbd()
     )
 
@@ -263,7 +263,7 @@ async def change_social_network(
 
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
-        text=select_change,
+        text=SELECT_TO_CHANGE,
         reply_markup=change_obtained_social_network_data_inl_kbd()
     )
 
