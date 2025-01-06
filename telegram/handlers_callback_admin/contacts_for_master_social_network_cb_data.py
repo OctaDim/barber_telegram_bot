@@ -10,7 +10,8 @@ from database.db_queries.social_network_by_id_query import get_social_network_by
 from database.db_queries.social_network_delete_obj_by_id_query import delete_social_network_by_id
 from database.db_queries.social_network_update_data_query import social_network_update_data
 
-from telegram.handlers_admin.contacts_admin_social_network_btn_admin import add_username_social_network, add_other_social_network
+from telegram.handlers_admin.contacts_admin_social_network_btn_admin import add_username_social_network, \
+    add_other_social_network
 
 from telegram.keyboard_inline.contacts_for_master_choose_social_network_inl_kbd import choose_social_network_inl_kbd, \
     NameSocialNetworkCbData, OtherSocialNetworkCbData
@@ -35,6 +36,7 @@ from telegram.params.button_social_networks import PreviewSocialNetwork
 from telegram.params.buttons_contacts_by_master import CONTACTS_BY_MASTER_PARAMS
 from telegram.params.contacts_for_master_cb_data_message import SELECT_SOCIAL_NETWORK, SELECT_TO_CHANGE
 from telegram.params.messages import SELECT_ACTION, SUCCESSFULLY
+from telegram.params.timetable_cb_data_message import NOT_CONTACTS_ERROR
 
 contacts_for_master_social_network_master_cb_query = Router(name=__name__)
 
@@ -215,12 +217,19 @@ async def get_social_networks_for_changes(
         state: FSMContext,
         bot: Bot
 ):
+    social_networks = get_all_social_networks_by_masters()
+
+    if len(social_networks) == 0:
+        await callback_query.answer(
+            text=NOT_CONTACTS_ERROR,
+            show_alert=True)
+
+        return
+
     await bot.delete_message(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id
     )
-
-    social_networks = get_all_social_networks_by_masters()
 
     messages_id = []
     for social_network in social_networks:
@@ -281,12 +290,19 @@ async def get_social_network_for_delete(
         state: FSMContext,
         bot: Bot
 ):
+    social_networks = get_all_social_networks_by_masters()
+
+    if len(social_networks) == 0:
+        await callback_query.answer(
+            text=NOT_CONTACTS_ERROR,
+            show_alert=True)
+
+        return
+
     await bot.delete_message(
         message_id=callback_query.message.message_id,
         chat_id=callback_query.message.chat.id
     )
-
-    social_networks = get_all_social_networks_by_masters()
 
     messages_id = []
     for social_network in social_networks:

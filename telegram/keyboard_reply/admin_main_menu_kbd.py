@@ -17,7 +17,7 @@ def get_admin_main_menu_kbd():
     keyboard_markup = builder.as_markup(
         input_field_placeholder=SELECT_ACTION,
         resize_keyboard=True,
-        one_time_keyboard=True
+        one_time_keyboard=False
     )
 
     return keyboard_markup
