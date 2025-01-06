@@ -13,6 +13,6 @@ def return_admin_panel_or_main_menu_kbd(quantity: int = None ) -> ReplyKeyboardM
 
     reply_keyboard_markup = builder_reply_kbd.as_markup(
         resize_keyboard=True,
-        one_time_keyboard=True)
+        one_time_keyboard=False)
 
     return reply_keyboard_markup
