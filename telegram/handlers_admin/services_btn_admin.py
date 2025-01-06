@@ -24,7 +24,7 @@ from telegram.params.messages import (
     ADD_DESCRIPTION_SERVICE,
     ADD_NAME_SERVICE,
     ADD_PRICE_SERVICE,
-    CHOOSE_AN_ACTION,
+    CHOOSE_AN_ACTION, NO_SERVICES_ERROR,
 )
 
 from telegram.params.services_btn_admin_message import (
@@ -64,7 +64,7 @@ async def get_services_action(message: Message):
 
 @services_admin_btn_router.message(F.text == BUTTON_SERVICES_ACTION.ADD)
 async def add_name_service(message: Message, state: FSMContext):
-    await message.answer(text=ADD_NAME_SERVICE)
+    await message.answer(text=ADD_NAME_SERVICE, reply_markup=get_admin_main_menu_kbd())
     await state.set_state(Services.name)
 
 
@@ -215,6 +215,12 @@ async def change_service(message: Message, state: FSMContext):
 async def services_change_or_remove(message: Message, state: FSMContext):
     data = get_services_list()
     messages_id = []
+
+    if len(data) == 0:
+        await message.answer(
+            text=NO_SERVICES_ERROR,
+            reply_markup=get_admin_main_menu_kbd()
+        )
 
     if message.text == BUTTON_SERVICES_ACTION.Remove:
         for service in data:
