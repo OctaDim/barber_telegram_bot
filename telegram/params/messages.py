@@ -12,6 +12,7 @@ ADD_DESCRIPTION_SERVICE = "Отправьте описание новой усл
 ADD_PRICE_SERVICE = "Отправьте цену новой услуги:"
 CHOOSE_AN_ACTION = 'Выберите действие'
 SUCCESSFULLY = 'Действие выполнено успешно'
+NO_SERVICES_ERROR = 'Извините, нет ранее созданных услуг'
 
 # MENU SECTION
 SELECT_ACTION = "Выберите действие:"
