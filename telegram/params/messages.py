@@ -33,7 +33,7 @@ NO_AVAILABLE_MASTERS = "ℹ️ Извините, нет доступных ма�
 # CLIENT SERVICES ENROLL SECTION
 SELECT_SERVICES_SECTION = "Выберите желаемый раздел в услугах"
 HOW_SELECT_SERVICES = "Выберите, как вы хотите записаться на услуги: ⤵️"
-NO_SERVICES = "ℹ️ Извините, Нет доступных услуг"
+NO_SERVICES = "ℹ️ Извините, нет доступных услуг"
 NO_SERVICES_FOR_CATEGORY = "ℹ️ Извините, нет услуг в этой категории"
 NO_SERVICES_FOR_SELECTED_OPTIONS = "ℹ️ Извините, нет доступных услуг для выбранных условий"
 SEE_OUR_SERVICES = "Рады предложить вам все наши услуги: ⤵️"
