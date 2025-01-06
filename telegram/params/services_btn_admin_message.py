@@ -6,8 +6,8 @@ class AddTimeDurationServiceMessage:
     SELECT_DURATION = 'Выберите продолжительность в <b>часах</b> и <b>минутах</b>:'
     HOURS = 'Часов:'
     MINUTES = 'Минут:'
-    IN_HOURS = "часах"
-    IN_MINUTES = "минутах"
+    IN_HOURS = 'часах'
+    IN_MINUTES = 'минутах'
 
 
 @dataclass
@@ -30,8 +30,8 @@ class ChangeService:
 
 
 service_details_message = (
-    "Название: {}\n"
-    "Описание: {}\n"
-    "Продолжительность: {}\n"
-    "Цена: {}\n"
+    'Название: {}\n'
+    'Описание: {}\n'
+    'Продолжительность: {}\n'
+    'Цена: {}\n'
 )

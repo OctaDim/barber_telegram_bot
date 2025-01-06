@@ -13,7 +13,7 @@ class MAIN_MENU_BUTTONS(COMMON_BUTTONS_PARAMS):
 
 @dataclass()
 class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
-    TIMETABLE = 'Записи на услуги'
+    TIMETABLE = 'Управление Расписанием'
     SERVICES = "Услуги"
     CONTACTS = "Контакты"
-    WORK_TIME = "Рабочий график"
+    WORK_TIME = "Создание \nГрафика"
