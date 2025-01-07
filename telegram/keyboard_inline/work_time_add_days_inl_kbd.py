@@ -3,6 +3,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.params.work_time_cb_data_message import RETURN_ADMIN_PANEL, RETURN, CONTINUE_BUTTON_TXT
+from utilities.calendar_utils import get_weekdays_names_list
 from utilities.get_days_calendar import get_days_in_month
 
 
@@ -26,7 +27,8 @@ def work_time_days_inl_kbd(mount: str, year: int, current_date, master_id):
     data, month_name = get_days_in_month(month_name=mount, year=year, current_date=current_date, master_id=master_id)
     data_copy = data.copy()
 
-    week_row = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
+    week_row = get_weekdays_names_list(abbreviation=True, language='RU')
+
     calendar_data = []
 
     builder.button(text=month_name, callback_data=month_name)

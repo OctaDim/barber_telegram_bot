@@ -5,6 +5,7 @@ from datetime import datetime
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, CONTINUE_BUTTON_TXT
+from utilities.calendar_utils import get_weekdays_names_list
 from utilities.get_days_calendar_by_timetable import get_days_in_month_by_logbook
 
 
@@ -33,7 +34,7 @@ def timetable_get_day_inl_kbd(month: int, year: int, date_days: dict, current_da
     data, month_name = get_days_in_month_by_logbook(month=month, year=year, days=date_days)
     data_copy = data.copy()
 
-    week_row = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
+    week_row = get_weekdays_names_list(abbreviation=True, language='RU')
     calendar_data = []
 
     builder.button(text=month_name, callback_data=f'{month_name}')

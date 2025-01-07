@@ -15,6 +15,8 @@ client_enter_name_state_router.message.filter(ChatTypesFilter(["private"]))
 @client_enter_name_state_router.message(StateFilter(RegisterNewClientState.new_client_name))
 async def client_enter_name_state_hdr_pvt(message: Message,
                                           state: FSMContext):
+    await state.set_state(None)
+
     data = message.from_user.dict()
     data['first_name'] = message.text
 
