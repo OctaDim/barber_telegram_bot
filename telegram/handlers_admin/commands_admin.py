@@ -50,7 +50,9 @@ async def register_first_name_master(message: Message, state: FSMContext):
 
 
 @admin_panel.message(StateFilter(AdminPanelState.first_name_new_user))
-async def create_master_on_start(message: Message):
+async def create_master_on_start(message: Message, state: FSMContext):
+    await state.set_state(None)
+
     data = message.from_user.dict()
     data['first_name'] = message.text
 
