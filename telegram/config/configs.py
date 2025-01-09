@@ -47,13 +47,13 @@ class SLOTS_CONFIGS:
     ONLY_TIME_START_UNIQUE_RANDOM_SLOTS: bool = False
     SHOW_SLOT_MASTER_FULL_NAME: bool = True
     SHOW_SAME_TIME_START_SLOT_NUMBER: bool = False
-    SHOW_SAME_TIME_START_FIRST_SLOT_NUMBER: bool = True
-    SHOW_SLOTS_ADVISES_ICONS: bool = False
+    SHOW_SAME_TIME_START_FIRST_SLOT_NUMBER: bool = False
+    SHOW_SLOTS_ADVISES_ICONS: bool = True
     SHOW_SLOTS_ADVISING_ICON_HINT: bool = True
     POINTS_5_TIME_LOSS_LIMIT: Union[int, 0] = 0  # In minutes. 0 to switch off diapason
     POINTS_4_TIME_LOSS_LIMIT: Union[int, 0] = 0  # In minutes. 0 to switch off diapason
-    POINTS_3_TIME_LOSS_LIMIT: Union[int, 0] = 25  # In minutes. 0 to switch off diapason
-    POINTS_2_TIME_LOSS_LIMIT: Union[int, 0] = 45  # In minutes. or 0 to switch off diapason
+    POINTS_3_TIME_LOSS_LIMIT: Union[int, 0] = 0  # In minutes. 0 to switch off diapason
+    POINTS_2_TIME_LOSS_LIMIT: Union[int, 0] = 30  # In minutes. or 0 to switch off diapason
     # Very big number (99999) - all other slots except those diapasons above
     POINTS_1_TIME_LOSS_LIMIT: Union[int, 0] = 99999  # In minutes. 0 to switch off
 
@@ -78,9 +78,9 @@ class RESERVATIONS_CONFIGS:
 @dataclass
 class PAUSE_CONFIGS:
     LIST_MESSAGES_COMMON_DELAY: float | int | str = 0  # 0 default, 0 - switch off delay
-    LIST_MORE_30_MESSAGES_DELAY: float | int | str = 0.05  # 0.1 default, 0 - switch off delay
-    INFO_MESSAGE_DELAY: float | int | str = 5  # 5
-    WARNING_MESSAGE_DELAY: float | int | str = 10  # 10
+    LIST_MORE_30_MESSAGES_DELAY: float | int | str = 0.05  # 0.05 default, 0 - switch off delay
+    INFO_MESSAGE_DELAY: float | int | str = 3  # 3
+    WARNING_MESSAGE_DELAY: float | int | str = 3  # 3
 
 
 @dataclass

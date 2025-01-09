@@ -173,7 +173,11 @@ async def re_open_reply_keyboard_message(
 
         await fsm_state.update_data(
             reply_keyboard_opened_state=reply_kbd_opened_state_after_open,
-            prior_reply_message_id_state=new_reply_message_id)
+            prior_reply_message_id_state=new_reply_message_id,
+            prior_reply_kbd_markup_obj_state=re_open_reply_keyboard,
+            prior_reply_kbd_text_state=re_open_reply_msg_text,
+            prior_reply_kbd_img_path_state=image_path,
+            prior_reply_kbd_img_text_state=image_caption_text)
         print(f"\tFSM state updated:\n"
               f"\treply_keyboard_opened_state = {reply_kbd_opened_state}\n"
               f"\tprior_reply_message_id_state = {new_reply_message_id}\n")

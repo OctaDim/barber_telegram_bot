@@ -70,7 +70,8 @@ async def balance_btn_to_submenu_reply_hdr_pvt(message: Message,
         telegram_update_obj=message,
         re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
-        reply_kbd_opened_state_after_open=True)
+        reply_kbd_opened_state_after_open=True,
+        open_reply_kbd_msg_anyway=True)
     if cur_message:
         cur_handler_messages_ids.append(cur_message.message_id)
 
