@@ -28,7 +28,7 @@ class MSG:
 
     CATEGORY_NAME: str = "Категория"
 
-    SOCIALS: str = "🌐 Социальная сеть"
+    SOCIALS: str = "🌐 Социальные сети"
     PHONES: str = "📞 Телефоны"
     ADDRESSES: str = "📍 Адресы"
 

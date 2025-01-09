@@ -14,12 +14,15 @@ from utilities.decorators_global import execution_time_decorator
 def get_company_contacts(company_id: int = None) -> Optional[dict]:
     with DBConnection(db_url=db_engine_url) as session:
         if not company_id:
-            socials = session.query(Social.name, Social.url).all()
+            socials = session.query(
+                Social.name, Social.url, Social.social_username).all()
             phones = session.query(Phone.number).all()
             address = session.query(Address.street, Address.url).all()
 
         else:
-            socials = session.query(Social.name, Social.url).filter(
+            socials = session.query(
+                Social.name, Social.url, Social.social_username
+            ).filter(
                 Social.company_id == company_id).all()
 
             phones = session.query(Phone.number).filter(

@@ -88,7 +88,15 @@ def get_contacts_text(socials: list,
     if socials:
         text += f"<b>{MSG.SOCIALS}:</b>\n"
         for social in socials:
-            text += f"<a href='{social.url}'>{social.name}</a>\n"
+            if social.url:
+                text += (f"<a href='{social.url}'>{social.name}:  "
+                         f"<b>{social.social_username}</b>"
+                         f"</a>\n\n")
+            else:
+                text += (f"{social.name}:  "
+                         f"<code>{social.social_username}</code>"
+                         f"\n\n")
+
         text += "\n"
 
     if phones:
