@@ -54,10 +54,6 @@ async def inline_our_contacts_cb_hdr(callback_query: CallbackQuery,
         disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_PREVIEW,
         reply_markup=get_pvt_main_menu_reply_kbd())
 
-    # TEST LOGS
-    await update_test_messages_ids_logs(state=state,
-                                        telegram_update_obj=callback_query)
-
     # await state.update_data()
 
     return get_handler_answer_flag_dict(
