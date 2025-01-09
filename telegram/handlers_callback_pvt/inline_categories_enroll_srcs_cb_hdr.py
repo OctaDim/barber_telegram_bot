@@ -23,7 +23,8 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
     NO_AVAILABLE_CATEGORIES,
-    SELECT_SERVICES_CATEGORY, OR_SELECT_MAIN_MENU)
+    SELECT_SERVICES_CATEGORY,
+    OR_SELECT_MAIN_MENU)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
