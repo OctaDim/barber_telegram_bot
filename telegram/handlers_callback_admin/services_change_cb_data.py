@@ -42,3 +42,5 @@ async def get_service(
     messages_id = state_data.get('messages_id')
 
     await bot.delete_messages(chat_id=callback_query.message.chat.id, message_ids=messages_id)
+
+    await state.update_data(change_btn=True)

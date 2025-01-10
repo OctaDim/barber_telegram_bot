@@ -5,14 +5,22 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
+from database.db_queries.all_categories_by_master_query import get_all_categories_by_master_query
+from database.db_queries.check_for_created_category_query import check_for_created_category_query
+from telegram.config.admin_configs import ADMIN_CATEGORIES_CONFIGS
 from telegram.filters.chat_types_filter import IsAdmin
+from telegram.keyboard_inline.service_get_all_categories_by_master import get_category_for_service_inl_kbd
 from telegram.keyboard_inline.services_change_select_inl_kbd import services_select_inl_kbd
 from telegram.keyboard_inline.services_time_duration_add_inl_kbd import (
     add_hours_time_duration_services_inl_kbd,
     add_minutes_time_duration_services_inl_kbd
 )
+from telegram.keyboard_reply.admin_categories_get_choose_service_or_categories import \
+    get_choose_service_or_categories_replay_kbd
 
 from telegram.keyboard_reply.admin_services_action_kbd import get_services_action_kbd
+from telegram.params.admin_categories_message import NOT_HAVE_CATEGORIES
+from telegram.params.buttons_admin_categories import CHOOSE_SERVICE_OR_CATEGORIES
 from telegram.params.buttons_main_menu import MAIN_MANU_ADMIN_PARAMS as MAIN_PARAMS
 from telegram.keyboard_reply.admin_main_menu_kbd import get_admin_main_menu_kbd
 from telegram.keyboard_reply.admin_add_services_kbd import get_keyboard, get_change_service_keyboard
@@ -31,7 +39,7 @@ from telegram.params.services_btn_admin_message import (
     AddTimeDurationServiceMessage,
     AddPriceMessage,
     GetDecision,
-    ChangeService, service_details_message
+    ChangeService, service_details_message, ADD_CATEGORY
 )
 
 from database.db_queries.admin_queries import add_services
@@ -55,11 +63,25 @@ class Services(StatesGroup):
     duration_minutes = State()
     duration_entered = State()
     messages_id = State()
+    change_btn = State()
 
 
 @services_admin_btn_router.message(F.text == MAIN_PARAMS.SERVICES)
+@services_admin_btn_router.message(F.text == CHOOSE_SERVICE_OR_CATEGORIES.SERVICE)
 async def get_services_action(message: Message):
-    await message.answer(text=CHOOSE_AN_ACTION, reply_markup=get_services_action_kbd())
+    result = check_for_created_category_query(
+        telegram_id=message.from_user.id)
+
+    if result:
+        await message.answer(
+            text=CHOOSE_AN_ACTION,
+            reply_markup=get_services_action_kbd())
+
+        return
+
+    await message.answer(
+        text=NOT_HAVE_CATEGORIES,
+        reply_markup=get_choose_service_or_categories_replay_kbd())
 
 
 @services_admin_btn_router.message(F.text == BUTTON_SERVICES_ACTION.ADD)
@@ -144,6 +166,11 @@ async def preview_service(message: Message, state: FSMContext, cb_data=None):
 @services_admin_btn_router.message(StateFilter(Services.decision))
 async def get_decision(message: Message, state: FSMContext):
     if message.text == BUTTONS_ADD_SERVICES.ADD:
+        if ADMIN_CATEGORIES_CONFIGS.USE_CATEGORY:
+            # print(message.from_user.id)
+            await add_category(message, state)
+            return
+
         data = await state.get_data()
         user_telegram_id = message.from_user.id
 
@@ -157,7 +184,14 @@ async def get_decision(message: Message, state: FSMContext):
         await message.answer(text=GetDecision.REMOVE, reply_markup=get_admin_main_menu_kbd())
 
     elif message.text == BUTTONS_ADD_SERVICES.CHANGE_SERVICE:
-        await message.answer(text=GetDecision.CHANGE, reply_markup=get_change_service_keyboard())
+        state_data = await state.get_data()
+        if state_data.get('change_btn'):
+            reply_markup = get_change_service_keyboard(category=True)
+        else:
+            reply_markup = get_change_service_keyboard()
+
+
+        await message.answer(text=GetDecision.CHANGE, reply_markup=reply_markup)
         await state.set_state(Services.change)
 
 
@@ -184,6 +218,9 @@ async def change_service(message: Message, state: FSMContext):
 
         case BUTTONS_CHANGE_SERVICES.DURATION:
             await state.update_data(change=message.text)
+
+        case BUTTONS_CHANGE_SERVICES.CATEGORY:
+            return await add_category(message, state)
 
     data = await state.get_data()
     change = data.get('change')
@@ -270,3 +307,25 @@ async def services_change_or_remove(message: Message, state: FSMContext):
         messages_id.append(message.message_id)
 
     return await state.update_data(messages_id=messages_id)
+
+
+
+async def add_category(message: Message, state: FSMContext):
+    messages_id = []
+
+    categories = get_all_categories_by_master_query(
+        telegram_id=message.from_user.id)
+
+    await message.answer(text=ADD_CATEGORY)
+
+    for category in categories:
+        message = await message.answer(
+            text=category.name.capitalize(),
+            reply_markup=get_category_for_service_inl_kbd(
+                category_id=category.id
+            )
+        )
+
+        messages_id.append(message.message_id)
+
+    await state.update_data(messages_id=messages_id)

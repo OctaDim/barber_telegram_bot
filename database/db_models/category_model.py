@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db_connection import Base
@@ -10,6 +11,10 @@ class Category(Base):
     __tablename__ = "category"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
+    master_id: Mapped[int] = mapped_column(
+        ForeignKey("master.id"),
+        nullable=True)
 
     name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[Optional[str]]

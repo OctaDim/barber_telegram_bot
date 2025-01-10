@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from telegram.config.admin_configs import ADMIN_CATEGORIES_CONFIGS
 from telegram.params.buttons_common import COMMON_BUTTONS_PARAMS
 
 
@@ -14,6 +15,9 @@ class MAIN_MENU_BUTTONS(COMMON_BUTTONS_PARAMS):
 @dataclass()
 class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
     TIMETABLE = 'Управление Расписанием'
-    SERVICES = "Услуги"
     CONTACTS = "Контакты"
     WORK_TIME = "Создание \nГрафика"
+    SERVICES = 'Услуги'
+    CATEGORIES = 'Услуги | Категории'
+    SERVICES = CATEGORIES if ADMIN_CATEGORIES_CONFIGS.USE_CATEGORY \
+        else SERVICES

@@ -12,10 +12,6 @@ class Master(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    category_id: Mapped[int] = mapped_column(
-        ForeignKey("category.id"),
-        nullable=True)
-
     user_id: Mapped[int] = mapped_column(
         ForeignKey("user.id"),
         unique=True)

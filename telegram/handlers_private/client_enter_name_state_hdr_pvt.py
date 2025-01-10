@@ -22,4 +22,4 @@ async def client_enter_name_state_hdr_pvt(message: Message,
 
     await menu_command(message=message, state=state)
 
-    create_user_on_start(data=data, master=True)
+    create_user_on_start(data=data, master=False)

@@ -15,10 +15,12 @@ import database.db_imports_initialization
 # ######################################################################
 
 from telegram.config.settings import BOT_CREDENTIALS
+from telegram.handlers_admin.categories_btn_admin import admin_categories_btn_router
 from telegram.handlers_admin.contacts_admin_address_btn_admin import contacts_admin_address_btn_router
 from telegram.handlers_admin.contacts_admin_social_network_btn_admin import contacts_admin_social_network_btn_router
 from telegram.handlers_admin.timetable_btn_admin import timetable_admin_btn_router
 from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_router
+from telegram.handlers_callback_admin.category_change_cb_data import admin_change_category_cb_router
 from telegram.handlers_callback_admin.contacts_for_master_address_cb_data import \
     contacts_for_master_address_master_cb_query
 from telegram.handlers_callback_admin.contacts_for_master_social_network_cb_data import contacts_for_master_social_network_master_cb_query
@@ -112,6 +114,8 @@ dp.update.outer_middleware(AllUpdatesMiddleware())
 
 # Routers:
 dp.include_router(admin_panel)
+dp.include_router(admin_change_category_cb_router)
+dp.include_router(admin_categories_btn_router)
 dp.include_router(no_action_common_cb_router)
 dp.include_router(contacts_admin_address_btn_router)
 dp.include_router(contacts_for_master_address_master_cb_query)

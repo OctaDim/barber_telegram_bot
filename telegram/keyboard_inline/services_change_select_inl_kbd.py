@@ -2,6 +2,7 @@ from aiogram.utils.keyboard import (InlineKeyboardBuilder)
 from aiogram.filters.callback_data import CallbackData
 
 from database.db_queries.admin_queries import get_one_service
+from telegram.params.admin_categories_message import CHANGE, REMOVE
 
 
 class ChangeServicesCbData(CallbackData, prefix='change-services'):
@@ -20,11 +21,13 @@ def services_select_inl_kbd(id_service: int, quantity: int = None, action: bool 
 
     if action:
         callback_data = RemoveServicesCbData(id_services=service.id)
+        text = REMOVE
 
     else:
         callback_data = ChangeServicesCbData(id_services=service.id, quantity=quantity)
+        text = CHANGE
 
-    builder.button(text='🟩',
+    builder.button(text=text,
                    callback_data=callback_data.pack()
                    )
 
