@@ -21,15 +21,17 @@ def get_keyboard():
     return keyboard_markup
 
 
-def get_change_service_keyboard():
+def get_change_service_keyboard(category: bool = False):
     builder = ReplyKeyboardBuilder()
 
     builder.button(text=BUTTONS_CHANGE_SERVICES.NAME)
     builder.button(text=BUTTONS_CHANGE_SERVICES.DESCRIPTION)
     builder.button(text=BUTTONS_CHANGE_SERVICES.PRICE)
     builder.button(text=BUTTONS_CHANGE_SERVICES.DURATION)
+    if category:
+        builder.button(text=BUTTONS_CHANGE_SERVICES.CATEGORY)
 
-    builder.adjust(3)
+    builder.adjust(2, 2, 3)
 
     keyboard_markup = builder.as_markup(
         resize_keyboard=True,

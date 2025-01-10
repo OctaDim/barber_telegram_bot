@@ -8,3 +8,4 @@ class BUTTONS_CHANGE_SERVICES:
     DESCRIPTION: str = "Описание"
     PRICE: str = "Цена"
     DURATION: str = "Продолжительность"
+    CATEGORY: str = "Категория"
