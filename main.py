@@ -5,10 +5,9 @@ from datetime import datetime
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.types import BotCommand, BotCommandScopeChat
+from aiogram.exceptions import TelegramBadRequest
 
 # ######################################################################
-
 # ## Very necessary import to initialize DB models without cycle imports
 # ######################################################################
 import database.db_imports_initialization
@@ -23,7 +22,8 @@ from telegram.handlers_admin.work_time_btn_time import work_time_admin_btn_route
 from telegram.handlers_callback_admin.category_change_cb_data import admin_change_category_cb_router
 from telegram.handlers_callback_admin.contacts_for_master_address_cb_data import \
     contacts_for_master_address_master_cb_query
-from telegram.handlers_callback_admin.contacts_for_master_social_network_cb_data import contacts_for_master_social_network_master_cb_query
+from telegram.handlers_callback_admin.contacts_for_master_social_network_cb_data import \
+    contacts_for_master_social_network_master_cb_query
 from telegram.handlers_callback_admin.timetable_cb_data import timetable_cb_query
 from telegram.handlers_callback_admin.work_time_cb_data import work_time_cb_query
 
@@ -68,7 +68,6 @@ from telegram.handlers_private.submenu_on_contacts_btn_reply_hdr_pvt import subm
 from telegram.handlers_private.submenu_on_services_btn_reply_hdr_pvt import submenu_services_pvt_router
 from telegram.keyboard_inline.inline_deposit_balance_cb_hdr import inline_deposit_balance_router
 from telegram.middlewares.all_updates_middleware import AllUpdatesMiddleware
-from telegram.params.commands import COMMANDS_PARAMS
 
 from telegram.handlers_private.start_stop_bot_hds_pvt import on_start_stop_router
 from telegram.handlers_private.commands_pvt import on_start_router
@@ -96,6 +95,10 @@ from telegram.handlers_private.cancel_all_services_btn_reply_hdr_pvt import canc
 from telegram.handlers_callback_pvt.clicked_slot_advising_icons_cb_hdr import clicked_slot_advising_icons_cb_router
 from telegram.handlers_callback_pvt.selected_slot_enroll_srcs_cb_hdr import slot_selected_enroll_services_cb_router
 from telegram.handlers_callback_pvt.continue_slot_saving_cb_hdr import continue_slot_saving_enroll_srcs_cb_router
+from telegram.telegram_utils.global_menu_button_utils import (
+    enable_users_global_commands,
+    enable_admins_global_commands,
+    enable_developers_global_commands)
 
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(name)s - "
@@ -180,32 +183,20 @@ dp.include_router(client_enter_name_state_router)
 # All unhandled update router:
 dp.include_router(unhandled_update_router)
 
-private_chat_commands = [
-    BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
-               description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
-]
-
-admin_chat_commands = [
-    BotCommand(command=COMMANDS_PARAMS.ADMIN_PANEL.TEXT,
-               description=COMMANDS_PARAMS.ADMIN_PANEL.DESCRIPTION),
-    BotCommand(command=COMMANDS_PARAMS.MENU_CMD.TEXT,
-               description=COMMANDS_PARAMS.MENU_CMD.DESCRIPTION),
-]
-
-scope = BotCommandScopeChat(chat_id=int(BOT_CREDENTIALS.TG_BOT_ADMIN_ID))
-
 
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
 
-    await bot.set_my_commands(commands=private_chat_commands)
-    await bot.set_my_commands(commands=admin_chat_commands, scope=scope)
+    await enable_users_global_commands(bot)
+    await enable_admins_global_commands(bot)
+    await enable_developers_global_commands(bot)
 
     try:
         await dp.start_polling(
             bot,
             allowed_updates=dp.resolve_used_update_types())
-
+    except (TelegramBadRequest, Exception) as exception_error:
+        print(f"\tBot start polling error because \t {exception_error}\n")
     finally:
         await bot.session.close()
 
