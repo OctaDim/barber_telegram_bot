@@ -3,6 +3,11 @@ from typing import Literal, Union
 
 
 @dataclass
+class BOT_START_STOP_CONFIG:
+    SEND_BOT_START_STOP_MSG: bool = True
+
+
+@dataclass
 class LANGUAGE_CONFIGS:
     LANGUAGE: Literal["EN", "RU"] = "RU"
     PHONE_NUMBER_REGION: Literal["BY", "RU", "US", "international"] = "BY"
