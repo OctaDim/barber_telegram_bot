@@ -5,6 +5,10 @@ from typing import Literal
 
 from dateutil.relativedelta import relativedelta
 
+from utilities.system_locale_utils import (
+    set_system_locale_name,
+    get_system_locale_name)
+
 
 def get_next_12_months_nums_from_now(required_months_number: int) -> list:
     datetime_now = datetime.now()
@@ -37,8 +41,8 @@ def get_weekdays_flex_abbr_list(language: Literal["EN", "RU"] = "EN",
                                 upper_case: bool = False) -> list:
     origin_locale = locale.getlocale(locale.LC_TIME)
 
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     weekdays_abbr_list = calendar.weekheader(symbols_max).split()
     if upper_case:
@@ -53,8 +57,9 @@ def get_weekday_flex_abbr_by_index(weekday_index: int,
                                    symbols_max: Literal[1, 2, 3, 100] = 3,
                                    upper_case: bool = False) -> str:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     weekdays_abbr_list = calendar.weekheader(symbols_max).split()
     weekday_abbr = weekdays_abbr_list[weekday_index]
@@ -70,8 +75,9 @@ def get_weekday_flex_abbr_by_date(date_value: date | datetime,
                                   symbols_max: Literal[1, 2, 3, 100] = 3,
                                   upper_case: bool = False) -> str:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     weekdays_abbr_list = calendar.weekheader(symbols_max).split()
     weekday_number = date_value.weekday()
@@ -99,8 +105,9 @@ def get_month_names_dict(abbreviation: bool = False,
                          language: Literal["EN", "RU"] = "EN",
                          upper_case: bool = False) -> dict:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     if abbreviation:
         month_names = dict(enumerate(calendar.month_abbr))
@@ -123,8 +130,9 @@ def get_month_name_by_number(month_number: int,
                              language: Literal["EN", "RU"] = "EN",
                              upper_case: bool = False) -> str:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     if abbreviation:
         month_name = calendar.month_abbr[month_number]
@@ -141,8 +149,9 @@ def get_weekdays_names_dict(abbreviation: bool = False,
                             language: Literal["EN", "RU"] = "EN",
                             upper_case: bool = False) -> dict:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     if abbreviation:
         weekdays_names = dict(enumerate(calendar.day_abbr))
@@ -165,8 +174,9 @@ def get_weekday_name_by_index(weekday_index: int,
                               language: Literal["EN", "RU"] = "EN",
                               upper_case: bool = False) -> str:
     origin_locale = locale.getlocale(locale.LC_TIME)
-    if language == "RU":
-        locale.setlocale(locale.LC_TIME, locale=("Russian_Russia", "1251"))
+
+    locale_name = get_system_locale_name(language=language)
+    set_system_locale_name(locale_name=locale_name)
 
     if abbreviation:
         weekday_name = calendar.day_abbr[weekday_index]
@@ -383,7 +393,6 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
     timedelta_str = timedelta_str.upper() if upper_case else timedelta_str
     return timedelta_str
 
-
 # ############################### TEST CODE ############################
 # test_date = datetime(year=2024, month=10, day=12,
 #                      hour=2, minute=7,
@@ -392,34 +401,58 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
 # test_timedelta = timedelta(weeks=2, days=1,
 #                            hours=3, minutes=7, seconds=2,
 #                            microseconds=15, milliseconds=1000)
+#
+# print(get_date_with_month_name(
+#     date_value=test_date,
+#     language="RU",
+#     upper_case=False
+# ))
+#
+# print(get_date_flex_from_datetime(
+#     date_value=test_date,
+#     language="RU",
+#     year_abbreviated=False,
+#     separator="-",
+#     month_as_name=False,
+#     upper_case=False
+# ))
+#
 # print(get_month_names_dict(
 #     language="RU",
 #     upper_case=True,
-#     abbreviation=True))
+#     abbreviation=False
+# ))
 #
 # print(get_weekdays_flex_abbr_list(
-#     language="EN",
+#     language="RU",
 #     upper_case=True,
-#     symbols_max=3))
-#
+#     symbols_max=100
+# ))
 #
 # print(get_numeric_month_calendar_list(
-#     year=2024, month=12))
+#     year=2024, month=12
+# ))
 #
 # print(get_next_12_months_nums_from_now(required_months_number=12))
 #
 # print(get_weekdays_names_dict(
 #     language="RU",
 #     upper_case=True,
-#     abbreviation=True))
+#     abbreviation=False
+# ))
 #
 # print(get_weekday_name_by_index(
-#     weekday_index=0))
-
+#     language="RU",
+#     weekday_index=0,
+#     abbreviation=False,
+#     upper_case=True
+# ))
+#
 # print(get_weekday_flex_abbr_by_date(
 #     date_value=datetime.now(),
 #     language="RU",
-#     symbols_max=
+#     symbols_max=3,
+#     upper_case=True
 # ))
 #
 # print(get_hours_minutes_secs_timedelta(
@@ -431,4 +464,21 @@ def get_hours_minutes_secs_timedelta(timedelta_value: timedelta,
 #     separator=" ",
 #     space_before_note=True
 # ))
+#
+# from babel.dates import get_month_names, get_day_names, format_date, format_time, format_timedelta
+# month_names = get_month_names(locale="he_IL.UTF-8", width="abbreviated", context="stand-alone")
+# for month_number, month_name in month_names.items():
+#     print(month_number, month_name)
+#
+# import locale
+# import platform
+#
+# if platform.system() == "Windows":
+#     for code in locale.windows_locale.values():
+#         try:
+#             locale.setlocale(locale.LC_ALL, code)
+#             print(f"Locale {code} is available: {locale.getlocale()}")
+#         except (locale.Error, ValueError, Exception) as error:
+#             print(error)
+#             continue
 # ######################################################################
