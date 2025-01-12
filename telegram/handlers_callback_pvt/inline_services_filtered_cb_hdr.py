@@ -13,7 +13,7 @@ from database.db_queries.all_services_ordered_queries import (
 from database.db_queries_hepers.masters_fullnames_by_service_obj import (
     get_masters_names_by_service_obj)
 from telegram.config.configs import (
-    PAUSE_CONFIGS,
+    LANGUAGE_CONFIGS, PAUSE_CONFIGS,
     SERVICES_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
@@ -49,6 +49,7 @@ from telegram.telegram_utils.messages_helpers import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual,
     re_open_reply_keyboard_message)
+from utilities.calendar_utils import get_hours_minutes_secs_timedelta
 from utilities.numeric_utils import (
     number_or_str_to_float)
 
@@ -149,6 +150,14 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
 
     all_services_info_dict = {}
     for service_record in all_services_records:
+        service_time_duration = get_hours_minutes_secs_timedelta(
+            timedelta_value=service_record.time_duration,
+            language=LANGUAGE_CONFIGS.LANGUAGE,
+            hide_zero_values=True,
+            space_before_note=True,
+            separator=" : ",
+            abbrev_symbols="3")
+
         # if (selected_method_prefix == MethodCategoryToServiceContinueCBD.__prefix__
         #         and SERVICES_CONFIGS.SHOW_MASTERS_NAMES_WHEN_BY_CATEGORY):
         if (not selected_master_id
@@ -157,10 +166,12 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
                 service_obj=service_record)
             service_brief_text = get_service_brief_info_with_master(
                 service_record=service_record,
+                service_duration=service_time_duration,
                 masters_info=masters_full_names)
         else:
             service_brief_text = get_service_brief_info(
-                service_record=service_record)
+                service_record=service_record,
+                service_duration=service_time_duration)
 
         if service_record.id in selected_services_ids:
             same_id_count = selected_services_ids.count(service_record.id)

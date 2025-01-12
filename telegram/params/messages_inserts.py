@@ -7,7 +7,7 @@ class MSG:
     TIME: str = "Время"
     NAME: str = "Имя"
     PRICE: str = "Цена"
-    DURATION: str = "Длительность"
+    DURATION: str = "Время"
     COST: str = "Стоимость"
     DESCRIPTION: str = "Описание"
     COUNT: str = "Количество"
@@ -15,9 +15,9 @@ class MSG:
     MASTERS: str = "Мастера"
     SERVICES: str = "Услуги"
 
-    SERVICES_TOTAL_COST: str = "💰 Общая стоимость"
-    SERVICES_TOTAL_DURATION: str = "🕑 Общая продолжительность"
-    SERVICES_TOTAL_COUNT: str = "✂️ Общее количество услуг"
+    SERVICES_TOTAL_COST: str = "💰 Общая цена"
+    SERVICES_TOTAL_DURATION: str = "🕑 Общее время"
+    SERVICES_TOTAL_COUNT: str = "✂️ Всего услуг"
 
     CURRENCY_BRIEF: str = "руб."
 

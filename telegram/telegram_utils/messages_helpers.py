@@ -21,24 +21,28 @@ from telegram.params.messages_inserts import (
 
 def get_service_brief_info(
         service_record: Service,
+        service_duration: str
 ) -> str:
     service_brief_text = (
         f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n")
+        f"{MSG.DURATION}:  {service_duration}\n")
+        # f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n")
     return service_brief_text
 
 
 def get_service_brief_info_with_master(
         service_record: Service,
+        service_duration: str,
         masters_info: str = ""
 ) -> str:
     service_brief_text = (
         f"<b>{service_record.name}</b>\n"
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n"
+        f"{MSG.DURATION}:  {service_duration}\n"
+        # f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n"
         f"{MSG.MASTERS}: {masters_info}\n")
     return service_brief_text
 
