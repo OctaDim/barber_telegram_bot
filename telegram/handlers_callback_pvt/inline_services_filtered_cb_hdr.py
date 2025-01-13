@@ -2,7 +2,7 @@ import asyncio
 import inspect
 from datetime import timedelta
 
-from aiogram import Router, Bot
+from aiogram import Bot, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
@@ -35,10 +35,8 @@ from telegram.keyboard_reply.pvt_enroll_services_action_reply_kbd import (
     get_enroll_services_reply_kbd)
 from telegram.params.icons_services import (
     SERVICES_ICONS)
-from telegram.params.messages import (
-    SELECT_SERVICES_BELLOW,
-    OR_SELECT_ENROLL_SERVICES_MENU,
-    NO_SERVICES_FOR_SELECTED_OPTIONS)
+from telegram.params.messages import (NO_SERVICES_FOR_SELECTED_OPTIONS, OR_SELECT_ENROLL_SERVICES_MENU,
+                                      SELECT_SERVICES_BELLOW)
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -52,6 +50,7 @@ from telegram.telegram_utils.messages_utils import (
 from utilities.calendar_utils import get_hours_minutes_secs_timedelta
 from utilities.numeric_utils import (
     number_or_str_to_float)
+
 
 inline_services_filtered_enroll_srcs_cb_router = Router(name=__name__)
 inline_services_filtered_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -177,7 +176,11 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
             same_id_count = selected_services_ids.count(service_record.id)
             cur_service_icon = f"{SERVICES_ICONS.SELECTED} " * same_id_count
             button_selected = True
-            one_more_service_btn = True
+
+            if SERVICES_CONFIGS.ALLOW_MULTI_ENROLL_SAME_SERVICE:
+                one_more_service_btn = True
+            else:
+                one_more_service_btn = False
         else:
             cur_service_icon = SERVICES_ICONS.SERVICE_POINT
             button_selected = False

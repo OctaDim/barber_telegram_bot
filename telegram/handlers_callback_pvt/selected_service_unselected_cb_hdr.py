@@ -7,6 +7,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from telegram.config.configs import SERVICES_CONFIGS
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.enroll_services_inl_kbd import (
@@ -94,10 +95,16 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
 
         button_txt_icon = SERVICES_ICONS.SELECTED
         new_service_text = f"{button_txt_icon} {cur_service_text}"
+
+        if SERVICES_CONFIGS.ALLOW_MULTI_ENROLL_SAME_SERVICE:
+            one_more_service_btn = True
+        else:
+            one_more_service_btn = False
+
         enroll_services_inline_kbd = get_enroll_service_inl_kbd(
             service_id=cur_service_id,
             button_selected=True,
-            one_more_service_btn=True)
+            one_more_service_btn=one_more_service_btn)
 
     else:  # If service is selected at least one time or several times
         if callback_prefix == EnrollServiceCallbackData.__prefix__:

@@ -81,7 +81,7 @@ async def inline_our_services_detail_info_srcs_cb_hdr(callback_query: CallbackQu
             language=LANGUAGE_CONFIGS.LANGUAGE,
             hide_zero_values=True,
             space_before_note=True,
-            separator=" : ",
+            separator=" ",
             abbrev_symbols="3")
 
         service_detailed_info = get_service_detailed_info(
