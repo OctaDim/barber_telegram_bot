@@ -37,14 +37,13 @@ async def enable_admins_global_commands(bot: Bot) -> None:
         try:
             await bot.set_my_commands(commands=admins_chat_commands,
                                       scope=admins_scope)
-            print(f"\tAdmin global commands enabled successfully:\n"
+            print(f"\tAdmin global commands enabled successfully "
                   f"\tadmin_tg_id = {admin_tg_id}\n")
 
         except (TelegramBadRequest, Exception) as exception_error:
             print(f"\tAdmin global commands not enabled because "
                   f"\texception_error = {exception_error}\n"
                   f"\tadmins_ids_env_str = '{admins_ids_env_str}'\n"
-                  f"\tadmins_tg_ids = {admins_tg_ids}\n"
                   f"\tadmin_tg_id = {admin_tg_id}\n")
 
 
@@ -66,20 +65,17 @@ async def enable_developers_global_commands(bot: Bot) -> None:
         try:
             await bot.set_my_commands(commands=developers_chat_commands,
                                       scope=developers_scope)
-            print(f"\tDeveloper global commands enabled successfully:\n"
+            print(f"\tDeveloper global commands enabled successfully "
                   f"\tdeveloper_tg_id = {developer_tg_id}\n")
 
         except (TelegramBadRequest, Exception) as exception_error:
             print(f"\tDeveloper global commands not enabled because "
                   f"\texception_error = {exception_error}\n"
                   f"\tdevelopers_ids_env_str = '{developers_ids_env_str}'\n"
-                  f"\tdevelopers_tg_ids = {developers_tg_ids}\n"
                   f"\tdeveloper_tg_id = {developer_tg_id}\n")
 
 
 def get_several_roles_ids_list(env_ids_string_lists: list[str]) -> list[int]:
-    print(f"{'-' * 115}\n\tFunction: {inspect.currentframe().f_code.co_name}\n")
-
     several_roles_admins_list = []
     for cur_admin_list in env_ids_string_lists:
         admins_ids = cur_admin_list

@@ -75,11 +75,11 @@ def get_service_detailed_info(
 
 def get_selected_services_summary(services_count: int,
                                   total_cost: float,
-                                  total_duration: timedelta) -> str:
+                                  total_duration: str) -> str:
     service_summary_text = (
         f"{MSG.SERVICES_TOTAL_COUNT}:  {services_count}\n"
         f"{MSG.SERVICES_TOTAL_COST}:  {total_cost} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICES_TOTAL_DURATION}:  {str(total_duration)[:-3]}")
+        f"{MSG.SERVICES_TOTAL_DURATION}:  {total_duration}")
 
     return service_summary_text
 
@@ -200,7 +200,7 @@ def get_reservation_detailed_info(reservation_weekday: str,
                                   reserved_services_names: str,
                                   reserved_masters_names: str
                                   ) -> str:
-    text = (f"{reservation_date} | {reservation_weekday}\n"
+    text = (f"{reservation_date} {reservation_weekday}\n"
             f"{MSG.TIME}: {reservation_time_start} - {reservation_time_end}\n\n"
             f"{MSG.DURATION}: {selected_services_duration}\n"
             f"{MSG.COST}: {selected_services_cost} {MSG.CURRENCY_BRIEF}\n"

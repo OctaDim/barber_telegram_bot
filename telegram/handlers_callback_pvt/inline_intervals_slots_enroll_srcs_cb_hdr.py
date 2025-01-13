@@ -48,7 +48,7 @@ from telegram.telegram_utils.messages_helpers import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual, re_open_reply_keyboard_message)
 from utilities.calendar_utils import (
-    get_date_with_month_name)
+    get_date_with_month_name, get_hours_minutes_secs_timedelta)
 from utilities.numeric_utils import (
     number_or_str_to_integer)
 from utilities.pagination_utility import (
@@ -90,10 +90,18 @@ async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuer
         fsm_state_or_dict_from=state_data,
         fsm_state_literal_key="selected_services_duration_state")
 
+    total_duration_txt = get_hours_minutes_secs_timedelta(
+        timedelta_value=total_duration_selected,
+        language=LANGUAGE_CONFIGS.LANGUAGE,
+        abbrev_symbols=3,
+        separator=' ',
+        space_before_note=True,
+        hide_zero_values=True)
+
     summary_text = get_selected_services_summary(
         services_count=len(selected_services_ids),
         total_cost=total_cost_selected,
-        total_duration=total_duration_selected)
+        total_duration=total_duration_txt)
 
     selected_date = await get_valid_datetime_by_fsm_state_key(
         fsm_state_or_dict_from=state_data,
@@ -169,7 +177,7 @@ async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuer
     total_pages = len(paginated_intervals)
 
     summary_msg_text = (f"{CALENDAR_ICONS.CALENDAR} "
-                        f"{MSG.SELECTED_DATE}:\n"
+                        f"<b>{MSG.SELECTED_DATE}:</b>\n"
                         f"{date_text}\n\n"
                         f"{summary_text}")
 
@@ -216,8 +224,7 @@ async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuer
         re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
         re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
         reply_kbd_opened_state_after_open=True,
-        # open_reply_kbd_msg_anyway=False)  # AAAAAAAAAAAAAAA
-        open_reply_kbd_msg_anyway=True)  # AAAAAAAAAAAAAAA
+        open_reply_kbd_msg_anyway=True)
     if cur_message:
         cur_handler_messages_ids.append(cur_message.message_id)
 

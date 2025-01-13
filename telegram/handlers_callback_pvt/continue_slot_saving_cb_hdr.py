@@ -64,7 +64,7 @@ from telegram.telegram_utils.messages_utils import (
     re_open_reply_keyboard_message)
 from utilities.calendar_utils import (
     get_date_with_month_name,
-    get_time_flex_from_datetime)
+    get_hours_minutes_secs_timedelta, get_time_flex_from_datetime)
 from utilities.numeric_utils import (
     number_or_str_to_integer)
 
@@ -367,10 +367,18 @@ async def continue_slot_saving_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         selected_date,
         language=LANGUAGE_CONFIGS.LANGUAGE)
 
+    selected_services_txt = get_hours_minutes_secs_timedelta(
+        timedelta_value=selected_services_duration,
+        language=LANGUAGE_CONFIGS.LANGUAGE,
+        abbrev_symbols=3,
+        separator=' ',
+        space_before_note=True,
+        hide_zero_values=True)
+
     summary_text = get_selected_services_summary(
         services_count=len(selected_services_ids),
         total_cost=selected_services_cost,
-        total_duration=selected_services_duration)
+        total_duration=selected_services_txt)
 
     slot_time_start_text = get_time_flex_from_datetime(
         date_value=slot_time_start,
