@@ -175,9 +175,12 @@ async def get_day_work_time_timetable(
     state_data = await state.get_data()
     state_date_day = state_data.get('date_day')
 
-    keyboard = callback_query.message.reply_markup.inline_keyboard
+    if state_date_day:
+        date_day = state_date_day
+    else:
+        keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    date_day = get_cb_data_of_day_timetable(keyboard=keyboard)
+        date_day = get_cb_data_of_day_timetable(keyboard=keyboard)
 
     if date_day is None:
         return await callback_query.answer(

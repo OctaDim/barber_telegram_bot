@@ -30,7 +30,8 @@ class ContactsAdminSocialNetwork(StatesGroup):
 
 
 @contacts_admin_social_network_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.CONTACTS)
-async def get_contacts_by_admin(message: Message):
+async def get_contacts_by_admin(message: Message, state: FSMContext):
+    await state.clear()
     await message.answer(text=SELECT_ACTION, reply_markup=contacts_by_admin_inl_kbd())
 
 
