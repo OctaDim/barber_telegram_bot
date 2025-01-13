@@ -35,13 +35,14 @@ class Timetable(StatesGroup):
 
 
 @timetable_admin_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.TIMETABLE)
-async def get_inl_kbd_add_work_time(message: Message):
+async def get_inl_kbd_add_work_time(message: Message, state: FSMContext):
     await message.answer(
         text=SELECT_A_MONTH,
         reply_markup=timetable_get_month_inl_kbd(month=message.date.month, year=message.date.year),
         parse_mode=ParseMode.MARKDOWN
     )
 
+    await state.clear()
 
 
 async def add_name_new_client(
@@ -56,7 +57,6 @@ async def add_name_new_client(
     )
 
     await state.set_state(Timetable.name_new_client)
-
 
 
 @timetable_admin_btn_router.message(StateFilter(Timetable.name_new_client))
