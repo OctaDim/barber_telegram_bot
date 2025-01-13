@@ -5,7 +5,7 @@ from datetime import datetime
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL, CONTINUE_BUTTON_TXT
-from utilities.calendar_utils import get_weekdays_names_list
+from utilities.calendar_babel_utils import get_weekdays_names_list
 from utilities.get_days_calendar_by_timetable import get_days_in_month_by_logbook
 
 

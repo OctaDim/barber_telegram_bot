@@ -3,7 +3,7 @@ from aiogram.filters.callback_data import CallbackData
 
 from telegram.keyboard_inline.timetable_get_month_inl_kbd import BackToAdminMenuTimetableCbData
 from telegram.params.work_time_cb_data_message import RETURN_ADMIN_PANEL, RETURN, CONTINUE_BUTTON_TXT
-from utilities.calendar_utils import get_weekdays_names_list
+from utilities.calendar_babel_utils import get_weekdays_names_list
 from utilities.get_days_calendar import get_days_in_month
 
 
