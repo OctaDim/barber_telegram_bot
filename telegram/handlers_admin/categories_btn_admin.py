@@ -33,7 +33,9 @@ class AdminCategories(StatesGroup):
 
 
 @admin_categories_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.CATEGORIES)
-async def get_choose_service_or_categories(message: Message):
+async def get_choose_service_or_categories(message: Message, state: FSMContext):
+    await state.clear()
+
     await message.answer(
         text=SELECT_ACTION,
         reply_markup=get_choose_service_or_categories_replay_kbd())

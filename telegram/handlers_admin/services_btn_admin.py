@@ -68,7 +68,9 @@ class Services(StatesGroup):
 
 @services_admin_btn_router.message(F.text == MAIN_PARAMS.SERVICES)
 @services_admin_btn_router.message(F.text == CHOOSE_SERVICE_OR_CATEGORIES.SERVICE)
-async def get_services_action(message: Message):
+async def get_services_action(message: Message, state: FSMContext):
+    await state.clear()
+
     result = check_for_created_category_query(
         telegram_id=message.from_user.id)
 

@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.enums import ParseMode
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram.fsm.state import StatesGroup, State
 
@@ -24,10 +25,11 @@ class WorkTimes(StatesGroup):
 
 
 @work_time_admin_btn_router.message(F.text == MAIN_MANU_ADMIN_PARAMS.WORK_TIME)
-async def get_inl_kbd_add_work_time(message: Message):
+async def get_inl_kbd_add_work_time(message: Message, state: FSMContext):
     await message.answer(
         text=SELECT_A_MONTH,
         reply_markup=work_time_month_inl_kbd(month=message.date.month, year=message.date.year),
         parse_mode=ParseMode.MARKDOWN
     )
 
+    await state.clear()

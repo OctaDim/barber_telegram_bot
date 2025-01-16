@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 
 from database.db_queries.work_time_queries import create_work_time, create_break_time
 
+from typing import Literal
+
 
 def save_work_time_data_in_db(
         time_start: timedelta,
@@ -13,14 +15,21 @@ def save_work_time_data_in_db(
         year,
         start_break: timedelta = None,
         end_break: timedelta = None,
-        master_obj=None
+        master_obj=None,
+        month_dict: Literal['EN', 'RU'] = 'EN'
 ):
     time_intervals = []
 
-    month_dict = {
-        "Январь": 1, "Февраль": 2, "Март": 3, "Апрель": 4, "Май": 5, "Июнь": 6,
-        "Июль": 7, "Август": 8, "Сентябрь": 9, "Октябрь": 10, "Ноябрь": 11, "Декабрь": 12
-    }
+    if month_dict == 'EN':
+        month_dict = {
+            "January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+            "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12
+        }
+    else:
+        month_dict = {
+            "Январь": 1, "Февраль": 2, "Март": 3, "Апрель": 4, "Май": 5, "Июнь": 6,
+            "Июль": 7, "Август": 8, "Сентябрь": 9, "Октябрь": 10, "Ноябрь": 11, "Декабрь": 12
+        }
 
     for day in days:
         start_datetime = datetime(year=int(year), month=month_dict.get(month), day=int(day)) + time_start

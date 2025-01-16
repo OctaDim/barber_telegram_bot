@@ -175,9 +175,12 @@ async def get_day_work_time_timetable(
     state_data = await state.get_data()
     state_date_day = state_data.get('date_day')
 
-    keyboard = callback_query.message.reply_markup.inline_keyboard
+    if state_date_day:
+        date_day = state_date_day
+    else:
+        keyboard = callback_query.message.reply_markup.inline_keyboard
 
-    date_day = get_cb_data_of_day_timetable(keyboard=keyboard)
+        date_day = get_cb_data_of_day_timetable(keyboard=keyboard)
 
     if date_day is None:
         return await callback_query.answer(
@@ -1069,7 +1072,8 @@ async def next_step_add_interval_work_time(
             month=month,
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
-            master_id=work_time_list[0].work_time_masters.id
+            master_id=work_time_list[0].work_time_masters.id,
+            month_dict='RU'
         )
 
         work_time_list = get_day_work_time(date_day=current_time_start_work_day.date())
@@ -1102,6 +1106,7 @@ async def next_step_add_interval_work_time(
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
             master_id=work_time_list[0].work_time_masters.id,
+            month_dict='RU'
         )
 
         work_time_list = get_day_work_time(date_day=current_time_start_work_day.date())
@@ -1133,7 +1138,8 @@ async def next_step_add_interval_work_time(
             month=month,
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
-            master_id=work_time_list[0].work_time_masters.id
+            master_id=work_time_list[0].work_time_masters.id,
+            month_dict='RU'
         )
 
         save_work_time_data_in_db(
@@ -1145,7 +1151,8 @@ async def next_step_add_interval_work_time(
             month=month,
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
-            master_id=work_time_list[0].work_time_masters.id
+            master_id=work_time_list[0].work_time_masters.id,
+            month_dict='RU'
         )
 
         work_time_list = get_day_work_time(date_day=current_time_start_work_day.date())
@@ -1178,7 +1185,8 @@ async def next_step_add_interval_work_time(
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
             master_id=work_time_list[0].work_time_masters.id,
-            master_obj=master_obj
+            master_obj=master_obj,
+            month_dict='RU'
         )
 
         work_time_list = get_day_work_time(date_day=current_time_start_work_day.date())
@@ -1209,7 +1217,8 @@ async def next_step_add_interval_work_time(
             year=current_time_start_work_day.year,
             days=[current_time_start_work_day.day],
             master_id=work_time_list[0].work_time_masters.id,
-            master_obj=master_obj
+            master_obj=master_obj,
+            month_dict='RU'
         )
 
         work_time_list = get_day_work_time(date_day=current_time_start_work_day.date())

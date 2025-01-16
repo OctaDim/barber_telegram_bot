@@ -60,13 +60,13 @@ async def add_hours_callback_query(callback_query: CallbackQuery,
             text=MINUTES_SIGN_UP,
             reply_markup=add_minutes_time_duration_services_inl_kbd())
 
-        await bot.send_message(chat_id=chat_id, text=YOU_CHOSEN_HOURS)
+        # await bot.send_message(chat_id=chat_id, text=YOU_CHOSEN_HOURS)
 
     elif data.get('duration_entered'):
         return await preview_service(message=callback_query.message, state=state)
 
     else:
-        await bot.delete_message(chat_id=chat_id, message_id=message_id+2)
+        # await bot.delete_message(chat_id=chat_id, message_id=message_id+1)
         await add_price_service(message=callback_query.message, state=state)
 
 
@@ -99,13 +99,13 @@ async def add_minutes_callback_query(callback_query: CallbackQuery,
             text=HOURS_SIGN_UP,
             reply_markup=add_hours_time_duration_services_inl_kbd())
 
-        await bot.send_message(chat_id=chat_id, text=YOU_CHOSEN_MINUTES)
+        # await bot.send_message(chat_id=chat_id, text=YOU_CHOSEN_MINUTES)
 
     elif data.get('duration_entered'):
         return await preview_service(message=callback_query.message, state=state)
 
     else:
-        await bot.delete_message(chat_id=chat_id, message_id=message_id+1)
+        # await bot.delete_message(chat_id=chat_id, message_id=message_id+2)
         await add_price_service(message=callback_query.message, state=state)
 
 
