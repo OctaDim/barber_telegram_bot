@@ -20,13 +20,10 @@ from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.params.messages import (
     NONE_SERVICES_SELECTED,
-    OR_SELECT_ENROLL_SERVICES_MENU)
-from telegram.telegram_utils.fsm_states_utils import (
-    get_valid_dict_by_fsm_state_key,
-    get_valid_timedelta_by_fsm_state_key,
-    get_valid_list_by_fsm_state_key,
-    get_valid_float_by_fsm_state_key,
-    get_valid_int_by_fsm_state_key)
+    OR_SELECT_ENROLL_SERVICES_MENU, SELECT_MIN_ONE_SERVICE)
+from telegram.telegram_utils.fsm_states_utils import (get_valid_dict_by_fsm_state_key, get_valid_float_by_fsm_state_key,
+                                                      get_valid_int_by_fsm_state_key, get_valid_list_by_fsm_state_key,
+                                                      get_valid_timedelta_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_helpers import (
@@ -38,6 +35,7 @@ from utilities.dict_utils import (
     empty_dict_if_none)
 from utilities.list_utils import (
     remove_same_list_elms_by_value)
+
 
 service_selected_unselected_enroll_srcs_cb_router = Router(name=__name__)
 service_selected_unselected_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -194,8 +192,13 @@ async def service_selected_unselected_enroll_srcs_cb_hdr(callback_query: Callbac
                   f"\tprior_handler_messages_ids = {prior_handler_msgs_ids}\n"
                   f"\tmessages_ids_to_change = {messages_ids_to_change}\n")
     else:
-        await callback_query.answer(text=NONE_SERVICES_SELECTED,
+        if SERVICES_CONFIGS.ALLOW_MULTI_ENROLL_SAME_SERVICE:
+            text = NONE_SERVICES_SELECTED
+        else:
+            text = SELECT_MIN_ONE_SERVICE
+        await callback_query.answer(text=text,
                                     show_alert=True)
+
         cur_message = await re_open_reply_keyboard_message(
             fsm_state=state,
             telegram_update_obj=callback_query,
