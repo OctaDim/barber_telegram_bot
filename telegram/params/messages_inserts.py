@@ -28,9 +28,9 @@ class MSG:
 
     CATEGORY_NAME: str = "Категория"
 
-    SOCIALS: str = "🌐 Социальные сети"
-    PHONES: str = "📞 Телефоны"
-    ADDRESSES: str = "📍 Адресы"
+    SOCIALS: str = "Социальные сети"
+    PHONES: str = "Телефоны"
+    ADDRESSES: str = "Адресы"
 
     SELECTED_DATE: str = "Выбранная дата"
     SELECTED_INTERVAL_SLOT: str = "Выбранное время"

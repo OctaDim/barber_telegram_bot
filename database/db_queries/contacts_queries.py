@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from database.db_connection import DBConnection
 from database.db_engine_url import db_engine_url
@@ -11,9 +11,10 @@ from utilities.decorators_global import execution_time_decorator
 
 @execution_time_decorator(in_seconds=True, note="Social, phones, address",
                           exec_time_logging=LOGGING.EXECUTION_TIME)
-def get_company_contacts(company_id: int = None) -> Optional[dict]:
+def get_company_contacts(
+        company_id: Union[int, "all"] = "all") -> Optional[dict]:
     with DBConnection(db_url=db_engine_url) as session:
-        if not company_id:
+        if company_id == "all":
             socials = session.query(
                 Social.name, Social.url, Social.social_username).all()
             phones = session.query(Phone.number).all()
@@ -31,7 +32,6 @@ def get_company_contacts(company_id: int = None) -> Optional[dict]:
             address = session.query(Address.street, Address.url).filter(
                 Address.company_id == company_id).all()
 
-        contacts_data = ""
         if address or socials or phones:
             contacts_data = {"socials": [social for social in socials],
                              "phones": [phone for phone in phones],

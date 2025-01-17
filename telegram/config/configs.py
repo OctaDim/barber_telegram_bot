@@ -92,4 +92,5 @@ class PAUSE_CONFIGS:
 @dataclass
 class CONTACTS_CONFIGS:
     PHONES_INTERNATIONAL: bool = True
-    DISABLE_PREVIEW: bool = True
+    DISABLE_CONTACTS_PREVIEW: bool = True
+    DISABLE_MAP_ADDRESSES_PREVIEW: bool = True

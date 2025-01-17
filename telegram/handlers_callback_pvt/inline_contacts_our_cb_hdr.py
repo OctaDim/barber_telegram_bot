@@ -24,6 +24,7 @@ from telegram.telegram_utils.messages_helpers import (
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 
+
 inline_our_contacts_cb_router = Router(name=__name__)
 inline_our_contacts_cb_router.message.filter(ChatTypesFilter(["private"]))
 
@@ -32,13 +33,15 @@ inline_our_contacts_cb_router.message.filter(ChatTypesFilter(["private"]))
 async def inline_our_contacts_cb_hdr(callback_query: CallbackQuery,
                                      callback_data: CallbackData,
                                      state: FSMContext):
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
+
     state_data = await state.get_data()
 
     # Checking if inline keyboard is actual and not obsolete by any reason
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return
 
-    contacts_data = get_company_contacts()
+    contacts_data = get_company_contacts(company_id="all")
 
     if not contacts_data:
         await callback_query.answer(text=NO_CONTACTS,
@@ -51,7 +54,7 @@ async def inline_our_contacts_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.message.answer(
         text=contacts_text,
-        disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_PREVIEW,
+        disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_CONTACTS_PREVIEW,
         reply_markup=get_pvt_main_menu_reply_kbd())
 
     # await state.update_data()

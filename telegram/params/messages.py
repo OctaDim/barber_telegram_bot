@@ -70,6 +70,8 @@ CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите �
 # CLIENT COMPANY CONTACTS SECTION
 SELECT_CONTACTS_SECTION = "Выберите желаемый раздел контактов"
 NO_CONTACTS = "Извините, пока нет доступных контактов"
+NO_MAPS_ADDRESSES = "Извините, пока нет доступных адресов, чтобы показать карту"
+CLICK_ADDRESS_FOR_GEO_MAP = "Кликните по адресу, чтобы посмотреть карту или построить маршрут"
 
 # CLIENT ASK QUESTIONS SECTION
 SELECT_QUESTION_SECTION = "Выберите желаемый раздел в вопросах"

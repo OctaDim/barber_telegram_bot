@@ -8,12 +8,15 @@ from telegram.params.buttons_common import (
     SPECIAL_CHARACTERS)
 from telegram.params.icons_calendar import (
     CALENDAR_ICONS)
+from telegram.params.icons_contacts import (
+    CONTACTS_ICONS)
 from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
 from telegram.params.icons_services import (
     SERVICES_ICONS)
 from telegram.params.messages import (
     BETTER_SLOTS_TO_CHOOSE,
+    CLICK_ADDRESS_FOR_GEO_MAP,
     SLOTS_RECOMMENDATIONS)
 from telegram.params.messages_inserts import (
     MSG)
@@ -28,7 +31,7 @@ def get_service_brief_info(
         f"{" " * 126}"  # Very important for getting same width inline keyboards
         f"{MSG.SERVICE_PRICE}:  {service_record.price} {MSG.CURRENCY_BRIEF}\n"
         f"{MSG.DURATION}:  {service_duration}\n")
-        # f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n")
+    # f"{MSG.DURATION}:  {str(service_record.time_duration)[:-3]}\n")
     return service_brief_text
 
 
@@ -84,40 +87,63 @@ def get_selected_services_summary(services_count: int,
     return service_summary_text
 
 
-def get_contacts_text(socials: list,
-                      phones: list,
-                      addresses: list,
-                      phones_international: bool = True) -> str:
+def get_contacts_text(socials: list = None,
+                      phones: list = None,
+                      addresses: list = None,
+                      phones_international: bool = True) -> str | None:
     text = ""
     if socials:
-        text += f"<b>{MSG.SOCIALS}:</b>\n"
+        text += (f"{CONTACTS_ICONS.SOCIALS_ICON}  "
+                 f"<b>{MSG.SOCIALS}:</b>\n\n")
         for social in socials:
             if social.url:
                 text += (f"<a href='{social.url}'>{social.name}:  "
-                         f"<b>{social.social_username}</b>"
-                         f"</a>\n\n")
+                         f"<b>{social.social_username}</b></a>\n\n")
             else:
                 text += (f"{social.name}:  "
-                         f"<code>{social.social_username}</code>"
-                         f"\n\n")
-
-        text += "\n"
+                         f"<code>{social.social_username}</code>\n\n")
 
     if phones:
-        text += f"<b>{MSG.PHONES}:</b>\n"
+        text += (f"{CONTACTS_ICONS.PHONES_ICON}  "
+                 f"<b>{MSG.PHONES}:</b>\n\n")
         if phones_international:
             for phone in phones:
-                text += f"{phone.number.international}\n"
+                text += f"{phone.number.international}\n\n"
         else:
             for phone in phones:
-                text += f"{phone.number}\n"
-        text += "\n"
+                text += f"{phone.number}\n\n"
 
     if addresses:
-        text += f"<b>{MSG.ADDRESSES}:</b>\n"
+        text += (f"{CONTACTS_ICONS.LOCATION_ICON}  "
+                 f"<b>{MSG.ADDRESSES}:</b>\n\n")
         for address in addresses:
-            text += f"<a href='{address.url}'>{address.street}</a>\n"
-        text += "\n"
+            if address.url:
+                text += (f"<b><a href='{address.url}'>"
+                         f"{address.street}</a></b>\n\n")
+            else:
+                text += f"<b>{address.street}</b>\n\n"
+
+    return text
+
+
+def get_addresses_for_maps_text(addresses: list = None) -> str | None:
+    text = ""
+    if addresses:
+        if all(address.url for address in addresses):
+            text += (f"{CONTACTS_ICONS.CAR_ICON}  "
+                     f"{CLICK_ADDRESS_FOR_GEO_MAP}:\n\n")
+        else:
+            text += (f"{CONTACTS_ICONS.LOCATION_ICON}  "
+                     f"<b>{MSG.ADDRESSES}:</b>\n\n")
+
+        for address in addresses:
+            if address.url:
+                text += (f"{CONTACTS_ICONS.DESTINATION_ICON}  "
+                         f"<b><a href='{address.url}'>"
+                         f"{address.street}</a></b>\n\n")
+            else:
+                text += (f"{CONTACTS_ICONS.DESTINATION_ICON}  "
+                         f"<b>{address.street}</b>\n\n")
 
     return text
 

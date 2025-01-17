@@ -5,6 +5,10 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from database.db_queries.addresses_queries import (
+    get_company_addresses_for_maps)
+from telegram.config.configs import (
+    CONTACTS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.submenu_contacts_inl_kbd import (
@@ -12,45 +16,48 @@ from telegram.keyboard_inline.submenu_contacts_inl_kbd import (
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
-    OR_SELECT_MAIN_MENU,
-    IN_DEVELOP_PROCESS)
+    NO_MAPS_ADDRESSES)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
+from telegram.telegram_utils.messages_helpers import (
+    get_addresses_for_maps_text)
 from telegram.telegram_utils.messages_utils import (
-    inline_keyboard_is_actual,
-    re_open_reply_keyboard_message)
+    inline_keyboard_is_actual)
+
 
 inline_geo_map_router = Router(name=__name__)
 inline_geo_map_router.message.filter(ChatTypesFilter(["private"]))
 
 
 @inline_geo_map_router.callback_query(OurMapInlineMenuCBData.filter())
-async def inline_frequent_questions_cb_hdr(callback_query: CallbackQuery,
-                                           callback_data: CallbackData,
-                                           state: FSMContext):
+async def geo_map_link_cb_hdr(callback_query: CallbackQuery,
+                              callback_data: CallbackData,
+                              state: FSMContext):
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
+
     state_data = await state.get_data()
-    cur_handler_messages_ids = []
 
     # Checking if inline keyboard is actual and not obsolete by any reason
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return
 
-    await callback_query.answer(text=IN_DEVELOP_PROCESS,
-                                show_alert=True)
+    company_addresses = get_company_addresses_for_maps(company_id="all")
 
-    cur_message = await re_open_reply_keyboard_message(
-        fsm_state=state,
-        telegram_update_obj=callback_query,
-        re_open_reply_msg_text=OR_SELECT_MAIN_MENU,
-        re_open_reply_keyboard=get_pvt_main_menu_reply_kbd(),
-        reply_kbd_opened_state_after_open=True)
-    if cur_message:
-        cur_handler_messages_ids.append(cur_message.message_id)
+    if not company_addresses:
+        await callback_query.answer(text=NO_MAPS_ADDRESSES,
+                                    show_alert=True)
+        return
 
-    # IMPORTANT: Set add_handler_to_return_stack=True, when realised (if logic necessary)
-    # IMPORTANT: update_min_actual_msg_id=True, when realised (if logic necessary)
+    addresses_text = get_addresses_for_maps_text(**company_addresses)
+
+    await callback_query.message.answer(
+        text=addresses_text,
+        disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_MAP_ADDRESSES_PREVIEW,
+        reply_markup=get_pvt_main_menu_reply_kbd())
+
+    # await state.update_data()
+
     return get_handler_answer_flag_dict(
-        add_handler_to_return_stack=False,
-        handler_messages_ids=cur_handler_messages_ids,
-        update_min_actual_msg_id=False,
+        add_handler_to_return_stack=True,
+        update_min_actual_msg_id=True,
         executed_handler_name=inspect.currentframe().f_code.co_name)
