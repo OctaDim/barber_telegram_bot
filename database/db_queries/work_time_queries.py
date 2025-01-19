@@ -15,6 +15,7 @@ from database.db_models.break_time_model import BreakTime
 from database.db_models.user_model import User
 from database.db_models.work_time_model import WorkTime
 from database.db_queries.get_master_obj_by_telegram_id import get_master_id_by_telegram_id
+from database.db_queries.user_obj_by_telegram_id import get_user_by_telegram_id_in_session
 from database.db_utilities.model_object_update import update_object
 
 manager = DBConnection(db_url=db_engine_url)
@@ -76,12 +77,18 @@ def get_work_time_by_month(month, year, master_id: int, list_checker=False):
         return data
 
 
-def get_working_time_month_by_month_by_year(year):
+def get_working_time_month_by_month_by_year(year, telegram_id: int):
     with manager as session:
+        user_obj = get_user_by_telegram_id_in_session(
+            telegram_id=telegram_id,
+            ongoing_session=session
+        )
+
         subquery = session.query(
             func.min(WorkTime.id).label('id')
         ).filter(
-            extract('year', WorkTime.time_start) == year
+            extract('year', WorkTime.time_start) == year,
+            WorkTime.master_id == user_obj.user_masters.id
         ).group_by(
             extract('month', WorkTime.time_start)
         ).subquery()
