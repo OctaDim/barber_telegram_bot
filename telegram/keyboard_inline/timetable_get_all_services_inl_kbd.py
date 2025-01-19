@@ -13,7 +13,7 @@ def get_all_services(id_service: int, quantity: int):
 
     callback_data = AddServiceTimetableCbData(service_id=id_service, quantity=quantity)
 
-    builder.button(text='🟩',
+    builder.button(text='Выбрать',
                    callback_data=callback_data.pack()
                    )
 
