@@ -1,3 +1,4 @@
+from database.db_queries.user_telegram_id_by_master_id_query import get_user_telegram_id_by_master_id
 from database.db_queries.work_time_queries import get_working_time_month_by_month_by_year, get_work_time_by_month, \
     get_all_work_years
 
@@ -36,17 +37,30 @@ def get_previous_or_next_int(
     return previous_integers, next_integers
 
 
-def get_other_month(select_year: int, select_month: int, action: bool, master_id: int) -> dict | None:
+def get_other_month(
+        select_year: int,
+        select_month: int,
+        action: bool,
+        master_id: int
+) -> dict | None:
     """
         action: True - next, False - previous
     """
-    other_months = get_working_time_month_by_month_by_year(year=select_year)
+    telegram_id = get_user_telegram_id_by_master_id(master_id=master_id)
 
-    previous_months, next_months = get_previous_or_next_int(list_integers=other_months, select_integer=select_month)
+    other_months = get_working_time_month_by_month_by_year(
+        year=select_year, telegram_id=telegram_id)
+
+    previous_months, next_months = get_previous_or_next_int(
+        list_integers=other_months, select_integer=select_month)
 
     if action:
         if next_months:
-            days = get_work_time_by_month(month=next_months, year=select_year, list_checker=True, master_id=master_id)
+            days = get_work_time_by_month(
+                month=next_months,
+                year=select_year,
+                list_checker=True,
+                master_id=master_id)
 
             data = {
                 'month': next_months,
@@ -58,11 +72,20 @@ def get_other_month(select_year: int, select_month: int, action: bool, master_id
 
         years = get_all_work_years()
 
-        next_year = get_previous_or_next_int(select_integer=select_year, list_integers=years, next_integer=True)
+        next_year = get_previous_or_next_int(
+            select_integer=select_year,
+            list_integers=years,
+            next_integer=True)
 
         if next_year:
-            months = get_working_time_month_by_month_by_year(year=next_year)
-            days = get_work_time_by_month(month=months[0], year=next_year, list_checker=True, master_id=master_id)
+            months = get_working_time_month_by_month_by_year(
+                year=select_year, telegram_id=telegram_id)
+
+            days = get_work_time_by_month(
+                month=months[0],
+                year=next_year,
+                list_checker=True,
+                master_id=master_id)
 
             data = {
                 'month': months[0],
@@ -76,8 +99,11 @@ def get_other_month(select_year: int, select_month: int, action: bool, master_id
 
     if previous_months:
         if previous_months:
-            days = get_work_time_by_month(month=previous_months, year=select_year, list_checker=True,
-                                          master_id=master_id)
+            days = get_work_time_by_month(
+                month=previous_months,
+                year=select_year,
+                list_checker=True,
+                master_id=master_id)
 
             data = {
                 'month': previous_months,
@@ -89,11 +115,20 @@ def get_other_month(select_year: int, select_month: int, action: bool, master_id
 
         years = get_all_work_years()
 
-        previous_year = get_previous_or_next_int(select_integer=select_year, list_integers=years, previous_integer=True)
+        previous_year = get_previous_or_next_int(
+            select_integer=select_year,
+            list_integers=years,
+            previous_integer=True)
 
         if previous_year:
-            months = get_working_time_month_by_month_by_year(year=previous_year)
-            days = get_work_time_by_month(month=months[-1], year=previous_year, list_checker=True, master_id=master_id)
+            months = get_working_time_month_by_month_by_year(
+                year=previous_year, telegram_id=telegram_id)
+
+            days = get_work_time_by_month(
+                month=months[-1],
+                year=previous_year,
+                list_checker=True,
+                master_id=master_id)
 
             data = {
                 'month': months[-1],
