@@ -30,12 +30,12 @@ def add_services(
 
         if category_id:
             validate_data['category_id'] = category_id
-            validate_data.pop('service_masters', None)
 
         service = session.query(Service).filter(
             Service.id == data.get('id_service')).first()
 
         if service:
+            validate_data.pop('service_masters', None)
             update_object(
                 data=validate_data,
                 obj=service,
