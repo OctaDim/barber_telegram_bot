@@ -16,7 +16,7 @@ def save_work_time_data_in_db(
         start_break: timedelta = None,
         end_break: timedelta = None,
         master_obj=None,
-        month_dict: Literal['EN', 'RU'] = 'EN'
+        month_dict: Literal['EN', 'RU'] = 'RU'
 ):
     time_intervals = []
 
