@@ -21,7 +21,11 @@ class BackToAdminMenuTimetableCbData(CallbackData, prefix='back-admin-menu-timet
     active: bool
 
 
-def timetable_get_month_inl_kbd(year: int, month: int):
+def timetable_get_month_inl_kbd(
+        year: int,
+        month: int,
+        telegram_id: int
+):
     builder = InlineKeyboardBuilder()
 
     first_row = [
@@ -32,7 +36,11 @@ def timetable_get_month_inl_kbd(year: int, month: int):
 
     builder.row(*first_row)
 
-    months = get_month_dict_for_timetable(month=get_working_time_month_by_month_by_year(year=year), current_month=month)
+    months = get_month_dict_for_timetable(
+        month=get_working_time_month_by_month_by_year(
+                                            year=year,
+                                            telegram_id=telegram_id),
+        current_month=month)
 
     for key, value in months.items():
         if value:
