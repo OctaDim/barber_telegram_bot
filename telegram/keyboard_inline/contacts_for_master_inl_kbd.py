@@ -15,12 +15,20 @@ def contacts_by_admin_inl_kbd():
 
     builder.row(InlineKeyboardButton(
         text=CONTACTS_BY_MASTER_PARAMS.SOCIAL_NETWORKS,
-        callback_data=ContactAdminCbData(contact=CONTACTS_BY_MASTER_PARAMS.SOCIAL_NETWORKS).pack()
+        callback_data=ContactAdminCbData(
+            contact=CONTACTS_BY_MASTER_PARAMS.SOCIAL_NETWORKS).pack()
     ))
 
     builder.row(InlineKeyboardButton(
         text=CONTACTS_BY_MASTER_PARAMS.ADDRESS,
-        callback_data=ContactAdminCbData(contact=CONTACTS_BY_MASTER_PARAMS.ADDRESS).pack()
+        callback_data=ContactAdminCbData(
+            contact=CONTACTS_BY_MASTER_PARAMS.ADDRESS).pack()
+    ))
+
+    builder.row(InlineKeyboardButton(
+        text=CONTACTS_BY_MASTER_PARAMS.PHONE,
+        callback_data=ContactAdminCbData(
+            contact=CONTACTS_BY_MASTER_PARAMS.PHONE).pack()
     ))
 
     builder.row(InlineKeyboardButton(
