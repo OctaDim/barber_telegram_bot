@@ -54,7 +54,10 @@ async def confirm_address(
 
     await state.clear()
 
-    create_address_db_obj(street=street, url=url)
+    create_address_db_obj(
+        street=street,
+        url=url,
+        telegram_id=callback_query.from_user.id)
 
 
 @contacts_for_master_address_master_cb_query.callback_query(ChangePreviewAddressCbData.filter())
@@ -88,4 +91,4 @@ async def remove_address(
         reply_markup=get_admin_main_menu_kbd()
     )
 
-    remove_address_obj()
+    remove_address_obj(telegram_id=callback_query.from_user.id)

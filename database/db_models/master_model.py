@@ -68,3 +68,16 @@ class Master(Base):
         secondary='master_break_time_association',
         order_by='BreakTime.start_break',
         back_populates='break_time_masters')
+
+    master_socials: Mapped[list['Social']] = relationship(
+        argument='Social',
+        uselist=False,
+        order_by='Social.name',
+        back_populates="social_masters")
+
+    master_address: Mapped[list['Address']] = relationship(
+        argument='Address',
+        uselist=False,
+        order_by='Address.street',
+        back_populates="address_masters")
+

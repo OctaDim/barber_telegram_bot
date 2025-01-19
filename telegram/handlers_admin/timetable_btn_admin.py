@@ -38,7 +38,10 @@ class Timetable(StatesGroup):
 async def get_inl_kbd_add_work_time(message: Message, state: FSMContext):
     await message.answer(
         text=SELECT_A_MONTH,
-        reply_markup=timetable_get_month_inl_kbd(month=message.date.month, year=message.date.year),
+        reply_markup=timetable_get_month_inl_kbd(
+            month=message.date.month,
+            year=message.date.year,
+            telegram_id=message.from_user.id),
         parse_mode=ParseMode.MARKDOWN
     )
 

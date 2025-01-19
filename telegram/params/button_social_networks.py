@@ -39,3 +39,22 @@ class PreviewSocialNetwork:
         return f'''Проверьте введенные данные:\n
 - Социальная сеть:  {self.social_network}
 - Ваше имя пользователя:  {self.username}'''
+
+
+class PreviewPhone:
+    def __init__(self, phone: str):
+        self.phone = phone
+
+    def generate_preview(self):
+        return f'''Проверьте введенные данные:\n
+- Номер телефона:  {self.phone}\n\n
+всё верно - нажмите «{confirm}»
+нужно исправить - нажмите «{change}»'''
+
+    def generate_preview_for_changes(self):
+        return f'''Проверьте введенные данные:\n
+- Номер телефона:  {self.phone}'''
+
+    def generate_preview_for_delete(self):
+        return f'''Проверьте введенные данные:\n
+- Номер телефона:  {self.phone}'''
