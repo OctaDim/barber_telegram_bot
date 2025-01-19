@@ -17,6 +17,7 @@ from telegram.keyboard_inline.contacts_for_master_choose_social_network_inl_kbd 
     NameSocialNetworkCbData, OtherSocialNetworkCbData
 from telegram.keyboard_inline.contacts_for_master_get_action_by_address import get_action_by_address, \
     ReturnToContactsCbData
+from telegram.keyboard_inline.contacts_for_master_get_action_by_phone import get_action_by_phone
 from telegram.keyboard_inline.contacts_for_master_get_action_by_social_network import get_action_by_social_networks, \
     AddNewSocialNetworkCbData, ChangeSocialNetworkCbData, RemoveSocialNetworkCbData
 from telegram.keyboard_inline.contacts_for_master_get_all_social_networks_for_changes import \
@@ -55,6 +56,16 @@ async def get_action_by_selected_contact(
             chat_id=callback_query.message.chat.id,
             text=SELECT_ACTION,
             reply_markup=get_action_by_social_networks()
+        )
+
+        return
+
+    if cb_data == CONTACTS_BY_MASTER_PARAMS.PHONE:
+        await bot.edit_message_text(
+            message_id=callback_query.message.message_id,
+            chat_id=callback_query.message.chat.id,
+            text=SELECT_ACTION,
+            reply_markup=get_action_by_phone()
         )
 
         return
@@ -142,7 +153,8 @@ async def confirm_social_network(
         create_social_network(
             url_social_network=url_social_network,
             username_social_network=username_social_network,
-            social_network=social_network
+            social_network=social_network,
+            telegram_id=callback_query.from_user.id
         )
 
     await callback_query.answer(SUCCESSFULLY, show_alert=True)
@@ -217,7 +229,9 @@ async def get_social_networks_for_changes(
         state: FSMContext,
         bot: Bot
 ):
-    social_networks = get_all_social_networks_by_masters()
+    social_networks = get_all_social_networks_by_masters(
+        telegram_id=callback_query.from_user.id
+    )
 
     if len(social_networks) == 0:
         await callback_query.answer(
@@ -290,7 +304,9 @@ async def get_social_network_for_delete(
         state: FSMContext,
         bot: Bot
 ):
-    social_networks = get_all_social_networks_by_masters()
+    social_networks = get_all_social_networks_by_masters(
+        telegram_id=callback_query.from_user.id
+    )
 
     if len(social_networks) == 0:
         await callback_query.answer(
