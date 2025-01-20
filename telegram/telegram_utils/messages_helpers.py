@@ -14,6 +14,8 @@ from telegram.params.icons_intervals_slots import (
     SLOT_ICONS)
 from telegram.params.icons_services import (
     SERVICES_ICONS)
+from telegram.params.icons_slots import (
+    SLOTS_ICONS)
 from telegram.params.messages import (
     BETTER_SLOTS_TO_CHOOSE,
     CLICK_ADDRESS_FOR_GEO_MAP,
@@ -80,9 +82,12 @@ def get_selected_services_summary(services_count: int,
                                   total_cost: float,
                                   total_duration: str) -> str:
     service_summary_text = (
-        f"{MSG.SERVICES_TOTAL_COUNT}:  {services_count}\n"
-        f"{MSG.SERVICES_TOTAL_COST}:  {total_cost} {MSG.CURRENCY_BRIEF}\n"
-        f"{MSG.SERVICES_TOTAL_DURATION}:  {total_duration}")
+        f"{SLOTS_ICONS.SERVICES_COUNT} {MSG.SERVICES_TOTAL_COUNT}:  "
+        f"{services_count}\n"
+        f"{SLOTS_ICONS.SERVICES_COST} {MSG.SERVICES_TOTAL_COST}:  "
+        f"{total_cost} {MSG.CURRENCY_BRIEF}\n"
+        f"{SLOTS_ICONS.SERVICES_DURATION} {MSG.SERVICES_TOTAL_DURATION}:  "
+        f"{total_duration}")
 
     return service_summary_text
 

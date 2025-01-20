@@ -71,7 +71,7 @@ CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите �
 SELECT_CONTACTS_SECTION = "Выберите желаемый раздел контактов"
 NO_CONTACTS = "Извините, пока нет доступных контактов"
 NO_MAPS_ADDRESSES = "Извините, пока нет доступных адресов, чтобы показать карту"
-CLICK_ADDRESS_FOR_GEO_MAP = "Кликните по адресу, чтобы посмотреть карту или построить маршрут"
+CLICK_ADDRESS_FOR_GEO_MAP = "Кликните по адресу для просмотра карты или маршрута"
 
 # CLIENT ASK QUESTIONS SECTION
 SELECT_QUESTION_SECTION = "Выберите желаемый раздел в вопросах"

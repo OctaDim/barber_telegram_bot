@@ -15,9 +15,9 @@ class MSG:
     MASTERS: str = "Мастера"
     SERVICES: str = "Услуги"
 
-    SERVICES_TOTAL_COST: str = "💰 Общая цена"
-    SERVICES_TOTAL_DURATION: str = "🕑 Общее время"
-    SERVICES_TOTAL_COUNT: str = "✂️ Всего услуг"
+    SERVICES_TOTAL_COST: str = "Общая цена"
+    SERVICES_TOTAL_DURATION: str = "Общее время"
+    SERVICES_TOTAL_COUNT: str = "Всего услуг"
 
     CURRENCY_BRIEF: str = "руб"
 
