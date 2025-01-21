@@ -18,6 +18,6 @@ class MAIN_MANU_ADMIN_PARAMS(COMMON_BUTTONS_PARAMS):
     CONTACTS = "Контакты"
     WORK_TIME = "Создание \nГрафика"
     SERVICES = 'Услуги'
-    CATEGORIES = 'Услуги | Категории'
+    CATEGORIES = 'Услуги и Категории'
     SERVICES = CATEGORIES if ADMIN_CATEGORIES_CONFIGS.USE_CATEGORY \
         else SERVICES
