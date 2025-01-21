@@ -3,7 +3,8 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from telegram.config.configs import (
-    ENROLL_METHODS_CONFIGS)
+    ENROLL_METHODS_CONFIGS,
+    PROMOTIONS_CONFIGS)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_submenu_services import (
@@ -48,9 +49,10 @@ def get_submenu_services_inl_kbd_pvt() -> InlineKeyboardMarkup:
             text=SERVICES_BUTTONS.ENROLL_SINGLE_MASTER_SERVICES,
             callback_data=EnrollSingleMasterServicesCBData().pack())
 
-    builder_inl_kbd.button(
-        text=SERVICES_BUTTONS.OUR_PROMOTIONS,
-        callback_data=OurPromotionsInlineMenuCBData().pack())
+    if PROMOTIONS_CONFIGS.SHOW_OUR_PROMOTIONS_BUTTON:
+        builder_inl_kbd.button(
+            text=SERVICES_BUTTONS.OUR_PROMOTIONS,
+            callback_data=OurPromotionsInlineMenuCBData().pack())
 
     builder_inl_kbd.button(
         text=SERVICES_BUTTONS.MY_RESERVATIONS,

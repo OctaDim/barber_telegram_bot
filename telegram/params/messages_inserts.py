@@ -13,8 +13,11 @@ class MSG:
     COUNT: str = "Количество"
 
     MASTERS: str = "Мастера"
-    SERVICES: str = "Услуги"
+    MASTER: str = "Мастер"
+    ADMINISTRATORS: str = "Администраторы"
+    ADMINISTRATOR: str = "Администратор"
 
+    SERVICES: str = "Услуги"
     SERVICES_TOTAL_COST: str = "Общая цена"
     SERVICES_TOTAL_DURATION: str = "Общее время"
     SERVICES_TOTAL_COUNT: str = "Всего услуг"

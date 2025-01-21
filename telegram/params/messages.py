@@ -1,7 +1,7 @@
 # WARNINGS SECTION
 CANNOT_USE_OBSOLETE_MSG = "*️⃣ Извините, это меню устарело. Зайдите в меню заново через главное меню ⬇️"
 UNKNOWN_COMMAND_ENTERED = "⚠️ Неизвестная команда. Попробуйте ещё раз!"
-IN_DEVELOP_PROCESS = "ℹ️ В процессе разработки. Скоро будет! 🚀"
+IN_DEVELOP_PROCESS = "🚀 В процессе разработки. Скоро будет"
 
 # GREETINGS SECTION
 WELCOME_ON_START = "✋ Добро пожаловать!"

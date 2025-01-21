@@ -1,8 +1,6 @@
-import asyncio
 import inspect
-from time import sleep
 
-from aiogram import F, Router, Bot
+from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -18,10 +16,10 @@ from telegram.params.messages import (
 from telegram.telegram_utils.fsm_states_utils import (
     get_valid_list_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
-    execute_last_stack_handler,
     get_handler_answer_flag_dict)
-from telegram.telegram_utils.messages_utils import send_warning_message_with_delete_delay
-from utilities.numeric_utils import number_or_str_to_float
+from telegram.telegram_utils.messages_utils import (
+    send_warning_message_with_delete_delay)
+
 
 cancel_all_services_pvt_router = Router(name=__name__)
 cancel_all_services_pvt_router.message.filter(ChatTypesFilter(["private"]))

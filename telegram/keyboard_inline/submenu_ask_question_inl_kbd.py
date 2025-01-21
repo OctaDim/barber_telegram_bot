@@ -2,6 +2,8 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from telegram.config.configs import (
+    ASK_QUESTION_CONFIGS)
 from telegram.keyboard_inline.common_buttons_inline import (
     create_main_menu_inline_button)
 from telegram.params.buttons_submenu_ask_question import (
@@ -12,6 +14,10 @@ class AskAdministratorInlineMenuCBData(CallbackData, prefix="ask administrator i
     pass
 
 
+class AskMasterInlineMenuCBData(CallbackData, prefix="ask master inline menu"):
+    pass
+
+
 class FrequentQuestionsInlineMenuCBData(CallbackData, prefix="faq questions inline menu"):
     pass
 
@@ -19,11 +25,20 @@ class FrequentQuestionsInlineMenuCBData(CallbackData, prefix="faq questions inli
 def get_ask_question_inl_kbd_pvt() -> InlineKeyboardMarkup:
     builder_inl_kbd = InlineKeyboardBuilder()
 
-    builder_inl_kbd.button(text=ASK_QUESTION_BUTTONS.ASK_ADMINISTRATOR,
-                           callback_data=AskAdministratorInlineMenuCBData())
+    if ASK_QUESTION_CONFIGS.SHOW_ASK_ADMIN_BUTTON:
+        builder_inl_kbd.button(
+            text=ASK_QUESTION_BUTTONS.ASK_ADMINISTRATOR,
+            callback_data=AskAdministratorInlineMenuCBData())
 
-    builder_inl_kbd.button(text=ASK_QUESTION_BUTTONS.FREQUENT_QUESTIONS,
-                           callback_data=FrequentQuestionsInlineMenuCBData())
+    if ASK_QUESTION_CONFIGS.SHOW_ASK_MASTER_BUTTON:
+        builder_inl_kbd.button(
+            text=ASK_QUESTION_BUTTONS.ASK_MASTER,
+            callback_data=AskMasterInlineMenuCBData())
+
+    if ASK_QUESTION_CONFIGS.SHOW_FAQ_QUESTIONS_BUTTON:
+        builder_inl_kbd.button(
+            text=ASK_QUESTION_BUTTONS.FREQUENT_QUESTIONS,
+            callback_data=FrequentQuestionsInlineMenuCBData())
 
     # builder_inl_kbd.add(create_return_inline_button(
     #     delete_inline_msg_on_return=True))

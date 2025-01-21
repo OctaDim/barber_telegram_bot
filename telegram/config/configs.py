@@ -74,6 +74,11 @@ class ENROLL_METHODS_CONFIGS:
 
 
 @dataclass
+class PROMOTIONS_CONFIGS:
+    SHOW_OUR_PROMOTIONS_BUTTON: bool = False
+
+
+@dataclass
 class RESERVATIONS_CONFIGS:
     SHOW_RESERVATION_WEEKDAY: bool = True
     SHOW_COMPLETED_RESERVATIONS: bool = True
@@ -90,7 +95,18 @@ class PAUSE_CONFIGS:
 
 
 @dataclass
+class ASK_QUESTION_CONFIGS:
+    SHOW_ASK_ADMIN_BUTTON: bool = True
+    SHOW_ASK_MASTER_BUTTON: bool = True
+    SHOW_FAQ_QUESTIONS_BUTTON: bool = False
+
+
+@dataclass
 class CONTACTS_CONFIGS:
     PHONES_INTERNATIONAL: bool = True
     DISABLE_CONTACTS_PREVIEW: bool = True
     DISABLE_MAP_ADDRESSES_PREVIEW: bool = True
+
+
+class BALANCE_CONFIGS:
+    SHOW_BALANCE_MENU: bool = False

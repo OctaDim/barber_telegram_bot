@@ -22,3 +22,6 @@ class BOT_CREDENTIALS:
 
     BOT_START_STOP_MSG_IDS: str = environment_vars_dict.get(
         "BOT_START_STOP_MSG_IDS")
+
+    TG_BOT_ASK_MASTERS_IDS: str = environment_vars_dict.get(
+        "TG_BOT_ASK_MASTERS_MSG_IDS")

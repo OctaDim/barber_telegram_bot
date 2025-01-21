@@ -13,7 +13,7 @@ from telegram.config.settings import (
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.submenu_ask_question_inl_kbd import (
-    AskAdministratorInlineMenuCBData)
+    AskMasterInlineMenuCBData)
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
@@ -29,14 +29,14 @@ from utilities.list_utils import (
     get_strs_list_from_env_string)
 
 
-inline_ask_administrator_cb_router = Router(name=__name__)
-inline_ask_administrator_cb_router.message.filter(ChatTypesFilter(["private"]))
+inline_ask_master_cb_router = Router(name=__name__)
+inline_ask_master_cb_router.message.filter(ChatTypesFilter(["private"]))
 
 
-@inline_ask_administrator_cb_router.callback_query(AskAdministratorInlineMenuCBData.filter())
-async def inline_ask_administrator_cb_hdr(callback_query: CallbackQuery,
-                                          callback_data: CallbackData,
-                                          state: FSMContext):
+@inline_ask_master_cb_router.callback_query(AskMasterInlineMenuCBData.filter())
+async def inline_ask_master_cb_hdr(callback_query: CallbackQuery,
+                                   callback_data: CallbackData,
+                                   state: FSMContext):
     state_data = await state.get_data()
 
     # Checking if inline keyboard is actual and not obsolete by any reason
@@ -47,41 +47,40 @@ async def inline_ask_administrator_cb_hdr(callback_query: CallbackQuery,
 
     await callback_query.answer()
 
-    admins_ids_env_str = BOT_CREDENTIALS.TG_BOT_ADMINS_IDS
-    admins_tg_ids_str = get_strs_list_from_env_string(admins_ids_env_str)
-    admins_tg_ids_int = convert_str_list_to_int_list(admins_tg_ids_str)
+    masters_ids_env_str = BOT_CREDENTIALS.TG_BOT_ASK_MASTERS_IDS
+    masters_tg_ids_str = get_strs_list_from_env_string(masters_ids_env_str)
+    masters_tg_ids_int = convert_str_list_to_int_list(masters_tg_ids_str)
 
-    admins_users_objs = get_user_objs_with_masters_by_tg_id(
-        telegram_ids=admins_tg_ids_int)
+    masters_users_objs = get_user_objs_with_masters_by_tg_id(
+        telegram_ids=masters_tg_ids_int)
 
     first_contact_msg_sent_flag = False
-    for admin_user_obj in admins_users_objs:
-        admin_tg_username = admin_user_obj.username
-        admin_user_fullname = admin_user_obj.get_full_name
+    for master_user_obj in masters_users_objs:
+        master_tg_username = master_user_obj.username
+        master_user_fullname = master_user_obj.get_full_name
 
-        if admin_tg_username:
-            admin_link = (f"<a href='https://t.me/{admin_tg_username}'>"
-                          f"{MSG.ADMINISTRATOR}:  {admin_user_fullname}"
-                          f"</a>")
+        if master_tg_username:
+            master_link = (f"<a href='https://t.me/{master_tg_username}'>"
+                           f"{MSG.MASTER}:  {master_user_fullname}"
+                           f"</a>")
         else:
-            admin_link = f"{MSG.ADMINISTRATOR}:  {admin_user_fullname}"
+            master_link = f"{MSG.MASTER}:  {master_user_fullname}"
 
         if not first_contact_msg_sent_flag:
             try:
-                await callback_query.message.edit_text(text=admin_link)
-                print(f"\tPrior msg was edited to 'Admin link' msg successfully\n"
-                      f"\tadmin_link = {admin_link}\n")
+                await callback_query.message.edit_text(text=master_link)
+                print(f"\tPrior msg was edited to 'Master link' msg successfully\n"
+                      f"\tmaster_link = {master_link}\n")
             except (TelegramBadRequest, Exception) as exception_info:
-                await callback_query.message.answer(text=admin_link)
-                print(f"\tNew 'Admin link' message was created, because "
+                print(f"\tNew 'Master link' message was created, because "
                       f"\tprior message is not editable: {exception_info}\n"
-                      f"\tadmin_link = {admin_link}\n")
+                      f"\tmaster_link = {master_link}\n")
             first_contact_msg_sent_flag = True
         else:
-            await callback_query.message.answer(text=admin_link)
-            print(f"\tNew 'Admin link' message was created, because \n"
+            await callback_query.message.answer(text=master_link)
+            print(f"\tNew 'Master link' message was created, because \n"
                   f"\tfirst_contact_msg_sent_flag = {first_contact_msg_sent_flag}\n"
-                  f"\tadmin_link = {admin_link}\n")
+                  f"\tadmin_link = {master_link}\n")
 
     await re_open_reply_keyboard_message(
         fsm_state=state,
