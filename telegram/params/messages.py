@@ -62,7 +62,7 @@ CLIENT_ALREADY_ENROLLED = "*️⃣ Извините, вы уже записан�
 # CLIENT RESERVATIONS SECTION
 ALL_RESERVATIONS_HERE = "Все ваши записи здесь: ⤵️"
 NO_CLIENT_RESERVATIONS = "ℹ️ У вас ещё нет записей. Скорее запишитесь на наши услуги"
-RESERVATION_ACTIONS_NOTE = "- кликните дату/время для информации или 'отмена'"
+RESERVATION_ACTIONS_NOTE = "- кликните дату/время для информации или 'Отмена'"
 RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь заново"
 RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь заново"
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"
