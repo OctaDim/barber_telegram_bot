@@ -259,7 +259,7 @@ async def create_start_time_work(
     await bot.edit_message_text(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        text=SELECT_WORKING_DAY,
+        text=ADD_START_TIME,
         reply_markup=add_start_time_work_inl_kbd()
     )
 

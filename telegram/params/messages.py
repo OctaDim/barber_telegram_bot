@@ -24,6 +24,7 @@ CAN_USE_LEFT_MENU = "ℹ️ Вы можете выбрать команду по
 
 # CLIENT CATEGORIES ENROLL SECTION
 SELECT_SERVICES_CATEGORY = "Выберите категорию для записи на одну или несколько услуг: ⤵️"
+SELECT_PRICE_LIST_CATEGORY = "Выберите категорию для просмотра информации о наших услугах: ⤵️"
 NO_AVAILABLE_CATEGORIES = "ℹ️ Извините, нет доступных категорий"
 
 # CLIENT MASTERS ENROLL SECTION
@@ -59,8 +60,9 @@ MAX_PERSON_GROUP_LIMIT_REACHED = "*️⃣ Максимальное количе�
 CLIENT_ALREADY_ENROLLED = "*️⃣ Извините, вы уже записаны на это время"
 
 # CLIENT RESERVATIONS SECTION
-ALL_RESERVATIONS_HERE = "Все ваши записи здесь. Вы можете посмотреть детали записей или отменить: ⤵️"
+ALL_RESERVATIONS_HERE = "Все ваши записи здесь: ⤵️"
 NO_CLIENT_RESERVATIONS = "ℹ️ У вас ещё нет записей. Скорее запишитесь на наши услуги"
+RESERVATION_ACTIONS_NOTE = "- кликните дату/время для информации или 'отмена'"
 RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь заново"
 RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь заново"
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"

@@ -23,14 +23,16 @@ from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
     NO_AVAILABLE_CATEGORIES,
-    SELECT_SERVICES_CATEGORY,
-    OR_SELECT_MAIN_MENU)
+    OR_SELECT_MAIN_MENU,
+    SELECT_PRICE_LIST_CATEGORY,
+    SELECT_SERVICES_CATEGORY)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual, re_open_reply_keyboard_message)
 from utilities.pagination_utility import (
     create_paginated_elems)
+
 
 inline_categories_enroll_srcs_cb_router = Router(name=__name__)
 inline_categories_enroll_srcs_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -84,16 +86,21 @@ async def inline_categories_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
+    if callback_data.__prefix__ == OurServicesInlineMenuCBData.__prefix__:
+        text = SELECT_PRICE_LIST_CATEGORY
+    else:
+        text = SELECT_SERVICES_CATEGORY
+
     try:
         cur_message = await callback_query.message.edit_text(
-            text=SELECT_SERVICES_CATEGORY,
+            text=text,
             reply_markup=categories_reply_markup)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tPrior message was edited to Categories msg successfully :)\n")
 
     except (TelegramBadRequest, Exception) as exception_info:
         cur_message = await callback_query.message.answer(
-            text=SELECT_SERVICES_CATEGORY,
+            text=text,
             reply_markup=categories_reply_markup)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew Categories message was created, because "

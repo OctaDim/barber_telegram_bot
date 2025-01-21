@@ -12,9 +12,7 @@ from database.db_queries.all_reservations_ordered_query import (
     get_all_reservations_ordered)
 from database.db_queries.user_obj_by_telegram_id import (
     get_user_obj_by_telegram_id)
-from telegram.config.configs import (
-    RESERVATIONS_CONFIGS,
-    PAGINATION_CONFIGS)
+from telegram.config.configs import (PAGINATION_CONFIGS, RESERVATIONS_CONFIGS)
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
 from telegram.keyboard_inline.reservations_client_inl_kbd import (
@@ -22,17 +20,14 @@ from telegram.keyboard_inline.reservations_client_inl_kbd import (
 from telegram.keyboard_inline.submenu_services_inl_kbd import (
     MyReservationsInlineMenuCBData)
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import get_pvt_main_menu_reply_kbd
-from telegram.params.messages import (
-    NO_CLIENT_RESERVATIONS,
-    ALL_RESERVATIONS_HERE,
-    OR_SELECT_MAIN_MENU)
+from telegram.params.messages import (ALL_RESERVATIONS_HERE, NO_CLIENT_RESERVATIONS, OR_SELECT_MAIN_MENU,
+                                      RESERVATION_ACTIONS_NOTE)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
-from telegram.telegram_utils.messages_utils import (
-    re_open_reply_keyboard_message,
-    inline_keyboard_is_actual)
+from telegram.telegram_utils.messages_utils import (inline_keyboard_is_actual, re_open_reply_keyboard_message)
 from utilities.pagination_utility import (
     create_paginated_elems)
+
 
 inline_client_reservations_cb_router = Router(name=__name__)
 inline_client_reservations_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -95,7 +90,7 @@ async def inline_reservations_client_user_cb_hdr(callback_query: CallbackQuery,
 
     try:
         cur_message = await callback_query.message.edit_text(
-            text=ALL_RESERVATIONS_HERE,
+            text=f"{ALL_RESERVATIONS_HERE}\n{RESERVATION_ACTIONS_NOTE}",
             reply_markup=get_reservation_client_user_inl_kbd(
                 current_page_reservations=current_page_reservations,
                 total_pages_number=total_pages,
