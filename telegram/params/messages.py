@@ -66,15 +66,16 @@ RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить з�
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"
 CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите отменить эту запись?"
 
-
 # CLIENT COMPANY CONTACTS SECTION
 SELECT_CONTACTS_SECTION = "Выберите желаемый раздел контактов"
-NO_CONTACTS = "Извините, пока нет доступных контактов"
-NO_MAPS_ADDRESSES = "Извините, пока нет доступных адресов, чтобы показать карту"
+NO_CONTACTS = "ℹ️ Извините, пока нет доступных контактов"
+NO_MAPS_ADDRESSES = "ℹ️ Извините, пока нет доступных адресов, чтобы показать карту"
 CLICK_ADDRESS_FOR_GEO_MAP = "Кликните по адресу для просмотра карты или маршрута"
 
 # CLIENT ASK QUESTIONS SECTION
 SELECT_QUESTION_SECTION = "Выберите желаемый раздел в вопросах"
+NO_ADMINS_TO_CONNECT = "ℹ️ Извините, нет администраторов для связи"
+NO_MASTERS_TO_CONNECT = "ℹ️ Извините, нет мастеров для связи"
 
 # CLIENT BALANCE SECTION
 SELECT_BALANCE_SECTION = "Выберите желаемый раздел"

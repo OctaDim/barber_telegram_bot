@@ -17,6 +17,7 @@ from telegram.keyboard_inline.submenu_ask_question_inl_kbd import (
 from telegram.keyboard_reply.pvt_main_menu_reply_kbd import (
     get_pvt_main_menu_reply_kbd)
 from telegram.params.messages import (
+    NO_MASTERS_TO_CONNECT,
     OR_SELECT_MAIN_MENU)
 from telegram.params.messages_inserts import MSG
 from telegram.telegram_utils.handlers_stack_utils import (
@@ -45,14 +46,17 @@ async def inline_ask_master_cb_hdr(callback_query: CallbackQuery,
 
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
-    await callback_query.answer()
-
     masters_ids_env_str = BOT_CREDENTIALS.TG_BOT_ASK_MASTERS_IDS
     masters_tg_ids_str = get_strs_list_from_env_string(masters_ids_env_str)
     masters_tg_ids_int = convert_str_list_to_int_list(masters_tg_ids_str)
 
     masters_users_objs = get_user_objs_with_masters_by_tg_id(
         telegram_ids=masters_tg_ids_int)
+
+    if not masters_users_objs:
+        await callback_query.answer(text=NO_MASTERS_TO_CONNECT,
+                                    show_alert=True)
+        return
 
     first_contact_msg_sent_flag = False
     for master_user_obj in masters_users_objs:
