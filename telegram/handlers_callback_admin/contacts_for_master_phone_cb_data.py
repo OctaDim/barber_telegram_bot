@@ -72,6 +72,11 @@ async def add_new_phone_master(
             phone=state_data.get('phone')
         )
 
+    await bot.delete_message(
+        message_id=callback_query.message.message_id,
+        chat_id=callback_query.message.chat.id
+    )
+
     await bot.send_message(
         chat_id=callback_query.message.chat.id,
         text=ButtonAdminPanelOrMainMenu.ADMIN_PANEL,

@@ -1281,5 +1281,3 @@ async def add_new_service(
             break_time=break_time_list
         )
     )
-
-    await state.clear()
