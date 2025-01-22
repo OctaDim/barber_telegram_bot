@@ -16,7 +16,7 @@ class Category(Base):
         ForeignKey("master.id"),
         nullable=True)
 
-    name: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str] = mapped_column()
     description: Mapped[Optional[str]]
 
     active: Mapped[bool] = mapped_column(default=True)
