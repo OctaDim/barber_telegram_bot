@@ -33,7 +33,10 @@ def get_company_contacts(
                 Address.company_id == company_id).all()
 
         if address or socials or phones:
-            contacts_data = {"socials": [social for social in socials],
-                             "phones": [phone for phone in phones],
-                             "addresses": [address for address in address]}
-        return contacts_data
+            contacts_data = {
+                "socials": [social for social in socials],
+                "phones": [phone for phone in phones],
+                "addresses": [address for address in address]}
+            return contacts_data
+
+        return None

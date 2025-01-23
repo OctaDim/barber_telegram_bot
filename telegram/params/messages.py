@@ -61,8 +61,8 @@ CLIENT_ALREADY_ENROLLED = "*️⃣ Извините, вы уже записан�
 
 # CLIENT RESERVATIONS SECTION
 ALL_RESERVATIONS_HERE = "Все ваши записи здесь: ⤵️"
-NO_CLIENT_RESERVATIONS = "ℹ️ У вас ещё нет записей. Скорее запишитесь на наши услуги"
-RESERVATION_ACTIONS_NOTE = "- кликните дату/время для информации или 'Отмена'"
+NO_CLIENT_RESERVATIONS = "ℹ️ У вас ещё нет записей. Скорее запишитесь на наши услуги!"
+RESERVATION_ACTIONS_NOTE = "- кликните дату/время для информации или 'отмена'"
 RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь заново"
 RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь заново"
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"
@@ -70,13 +70,13 @@ CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите �
 
 # CLIENT COMPANY CONTACTS SECTION
 SELECT_CONTACTS_SECTION = "Выберите желаемый раздел контактов"
-NO_CONTACTS = "ℹ️ Извините, пока нет доступных контактов"
+NO_CONTACTS = "ℹ️ Извините, пока нет контактов для связи"
 NO_MAPS_ADDRESSES = "ℹ️ Извините, пока нет доступных адресов, чтобы показать карту"
-CLICK_ADDRESS_FOR_GEO_MAP = "Кликните по адресу для просмотра карты или маршрута"
+CLICK_ADDRESS_FOR_GEO_MAP = "Кликните адрес для просмотра карты или маршрута"
 
 # CLIENT ASK QUESTIONS SECTION
 SELECT_QUESTION_SECTION = "Выберите желаемый раздел в вопросах"
-NO_ADMINS_TO_CONNECT = "ℹ️ Извините, нет администраторов для связи"
+NO_ADMINS_TO_CONNECT = "ℹ️ Извините, пока нет администраторов для связи"
 NO_MASTERS_TO_CONNECT = "ℹ️ Извините, нет мастеров для связи"
 
 # CLIENT BALANCE SECTION

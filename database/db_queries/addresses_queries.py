@@ -20,4 +20,6 @@ def get_company_addresses_for_maps(
 
         if address:
             addresses_data = {"addresses": [address for address in address]}
-        return addresses_data
+            return addresses_data
+
+        return None
