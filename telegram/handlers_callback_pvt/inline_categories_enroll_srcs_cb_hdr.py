@@ -63,7 +63,7 @@ async def inline_categories_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     categories_records = get_all_categories_ordered(
         active=True,
-        order_by_fields="name")
+        order_by_fields=("sort_index", "name"))
 
     if not categories_records:
         await callback_query.answer(text=NO_AVAILABLE_CATEGORIES,

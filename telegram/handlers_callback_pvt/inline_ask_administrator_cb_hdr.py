@@ -46,7 +46,7 @@ async def inline_ask_administrator_cb_hdr(callback_query: CallbackQuery,
 
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
-    admins_ids_env_str = BOT_CREDENTIALS.TG_BOT_ADMINS_IDS
+    admins_ids_env_str = BOT_CREDENTIALS.TG_BOT_ASK_ADMINS_IDS
     admins_tg_ids_str = get_strs_list_from_env_string(admins_ids_env_str)
     admins_tg_ids_int = convert_str_list_to_int_list(admins_tg_ids_str)
 
