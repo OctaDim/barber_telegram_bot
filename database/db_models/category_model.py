@@ -18,6 +18,7 @@ class Category(Base):
 
     name: Mapped[str] = mapped_column()
     description: Mapped[Optional[str]]
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 

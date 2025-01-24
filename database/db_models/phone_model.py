@@ -16,6 +16,7 @@ class Phone(Base):
     number: Mapped[str] = mapped_column(
         PhoneNumberType(region=LANGUAGE_CONFIGS.PHONE_NUMBER_REGION),
         unique=True)
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 
