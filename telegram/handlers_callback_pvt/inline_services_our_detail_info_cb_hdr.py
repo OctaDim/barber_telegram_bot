@@ -62,7 +62,7 @@ async def inline_our_services_detail_info_srcs_cb_hdr(callback_query: CallbackQu
     srcs_recs_by_category = get_all_services_ordered(
         category_id=selected_category_id,
         active=True,
-        order_by_fields=("name", "price",))
+        order_by_fields=("sort_index", "name", "price",))
 
     if not srcs_recs_by_category:
         await callback_query.answer(text=NO_SERVICES_FOR_CATEGORY,

@@ -102,21 +102,21 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
             category_id=selected_category_id,
             master_id=selected_master_id,
             active=True,
-            order_by_fields=("name", "price",))
+            order_by_fields=("sort_index", "name", "price",))
     elif selected_master_id:
         all_services_records = get_all_services_ordered(
             master_id=selected_master_id,
             active=True,
-            order_by_fields=("name", "price",))
+            order_by_fields=("sort_index", "name", "price",))
     elif selected_category_id:
         all_services_records = get_all_services_ordered(
             category_id=selected_category_id,
             active=True,
-            order_by_fields=("name", "price",))
+            order_by_fields=("sort_index", "name", "price",))
     else:  # elif not selected_category_id and not selected_master_id
         all_services_records = get_all_services_ordered(
             active=True,
-            order_by_fields=("name", "price",))
+            order_by_fields=("sort_index", "name", "price",))
 
     if not all_services_records:
         await callback_query.answer(text=NO_SERVICES_FOR_SELECTED_OPTIONS,

@@ -44,7 +44,11 @@ async def inline_our_contacts_cb_hdr(callback_query: CallbackQuery,
 
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
-    contacts_data = get_company_contacts(company_id="all")
+    contacts_data = get_company_contacts(
+        company_id="all",
+        socials_order_by_fields=("sort_index", "name"),
+        phones_order_by_fields=("sort_index", "number"),
+        address_order_by_fields=("sort_index", "street"))
 
     if not contacts_data:
         await callback_query.answer(text=NO_CONTACTS,
