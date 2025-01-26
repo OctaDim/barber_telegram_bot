@@ -42,7 +42,9 @@ async def geo_map_link_cb_hdr(callback_query: CallbackQuery,
 
     print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
-    company_addresses = get_company_addresses_for_maps(company_id="all")
+    company_addresses = get_company_addresses_for_maps(
+        company_id="all",
+        address_order_by_fields=("sort_index", "name"))
 
     if not company_addresses:
         await callback_query.answer(text=NO_MAPS_ADDRESSES,

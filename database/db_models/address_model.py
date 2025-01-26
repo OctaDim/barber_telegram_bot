@@ -16,6 +16,7 @@ class Address(Base):
 
     street: Mapped[str] = mapped_column(unique=True)
     url: Mapped[str] = mapped_column(unique=True)
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 
@@ -30,4 +31,3 @@ class Address(Base):
         uselist=False,
         order_by='Master.full_name',
         back_populates="master_address")
-

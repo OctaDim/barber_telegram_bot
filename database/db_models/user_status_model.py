@@ -14,6 +14,7 @@ class UserStatus(Base):
 
     name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[Optional[str]]
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 

@@ -23,6 +23,8 @@ class Master(Base):
     qualification: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     note: Mapped[Optional[str]]
+    sort_index: Mapped[int] = mapped_column(nullable=True)
+
 
     image: Mapped[bytes] = mapped_column(LargeBinary, nullable=True)
 
@@ -80,4 +82,3 @@ class Master(Base):
         uselist=False,
         order_by='Address.street',
         back_populates="address_masters")
-

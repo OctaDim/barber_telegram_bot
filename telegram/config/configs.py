@@ -109,4 +109,4 @@ class CONTACTS_CONFIGS:
 
 
 class BALANCE_CONFIGS:
-    SHOW_BALANCE_MENU: bool = False
+    SHOW_BALANCE_MENU: bool = True

@@ -20,6 +20,7 @@ class Service(Base):
     price: Mapped[float]
     time_duration: Mapped[timedelta]
     description: Mapped[Optional[str]]
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 

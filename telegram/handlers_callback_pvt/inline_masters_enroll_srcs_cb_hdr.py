@@ -67,7 +67,7 @@ async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     if callback_prefix == MethodMasterToServiceContinueCBD.__prefix__:
         masters_records = get_all_masters_ordered(
             active=True,
-            order_by_fields=("full_name", "category_id"))
+            order_by_fields=("sort_index", "full_name", "category_id"))
     elif callback_prefix == CategoryToMasterContinueCBData.__prefix__:
         selected_category_id = await get_valid_int_by_fsm_state_key(
             fsm_state_or_dict_from=state_data,

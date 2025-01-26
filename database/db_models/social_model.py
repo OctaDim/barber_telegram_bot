@@ -17,6 +17,7 @@ class Social(Base):
     name: Mapped[str]
     social_username: Mapped[str] = mapped_column(nullable=True, unique=True)
     url: Mapped[str] = mapped_column(nullable=True, unique=True)
+    sort_index: Mapped[int] = mapped_column(nullable=True)
 
     active: Mapped[bool] = mapped_column(default=True)
 
