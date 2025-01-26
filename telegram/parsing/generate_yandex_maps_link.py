@@ -1,4 +1,5 @@
 import requests
+import re
 
 
 class MapsLinkBuilder:
@@ -39,7 +40,7 @@ class MapsLinkBuilder:
         return data
 
     def get_object(self):
-        data = self.get_json_format()
+        data = self.normalize_address()
 
         if data:
             result = data[0]
@@ -56,3 +57,21 @@ class MapsLinkBuilder:
         link = self.get_object()
 
         return link
+
+    def normalize_address(self):
+        address = self.address.strip().lower()
+
+        address = re.sub(r'(\d+[а-я]*)\s*(?:корпус|корп|к|литера|лит|л)[\s.,-]*(\d+)', r'\1к\2', address)
+
+        address = re.sub(r'(кв|квартира|офис|помещение|комната|кабинет)[\s.,-]*\d+', '', address)
+
+        address = re.sub(r'(\d+[а-я]*)[\s\/\-.,]+(\d+)', r'\1', address)
+
+        address = re.sub(r'\s+', ' ', address)
+        address = re.sub(r',\s*,', ',', address)
+
+        address = address.strip(', ')
+
+        self.address = address
+
+        return self.get_json_format()
