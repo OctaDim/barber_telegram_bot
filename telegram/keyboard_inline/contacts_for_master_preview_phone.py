@@ -8,11 +8,11 @@ from telegram.params.contacts_for_master_cb_data_message import confirm, change
 from telegram.params.work_time_cb_data_message import RETURN, RETURN_ADMIN_PANEL
 
 
-class ChangePreviewPhoneCbData(CallbackData, prefix='change-preview-address'):
+class ChangePreviewPhoneCbData(CallbackData, prefix='change-preview-phone'):
     pass
 
 
-class ConfirmPreviewPhoneCbData(CallbackData, prefix='confirm-preview-address'):
+class ConfirmPreviewPhoneCbData(CallbackData, prefix='confirm-preview-phone'):
     pass
 
 
