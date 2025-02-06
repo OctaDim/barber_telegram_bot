@@ -7,4 +7,4 @@ class ENROLL_METHODS_BUTTONS:
     ENROLL_MASTER_TO_SERVICE: str = "по Мастеру"
     ENROLL_CATEGORY_TO_SERVICE: str = "по Категории"
     ENROLL_SERVICES_DIRECTLY: str = "по Услугам"
-    CONTINUE: str = "▶️ Продолжить"
+    CONTINUE: str = "🟢 ПРОДОЛЖИТЬ"
