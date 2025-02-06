@@ -66,7 +66,7 @@ RESERVATION_ACTIONS_NOTE = "- кликните дату/время для инф
 RESERVATION_ADMIN_CANCELLED = "ℹ️ Невозможно изменить запись отмененную администратором. Запишитесь заново"
 RESERVATION_CLIENT_CANCELLED = "ℹ️ Невозможно изменить запись отмененную клиентом. Запишитесь заново"
 RESERVATION_ALREADY_COMPLETED = "ℹ️ Прошлые записи не могут быть изменены. Можно только посмотреть детали"
-CONFIRM_CANCEL_RESERVATION = "❓ Вы действительно хотите отменить эту запись?"
+CONFIRM_CANCEL_RESERVATION = "❓ Мы рады видеть вас в нашем салоне! Вы хотите отменить эту запись?"
 
 # CLIENT COMPANY CONTACTS SECTION
 SELECT_CONTACTS_SECTION = "Выберите желаемый раздел контактов"

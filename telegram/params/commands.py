@@ -5,13 +5,13 @@ from dataclasses import dataclass
 class COMMANDS_PARAMS:
     class START_CMD:
         TEXT: str = "start"
-        DESCRIPTION: str = "🚀 Старт"
+        DESCRIPTION: str = "🚀 СТАРТ"
 
     class MENU_CMD:
         TEXT: str = "menu"
-        DESCRIPTION: str = "💈 Главное Меню"
+        DESCRIPTION: str = "КАБИНЕТ КЛИЕНТА  👒🎩"
 
 
     class ADMIN_PANEL:
         TEXT: str = "admin"
-        DESCRIPTION: str = "⚙️ Меню Администратора"
+        DESCRIPTION: str = "КАБИНЕТ АДМИНИСТРАТОРА  ⚙️"
