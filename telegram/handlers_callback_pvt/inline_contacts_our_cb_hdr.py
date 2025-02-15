@@ -67,7 +67,8 @@ async def inline_our_contacts_cb_hdr(callback_query: CallbackQuery,
     except (TelegramBadRequest, Exception) as exception_info:
         await callback_query.message.answer(
             text=contacts_text,
-            disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_CONTACTS_PREVIEW)
+            disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_CONTACTS_PREVIEW,
+            disable_notification=True)
         print(f"\tNew 'Contacts' message was created, because "
               f"\tprior message is not editable: {exception_info}\n")
 

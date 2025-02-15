@@ -61,7 +61,8 @@ async def geo_map_link_cb_hdr(callback_query: CallbackQuery,
     except (TelegramBadRequest, Exception) as exception_info:
         await callback_query.message.answer(
             text=addresses_text,
-            disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_MAP_ADDRESSES_PREVIEW)
+            disable_web_page_preview=CONTACTS_CONFIGS.DISABLE_MAP_ADDRESSES_PREVIEW,
+            disable_notification=True)
         print(f"\tNew 'Addresses Maps' message was created, because "
               f"\tprior message is not editable: {exception_info}\n")
 

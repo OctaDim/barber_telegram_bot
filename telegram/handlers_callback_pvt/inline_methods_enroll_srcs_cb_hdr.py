@@ -53,7 +53,8 @@ async def inline_methods_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         cur_message = await callback_query.message.answer(
             text=HOW_SELECT_SERVICES,
             reply_markup=get_methods_enroll_srcs_inl_kbd(
-                selected_method_prefix=selected_method_prefix))
+                selected_method_prefix=selected_method_prefix),
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew Methods message was created, because "
               f"\tprior message is not editable: {exception_info}\n")

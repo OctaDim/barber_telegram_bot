@@ -205,7 +205,8 @@ async def inline_intervals_slots_enroll_srcs_cb_hdr(callback_query: CallbackQuer
 
     except (TelegramBadRequest, Exception) as exception_info:
         cur_message = await callback_query.message.answer(
-            text=summary_msg_text)
+            text=summary_msg_text,
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew 'Selected Services Summary' message was created, because "
               f"\tprior message is not editable: {exception_info}\n")

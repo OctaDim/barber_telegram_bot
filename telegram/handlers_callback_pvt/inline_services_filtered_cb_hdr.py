@@ -131,7 +131,8 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
               f"\tmessage successfully\n")
     except (TelegramBadRequest, Exception) as exception_info:
         cur_message = await callback_query.message.answer(
-            text=SELECT_SERVICES_BELLOW)
+            text=SELECT_SERVICES_BELLOW,
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew 'Select services bellow' msg was created, because "
               f"\tprior message is not editable: {exception_info}\n")
@@ -192,7 +193,8 @@ async def inline_enroll_srcs_filtered_cb_hdr(callback_query: CallbackQuery,
             reply_markup=get_enroll_service_inl_kbd(
                 service_id=service_record.id,
                 button_selected=button_selected,
-                one_more_service_btn=one_more_service_btn))
+                one_more_service_btn=one_more_service_btn),
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tCurrent service message id added to msgs ids list to delete:\n"
               f"\tcur_message.message_id = {cur_message.message_id}\n"

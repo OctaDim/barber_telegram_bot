@@ -99,7 +99,8 @@ async def inline_our_services_detail_info_srcs_cb_hdr(callback_query: CallbackQu
                   f"\tsuccessfully, because first service record: service_idx == 0\n")
         else:
             cur_message = await callback_query.message.answer(
-                text=f"{service_detailed_info}")
+                text=f"{service_detailed_info}",
+                disable_notification=True)
             cur_handler_messages_ids.append(cur_message.message_id)
             print(f"\tNew 'Service Detailed Info' msg was created, because it is"
                   f"\tnot first first service record: service_idx == {service_idx}\n")

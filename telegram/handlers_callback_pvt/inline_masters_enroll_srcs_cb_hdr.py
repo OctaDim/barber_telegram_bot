@@ -119,7 +119,8 @@ async def inline_masters_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     except (TelegramBadRequest, Exception) as exception_info:
         cur_message = await callback_query.message.answer(
             text=SELECT_MASTER,
-            reply_markup=masters_reply_markup)
+            reply_markup=masters_reply_markup,
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew Masters message was created, because "
               f"\tprior message is not editable: {exception_info}\n")

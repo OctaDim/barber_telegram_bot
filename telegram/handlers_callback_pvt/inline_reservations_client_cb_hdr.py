@@ -106,7 +106,8 @@ async def inline_reservations_client_user_cb_hdr(callback_query: CallbackQuery,
             reply_markup=get_reservation_client_user_inl_kbd(
                 current_page_reservations=current_page_reservations,
                 total_pages_number=total_pages,
-                current_page_number=cur_page_number))
+                current_page_number=cur_page_number),
+            disable_notification=True)
         cur_message_id = cur_message.message_id
         cur_handler_messages_ids.append(cur_message_id)
         reservation_msg_id = cur_message_id

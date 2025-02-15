@@ -101,7 +101,8 @@ async def inline_categories_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
     except (TelegramBadRequest, Exception) as exception_info:
         cur_message = await callback_query.message.answer(
             text=text,
-            reply_markup=categories_reply_markup)
+            reply_markup=categories_reply_markup,
+            disable_notification=True)
         cur_handler_messages_ids.append(cur_message.message_id)
         print(f"\tNew Categories message was created, because "
               f"\tprior message is not editable: {exception_info}\n")

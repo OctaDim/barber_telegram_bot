@@ -76,12 +76,17 @@ async def inline_ask_master_cb_hdr(callback_query: CallbackQuery,
                 print(f"\tPrior msg was edited to 'Master link' msg successfully\n"
                       f"\tmaster_link = {master_link}\n")
             except (TelegramBadRequest, Exception) as exception_info:
+                await callback_query.message.answer(
+                    text=master_link,
+                    disable_notification=True)
                 print(f"\tNew 'Master link' message was created, because "
                       f"\tprior message is not editable: {exception_info}\n"
                       f"\tmaster_link = {master_link}\n")
             first_contact_msg_sent_flag = True
         else:
-            await callback_query.message.answer(text=master_link)
+            await callback_query.message.answer(
+                text=master_link,
+                disable_notification=True)
             print(f"\tNew 'Master link' message was created, because \n"
                   f"\tfirst_contact_msg_sent_flag = {first_contact_msg_sent_flag}\n"
                   f"\tadmin_link = {master_link}\n")

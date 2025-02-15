@@ -77,13 +77,17 @@ async def inline_ask_administrator_cb_hdr(callback_query: CallbackQuery,
                 print(f"\tPrior msg was edited to 'Admin link' msg successfully\n"
                       f"\tadmin_link = {admin_link}\n")
             except (TelegramBadRequest, Exception) as exception_info:
-                await callback_query.message.answer(text=admin_link)
+                await callback_query.message.answer(
+                    text=admin_link,
+                    disable_notification=True)
                 print(f"\tNew 'Admin link' message was created, because "
                       f"\tprior message is not editable: {exception_info}\n"
                       f"\tadmin_link = {admin_link}\n")
             first_contact_msg_sent_flag = True
         else:
-            await callback_query.message.answer(text=admin_link)
+            await callback_query.message.answer(
+                text=admin_link,
+                disable_notification=True)
             print(f"\tNew 'Admin link' message was created, because \n"
                   f"\tfirst_contact_msg_sent_flag = {first_contact_msg_sent_flag}\n"
                   f"\tadmin_link = {admin_link}\n")
