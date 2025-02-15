@@ -1,25 +1,24 @@
 import inspect
 
 from aiogram import Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from telegram.filters.chat_types_filter import (
     ChatTypesFilter)
-from telegram.keyboard_inline.reservations_client_inl_kbd import (
-    PreviousReservationPageCBData,
-    NextReservationPageCBData,
-    get_reservation_client_user_inl_kbd)
+from telegram.keyboard_inline.reservations_client_inl_kbd import (NextReservationPageCBData,
+                                                                  PreviousReservationPageCBData,
+                                                                  get_reservation_client_user_inl_kbd)
 from telegram.params.messages import (
     ALL_RESERVATIONS_HERE)
-from telegram.telegram_utils.fsm_states_utils import (
-    get_valid_int_by_fsm_state_key,
-    get_valid_dict_by_fsm_state_key)
+from telegram.telegram_utils.fsm_states_utils import (get_valid_dict_by_fsm_state_key, get_valid_int_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
+
 
 next_prev_page_reservation_client_cb_router = Router(name=__name__)
 next_prev_page_reservation_client_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -34,6 +33,8 @@ async def next_prev_page_reservation_client_cb_hdr(callback_query: CallbackQuery
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     callback_prefix = callback_data.__prefix__
 
@@ -76,12 +77,15 @@ async def next_prev_page_reservation_client_cb_hdr(callback_query: CallbackQuery
 
     current_page_reservations = paginated_reservations.get(cur_page_number)
 
-    await callback_query.message.edit_text(
-        text=ALL_RESERVATIONS_HERE,
-        reply_markup=get_reservation_client_user_inl_kbd(
-            current_page_reservations=current_page_reservations,
-            total_pages_number=total_pages,
-            current_page_number=cur_page_number))
+    try:
+        await callback_query.message.edit_text(
+            text=ALL_RESERVATIONS_HERE,
+            reply_markup=get_reservation_client_user_inl_kbd(
+                current_page_reservations=current_page_reservations,
+                total_pages_number=total_pages,
+                current_page_number=cur_page_number))
+    except (TelegramBadRequest, Exception) as exception_info:
+        print(f"\tMessage not modified, exception intercepted: {exception_info}\n")
 
     await state.update_data(
         current_page_number_of_reservations=cur_page_number)

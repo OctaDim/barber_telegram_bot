@@ -2,6 +2,7 @@ import inspect
 from datetime import datetime
 
 from aiogram import Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
@@ -22,16 +23,15 @@ from telegram.keyboard_inline.calendar_enroll_srcs_inl_kbd import (
     get_calendar_enroll_srcs_inl_kbd)
 from telegram.params.messages import (
     CHOOSE_SERVICES_DAY)
-from telegram.telegram_utils.fsm_states_utils import (
-    get_valid_int_by_fsm_state_key,
-    get_valid_timedelta_by_fsm_state_key,
-    get_valid_list_by_fsm_state_key)
+from telegram.telegram_utils.fsm_states_utils import (get_valid_int_by_fsm_state_key, get_valid_list_by_fsm_state_key,
+                                                      get_valid_timedelta_by_fsm_state_key)
 from telegram.telegram_utils.handlers_stack_utils import (
     get_handler_answer_flag_dict)
 from telegram.telegram_utils.messages_utils import (
     inline_keyboard_is_actual)
 from utilities.numeric_utils import (
     number_or_str_to_integer)
+
 
 next_prev_month_services_cb_router = Router(name=__name__)
 next_prev_month_services_cb_router.message.filter(ChatTypesFilter(["private"]))
@@ -46,6 +46,8 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
 
     if not await inline_keyboard_is_actual(state_data, callback_query):
         return
+
+    print(f"{'-' * 115}\n\tHandler: {inspect.currentframe().f_code.co_name}\n")
 
     await callback_query.answer()
 
@@ -114,12 +116,15 @@ async def next_prev_month_enroll_srcs_cb_hdr(callback_query: CallbackQuery,
         selected_services_duration=selected_services_duration,
         time_loss_max_limit=time_loss_max_limit)
 
-    await callback_query.message.edit_text(
-        text=CHOOSE_SERVICES_DAY,
-        reply_markup=get_calendar_enroll_srcs_inl_kbd(
-            calendar_year=calendar_year,
-            calendar_month=calendar_month,
-            enrollment_days=enrollment_days))
+    try:
+        await callback_query.message.edit_text(
+            text=CHOOSE_SERVICES_DAY,
+            reply_markup=get_calendar_enroll_srcs_inl_kbd(
+                calendar_year=calendar_year,
+                calendar_month=calendar_month,
+                enrollment_days=enrollment_days))
+    except (TelegramBadRequest, Exception) as exception_info:
+        print(f"\tMessage not modified, exception intercepted: {exception_info}\n")
 
     await state.update_data(
         cur_month_enroll_srcs_calendar=calendar_month,
